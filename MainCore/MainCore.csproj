@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>WebCMS</RootNamespace>
+		<UserSecretsId>70cbb8cf-e70a-4054-8370-6f755c47873a</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\WebExtention\WebExtention.csproj" />
+		<ProjectReference Include="..\WebModel\WebModel.csproj" />
+		<ProjectReference Include="..\WebService\WebService.csproj" />
+		<ProjectReference Include="..\WebUtils\WebUtils.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Controllers\Works\" />
+	</ItemGroup>
+	<ProjectExtensions>
+		<VisualStudio><UserProperties configs_4database_1json__JsonSchema="https://appsemble.app/api.json" /></VisualStudio>
+	</ProjectExtensions>
+</Project>

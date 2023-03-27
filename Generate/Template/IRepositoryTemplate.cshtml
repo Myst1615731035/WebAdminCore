@@ -1,0 +1,15 @@
+@{
+	var name = $"I{@Model.EntityName}Repository";
+}
+using BaseRepository;
+using WebModel.Entitys;
+
+namespace WebService.IRepository
+{
+    /// <summary>
+	/// @name
+	/// </summary>
+    public partial interface @name : IBaseRepository<@Model.EntityName>
+	{
+	}
+}

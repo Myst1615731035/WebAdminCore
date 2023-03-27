@@ -1,0 +1,25 @@
+﻿@{
+	var name = $"{@Model.EntityName}Service";
+}
+using BaseRepository;
+using BaseService;
+using SqlSugar;
+using WebModel.Entitys;
+using WebService.IService;
+
+namespace WebService.Service
+{
+    /// <summary>
+	/// @name
+	/// </summary>
+    public partial class @name : BaseService<@Model.EntityName>, @($"I{name}")
+	{
+		IBaseRepository<@Model.EntityName> dal;
+		ISqlSugarClient db;
+		public @($"{name}(IBaseRepository<{Model.EntityName}> _dal)")
+		{
+			dal = _dal;
+			db = dal.Db;
+		}
+	}
+}

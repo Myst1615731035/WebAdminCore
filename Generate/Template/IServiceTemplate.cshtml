@@ -1,0 +1,15 @@
+﻿@{
+	var name = $"I{@Model.EntityName}Service";
+}
+using BaseService;
+using WebModel.Entitys;
+
+namespace WebService.IService
+{
+    /// <summary>
+	/// @name
+	/// </summary>
+    public interface @name : IBaseService<@Model.EntityName>
+	{
+	}
+}

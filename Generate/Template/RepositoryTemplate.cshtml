@@ -1,0 +1,19 @@
+﻿@{
+	var name = $"{@Model.EntityName}Repository";
+}
+using BaseRepository;
+using WebModel.Entitys;
+using WebService.IRepository;
+
+namespace WebService.Repository
+{
+    /// <summary>
+	/// @name
+	/// </summary>
+    public partial class @name : BaseRepository<@Model.EntityName>, @("I"+ name)
+	{
+		public @(name + "()") : base()
+		{
+		}
+	}
+}

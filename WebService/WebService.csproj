@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebModel\WebModel.csproj" />
+    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="WorkRepository\" />
+    <Folder Include="WorkService\" />
+    <Folder Include="IWorkRepository\" />
+    <Folder Include="IWorkService\" />
+  </ItemGroup>
+
+</Project>

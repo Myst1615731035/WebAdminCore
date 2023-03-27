@@ -1,0 +1,21 @@
+﻿using SqlSugar;
+using WebModel.RootEntity;
+
+namespace WebModel.Entitys 
+{
+    ///<summary>
+    /// @Model.Description
+    ///</summary>
+    [SugarTable("@Model.TableName")]
+    public class @Model.EntityName
+    {
+        @foreach (var t in @Model.Columns)
+        {
+        @:/// <summary>
+        @:/// @t.Description
+        @:/// </summary>
+        @:[SugarColumn(@t.Props)]
+        @:public @t.Type @t.Name { get; set; } @t.DefaultValue
+        }
+    }
+}

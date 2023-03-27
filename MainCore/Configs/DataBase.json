@@ -1,0 +1,26 @@
+{
+    "DataBase": {
+        "MainDb": "Main",
+        "MutilDb": false,
+        "CQRSEnabled": false,
+        "DBS": [
+            {
+                "Enable": true,
+                "ConfigId": "Main",
+                "HitRate": 50,
+                "DbType": 1,
+                "ConnectionString": "Data Source=127.0.0.1;Initial Catalog=WebSiteCore;User ID=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;"
+            }
+        ],
+        "SplitTables": [],
+        "OriginSplitTableInit": false,
+        "SplitTableFields": [],
+        //公有字段，对应 RootEntity
+        "PublicColumn": [],
+        "SetUp": {
+            "CreateDB": false,
+            "CreateTable": false,
+            "CreateData": false
+        }
+    }
+}

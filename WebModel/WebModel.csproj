@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>WebModel</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Folder Include="DBSeed\" />
+	  <Folder Include="Enums\" />
+	  <Folder Include="RootEntity\" />
+	  <Folder Include="SystemEntity\" />
+	  <Folder Include="WorkEntity\" />
+  </ItemGroup>
+
+</Project>
