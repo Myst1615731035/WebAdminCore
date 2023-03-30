@@ -1,48 +1,31 @@
 <template>
 	<div class="container-grid">
 		<vxe-grid ref="grid" v-bind="gridOptions" @toolbar-button-click="toolBtnClick" @toolbar-tool-click="toolBtnClick"></vxe-grid>
-		<pageForm v-model="form.show" :data="form.data"></pageForm>
+		<formPage v-model="form.show" :data="form.data"></formPage>
 	</div>
 </template>
 
 <script>
-const query = ({ page, sorts, filters, form }) => {
-	return new Promise((resolve, reject) => {
-		page = Object.assign(Object.assign({ isAll: page == undefined }, page), {
-			keyword: form.keyword,
-			form: Object.assign({}, form),
-			sorts: Object.assign({}, sorts),
-			filters: Object.assign({}, filters)
-		});
-		resolve(self.$postPage(self.$store.state.serverApi.sysRole.list, page));
-	}).then(res => res);
-};
-import pageForm from './form.vue';
-let self;
+import formPage from './form.vue';
 export default {
-	created() {
-		self = this;
-	},
-	components: { pageForm },
+	components: { formPage },
 	data() {
 		return {
 			form: { show: false, data: null },
 			gridOptions: {
-				border: true,
+				height: 'auto',
 				headerAlign: 'center',
 				resizable: true,
-				showHeaderOverflow: true,
-				showOverflow: true,
-				highlightHoverRow: true,
 				keepSource: true,
-				height: 'auto',
-				highlightCurrentRow: true,
-				highlightHoverRow: true,
-				showOverflow: true,
 				tooltipConfig: { showAll: true },
-				rowConfig: { useKey: true, keyField: 'Id' },
+				proxyConfig: {
+					ajax: {
+						query: this.$gridQuery(this.serverApi.sysRole.list),
+						queryAll: this.$gridQuery(this.serverApi.sysRole.list)
+					}
+				},
+				rowConfig: { useKey: true, keyField: 'Id', isCurrent: true, isHover: true },
 				toolbarConfig: { buttons: [{ code: 'add', name: '新增', icon: 'fa fa-plus' }, { code: 'edit', name: '编辑', icon: 'fa fa-edit' }] },
-				proxyConfig: { ajax: { query: query, queryAll: query } },
 				pagerConfig: { align: 'center', border: true, background: true, perfect: true, pageSize: 50, pageSizes: [50, 100, 200] },
 				columns: [
 					{ type: 'seq', title: '序号', width: 60, align: 'center' },
@@ -81,7 +64,7 @@ export default {
 				case 'edit':
 					var row = this.$refs.grid.getCurrentRecord();
 					if (IsNotEmpty(row)) this.form = { show: true, data: row };
-					else self.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
+					else this.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
 					break;
 			}
 		},

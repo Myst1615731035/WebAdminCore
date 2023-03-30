@@ -7,24 +7,9 @@
 </template>
 
 <script>
-const query = ({ page, sorts, filters, form }) => {
-	return new Promise((resolve, reject) => {
-		page = Object.assign(Object.assign({ isAll: page == undefined }, page), {
-			keyword: form.keyword,
-			form: Object.assign({}, form),
-			sorts: Object.assign({}, sorts),
-			filters: Object.assign({}, filters)
-		});
-		resolve(self.$postPage(self.$store.state.serverApi.permission.list, page));
-	}).then(res => res);
-};
 import pageForm from './form.vue';
 import sortModal from './sort.vue';
-let self;
 export default {
-	created() {
-		self = this;
-	},
 	components: { pageForm, sortModal },
 	data() {
 		return {
@@ -52,7 +37,10 @@ export default {
 						{ code: 'sort', name: '排序', icon: 'fa fa-sort' }
 					]
 				},
-				proxyConfig: { props: { result: 'data' }, ajax: { query: query, queryAll: query } },
+				proxyConfig: {
+					props: { result: 'data' },
+					ajax: { query: this.$treeGridQuery(this.$store.state.serverApi.permission.list), queryAll: this.$treeGridQuery(this.$store.state.serverApi.permission.list) }
+				},
 				columns: [
 					{ type: 'seq', title: '序号', width: 60, align: 'center' },
 					{ field: 'Id', title: 'Id', visible: false },
@@ -89,22 +77,22 @@ export default {
 		toolBtnClick({ code }) {
 			switch (code) {
 				case 'add':
-					self.$refs.grid.clearCurrentRow();
-					self.GetMenuTree().then(res => (self.params = { show: true, menuTree: Object.freeze(res.data) }));
+					this.$refs.grid.clearCurrentRow();
+					this.GetMenuTree().then(res => (this.params = { show: true, menuTree: Object.freeze(res.data) }));
 					break;
 				case 'edit':
 					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row)) self.GetMenuTree().then(res => (self.params = { show: true, data: row, menuTree: Object.freeze(res.data) }));
-					else self.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
+					if (IsNotEmpty(row)) this.GetMenuTree().then(res => (this.params = { show: true, data: row, menuTree: Object.freeze(res.data) }));
+					else this.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
 					break;
 				case 'sort':
-					self.$refs.grid.clearCurrentRow();
+					this.$refs.grid.clearCurrentRow();
 					this.sortConfig.show = true;
 					break;
 			}
 		},
 		cellDbClick() {
-			self.toolBtnClick({ code: 'edit' });
+			this.toolBtnClick({ code: 'edit' });
 		},
 		updateRow(newRow) {
 			const row = this.$refs.grid.getCurrentRecord();
@@ -115,7 +103,7 @@ export default {
 			}
 		},
 		GetMenuTree() {
-			return self.$post(self.$store.state.serverApi.permission.list);
+			return this.$post(this.$store.state.serverApi.permission.list);
 		}
 	}
 };

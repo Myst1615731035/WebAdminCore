@@ -48,17 +48,14 @@ export default {
 				rules: { Name: [{ required: true, message: '请输入字典名称' }], Code: [{ required: true, message: '请输入字典key' }] }
 			},
 			gridOption: {
+				height: '85%',
 				border: true,
 				headerAlign: 'center',
 				resizable: true,
 				showHeaderOverflow: true,
 				showOverflow: true,
 				highlightHoverRow: true,
-				keepSource: true,
-				height: '85%',
 				highlightCurrentRow: true,
-				highlightHoverRow: true,
-				showOverflow: true,
 				tooltipConfig: { showAll: true },
 				toolbarConfig: { buttons: [{ code: 'add', name: '新增', icon: 'fa fa-plus' }, { code: 'del', name: '删除', icon: 'fa fa-trash' }] },
 				editConfig: { enabled: true, trigger: 'click', mode: 'row', showStatus: true },

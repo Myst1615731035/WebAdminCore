@@ -1,8 +1,8 @@
-import _config from '../../../public/Settings.js';
+import _config from '../../../../public/Settings.js';
 import axios from 'axios';
-import router from '../../plugins/vue-plugins/router/router.js';
-import defaultRoute from '../../plugins/vue-plugins/router/defaultRoute';
-import store from '../../plugins/vue-plugins/store/store';
+import router from '../../vue-plugins/router/router.js';
+import defaultRoute from '../../vue-plugins/router/defaultRoute';
+import store from '../../vue-plugins/store/store';
 import { modal, saveFile } from 'vxe-table';
 const { message: $message } = modal;
 const loginInfo = store.getters.get('loginInfo');
@@ -286,4 +286,4 @@ const install = app => {
 	// 退出登录
 	app.config.globalProperties.ToLogin = ToLogin;
 };
-export default { install, GetUserInfo, GetUserAuth, GetCache };
+export default { install, postPage, GetUserInfo, GetUserAuth, GetCache };

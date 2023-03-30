@@ -6,8 +6,9 @@ import VXETablePluginRenderer from 'vxe-table-plugin-renderer';
 import VXETablePluginMenus from 'vxe-table-plugin-menus';
 import VXETablePluginElement from 'vxe-table-plugin-element';
 import formatOptions from './vxe-table-formatter';
-// Vxe-Table 自建扩展插件
-import '../vxe-table-plugins';
+import '../vxe-table-plugins'; // Vxe-Table 自建扩展插件
+import http from '../utils/http';
+const { postPage: $postPage } = http;
 
 VXETable.setup({
 	size: 'medium', // 全局尺寸
@@ -44,17 +45,16 @@ VXETable.setup({
 	},
 	grid: {
 		size: 'medium',
+		height: 'auto',
 		border: true,
 		headerAlign: 'center',
 		resizable: true,
 		showHeaderOverflow: true,
 		showOverflow: true,
-		highlightHoverRow: true,
 		keepSource: true,
-		height: 'auto',
-		highlightCurrentRow: true,
 		tooltipConfig: { showAll: true },
 		zoomConfig: { escRestore: true },
+		rowConfig: { isCurrent: true, isHover: true },
 		pagerConfig: { align: 'center', border: true, background: true, perfect: true, pageSize: 50, pageSizes: [50, 100, 200] },
 		toolbarConfig: { className: 'grid-toolbar', refresh: false, zoom: true, custom: true },
 		formConfig: { preventSubmit: false },
@@ -136,6 +136,14 @@ const formSubmitResponse = (node, res = {}) => {
 		if (!!modal && !!modal.close && typeof modal.close == 'function') modal.close();
 	}
 };
+const gridQueryParam = (page, sorts, filters, form) => {
+	return Object.assign(Object.assign({ isAll: page == undefined }, page), {
+		keyword: form.keyword,
+		form: Object.assign({}, form),
+		sorts: Object.assign({}, sorts),
+		filters: Object.assign({}, filters)
+	});
+};
 const install = app => {
 	// 补充插件
 	VXETable.use(VXETablePluginExportXLSX);
@@ -155,14 +163,19 @@ const install = app => {
 	app.config.globalProperties.$saveFile = VXETable.saveFile;
 	app.config.globalProperties.$readFile = VXETable.readFile;
 	// 自定义快捷功能
+	// 表格请求的公用方法
+	app.config.globalProperties.$gridQuery = url => {
+		return ({ page, sorts, filters, form }) => new Promise((resolve, reject) => resolve($postPage(url, gridQueryParam(page, sorts, filters, form)))).then(res => res || {});
+	};
+	app.config.globalProperties.$treeGridQuery = url => {
+		return ({ page, sorts, filters, form }) => new Promise((resolve, reject) => resolve($postPage(url, gridQueryParam(page, sorts, filters, form)))).then(res => res || {});
+	};
 	app.config.globalProperties.$alertRes = alertResponse;
 	app.config.globalProperties.$formSubmitAfter = formSubmitResponse;
 	app.config.globalProperties.$fromValidErrorMsg = () => VXETable.modal.message({ content: `数据错误，请检查`, status: 'warning' });
+	//定义弹窗公用取消函数
 	app.config.globalProperties.beforeHideMethod = fromFormValid => {
-		//定义弹窗公用取消函数
-		if (fromFormValid === true || fromFormValid.type == 'confirm') {
-			return new Error();
-		}
+		if (fromFormValid === true || fromFormValid.type == 'confirm') return new Error();
 	};
 };
 

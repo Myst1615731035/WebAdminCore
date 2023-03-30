@@ -1,6 +1,6 @@
 import $store from '../../vue-plugins/store/store';
 import $router from '../../vue-plugins/router/router';
-import axios from './../../../utils/http/index';
+import axios from './../../utils/http/index';
 const { GetUserInfo } = axios;
 const install = async app => {
 	// 判断登录状态
