@@ -101,7 +101,7 @@ export default {
 				permissionSelected = Array.from(new Set(permissionSelected.concat(this.checkedKeys)));
 				self.$post(self.serverApi.authority.saveRoleAuth, { roleId: self.curRole.Id, list: permissionSelected }).then(res => {
 					self.GetRolePermission(self.curRole.Id);
-					self.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+					self.$alertRes(res);
 				});
 			}
 		},

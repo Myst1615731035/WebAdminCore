@@ -59,7 +59,7 @@ export default {
 					this.$parent.updateRow();
 					this.$refs.modal.close();
 				} else this.$refs.modal.beforeHideMethod(true);
-				this.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+				this.$alertRes(res);
 			});
 		},
 		async close() {}

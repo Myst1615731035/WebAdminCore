@@ -47,7 +47,7 @@ export default {
 			var data = await this.ValidData();
 			if(!!data){
 				this.$post(this.serverApi.sysUser.save, data).then(res => {
-					this.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+					this.$alertRes(res);
 					if (res.success) this.GetUserInfo();
 				});
 			}

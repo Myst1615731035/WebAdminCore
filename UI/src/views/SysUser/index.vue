@@ -2,7 +2,6 @@
 	<div class="container-grid">
 		<vxe-grid ref="grid" v-bind="gridOptions" @toolbar-button-click="toolBtnClick" @toolbar-tool-click="toolBtnClick"></vxe-grid>
 		<pageForm :params="params"></pageForm>
-		<siteList v-model="assign.show" v-bind="assign"></siteList>
 	</div>
 </template>
 
@@ -19,13 +18,12 @@ const query = ({ page, sorts, filters, form }) => {
 	}).then(res => res);
 };
 import pageForm from './form.vue';
-import siteList from './siteAssign.vue';
 let self;
 export default {
 	created() {
 		self = this;
 	},
-	components: { pageForm, siteList },
+	components: { pageForm },
 	data() {
 		return {
 			params: {},
@@ -106,7 +104,7 @@ export default {
 						this.$confirm({ content: `是否重置用户: ${row.Name} 的密码?`, confirmButtonText: '重置' }).then(res => {
 							if (res == 'confirm') {
 								this.$get(`${this.serverApi.sysUser.resetpw}?Id=${row.Id}`).then(res => {
-									this.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+									this.$alertRes(res);
 									if (res.success) {
 										this.$alert({
 											content: `密码已更新，请点击"复制"按钮，获取新密码到剪贴板`,

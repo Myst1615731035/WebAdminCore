@@ -73,7 +73,7 @@ export default {
 		},
 		async ResetProductProps() {
 			this.$post(this.serverApi.product.resetProps).then(res => {
-				this.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+				this.$alertRes(res);
 			});
 		}
 	}

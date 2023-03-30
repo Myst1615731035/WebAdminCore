@@ -117,16 +117,25 @@ VXETable.setup({
 		confirmButtonText: '保存',
 		cancelButtonText: '取消',
 		showZoom: true,
-		lockView: false,
+		lockView: false
 		// showFooter: true,
 	},
 	list: { scrollY: { gt: 100 } }
 });
-
-const showResponse = res=>{
-	VXETable.modal.message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
-}
-
+// 请求结束，显示提示
+const alertResponse = res => {
+	res = res || {};
+	if (!!res.msg && res.success != undefined && res.success != null) VXETable.modal.message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+};
+const formSubmitResponse = (node, res = {}) => {
+	if (!!node) {
+		var parent = node.$parent;
+		if (!!parent && !!parent.updateRow && typeof parent.updateRow == 'function' && !!res.success) parent.updateRow(res.response || res.data);
+		alertResponse(res);
+		var modal = node.$refs.modal;
+		if (!!modal && !!modal.close && typeof modal.close == 'function') modal.close();
+	}
+};
 const install = app => {
 	// 补充插件
 	VXETable.use(VXETablePluginExportXLSX);
@@ -136,16 +145,19 @@ const install = app => {
 	VXETable.use(VXETablePluginElement);
 	VXETable.formats.mixin(formatOptions);
 	app.use(VXETable);
-
+	// 弹窗
 	app.config.globalProperties.$modal = VXETable.modal.open;
 	app.config.globalProperties.$alert = VXETable.modal.alert;
 	app.config.globalProperties.$confirm = VXETable.modal.confirm;
 	app.config.globalProperties.$message = VXETable.modal.message;
-	
+	// 文件操作
 	app.config.globalProperties.$print = VXETable.print;
 	app.config.globalProperties.$saveFile = VXETable.saveFile;
 	app.config.globalProperties.$readFile = VXETable.readFile;
-	app.config.globalProperties.$showRes = showResponse;
+	// 自定义快捷功能
+	app.config.globalProperties.$alertRes = alertResponse;
+	app.config.globalProperties.$formSubmitAfter = formSubmitResponse;
+	app.config.globalProperties.$fromValidErrorMsg = () => VXETable.modal.message({ content: `数据错误，请检查`, status: 'warning' });
 	app.config.globalProperties.beforeHideMethod = fromFormValid => {
 		//定义弹窗公用取消函数
 		if (fromFormValid === true || fromFormValid.type == 'confirm') {

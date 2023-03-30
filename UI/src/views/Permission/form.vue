@@ -78,7 +78,7 @@ export default {
 						// 如果保存失败，阻止关闭窗口，提示
 						self.$refs.modal.beforeHideMethod(true);
 					}
-					self.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+					self.$alertRes(res);
 				});
 			} else {
 				self.$message({ content: `参数不符，请检查`, status: 'warning' });

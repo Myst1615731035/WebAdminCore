@@ -99,7 +99,7 @@ export default {
 						self.$parent.updateRow(res.response);
 						self.$refs.modal.close();
 					} else self.$refs.modal.beforeHideMethod(true);
-					self.$message({ content: `${res.msg}`, status: res.success ? 'success' : 'error' });
+					self.$alertRes(res);
 				});
 			} else {
 				self.$message({ content: `参数不符，请检查`, status: 'warning' });

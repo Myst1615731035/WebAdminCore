@@ -4,7 +4,6 @@ import router from '../../plugins/vue-plugins/router/router.js';
 import defaultRoute from '../../plugins/vue-plugins/router/defaultRoute';
 import store from '../../plugins/vue-plugins/store/store';
 import { modal, saveFile } from 'vxe-table';
-import { forEach } from 'core-js/fn/dict';
 const { message: $message } = modal;
 const loginInfo = store.getters.get('loginInfo');
 const { cursite } = store.getters.get('website');
@@ -263,6 +262,7 @@ const GetCache = () => {
 		}
 	});
 };
+
 
 const install = app => {
 	// 通用方法
