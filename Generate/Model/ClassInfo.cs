@@ -7,6 +7,10 @@ namespace Generate.Model
     public class ClassInfo
     {
         /// <summary>
+        /// 实体类
+        /// </summary>
+        public Type? Type { get; set; }
+        /// <summary>
         /// 实体类名称
         /// </summary>
         public string EntityName { get; set; }

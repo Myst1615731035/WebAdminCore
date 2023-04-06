@@ -7,6 +7,12 @@ namespace Generate.Service
 {
     public static class Generate
     {
+        /// <summary>
+        /// 过滤基类字段
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="root"></param>
+        /// <returns></returns>
         public static List<ClassInfo> FilterRootColumns(this List<ClassInfo> list, Type root = null)
         {
             if(root.IsNotEmpty())
@@ -24,9 +30,10 @@ namespace Generate.Service
         /// <param name="outputDir">文件输出的目录，请使用相对路径</param>
         /// <param name="fileNameFormat">文件名称格式</param>
         /// <param name="overWriteExistFile">是否重写文件</param>
+        /// <param name="noCreateSelectFunc">跳过生成文件的筛选方法</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static List<ClassInfo> CreateFile(this List<ClassInfo> list, string templatePath, string outputDir, Func<ClassInfo, string> fileNameFormat, bool overWriteExistFile = false)
+        public static List<ClassInfo> CreateFile(this List<ClassInfo> list, string templatePath, string outputDir, Func<ClassInfo, string> fileNameFormat, bool overWriteExistFile = false, Func<ClassInfo, bool>? noCreateSelectFunc = null)
         {
             outputDir = Path.GetFullPath(outputDir);
             if (outputDir.IsEmpty()) throw new Exception("Invalid file path");
@@ -36,6 +43,7 @@ namespace Generate.Service
             $"是否覆写文件：{overWriteExistFile} \r\n").WriteInfoLine();
             list.ForEach(t =>
             {
+                if(noCreateSelectFunc.IsNotEmpty() && noCreateSelectFunc.Invoke(t)) return;
                 var fileName = fileNameFormat.Invoke(t);
                 var filePath = Path.Combine(outputDir, fileName);
                 if (!FileHelper.Exists(outputDir, fileName, true) || overWriteExistFile)
@@ -43,16 +51,8 @@ namespace Generate.Service
                     // 根据模板生成内容
                     var text = RazorHelper.Compile(FileHelper.ReadFile(templatePath), t).Result;
                     // 写文件
-                    if (text.IsNotEmpty())
-                    {
-                        FileHelper.WriteFile(filePath, text);
-                        $"{t.EntityName}: {fileName} create success!".WriteSuccessLine();
-                    }
-                    else
-                    {
-                        $"{t.EntityName}: {fileName} create fail!".WriteErrorLine();
-                        throw new Exception("代码生成失败，目标文件内容为空");
-                    }
+                    FileHelper.WriteFile(filePath, text);
+                    $"{t.EntityName}: {fileName} create success!".WriteSuccessLine();
                 }
                 else $"{t.EntityName}: {fileName} File is exist, skip!".WriteInfoLine();
             });
@@ -76,6 +76,7 @@ namespace Generate.Service
                 var splitTableAttr = t.GetCustomAttribute<SplitTableAttribute>();
                 var ci = new ClassInfo()
                 {
+                    Type = t,
                     EntityName = t.Name,
                     IsSplitTable = splitTableAttr != null,
                     TableName = sugarTableAttr != null ? sugarTableAttr.TableName : t.Name,
