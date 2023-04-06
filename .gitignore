@@ -5,4 +5,7 @@
 *.suo
 *.user
 **/bin
-Properties
+**/obj
+**/Properties
+MainCore/Log
+MainCore/DataProtection
