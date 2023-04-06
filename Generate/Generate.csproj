@@ -21,6 +21,12 @@
 	  <None Update="Template\ControllerTemplate.cshtml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Template\FormVue.cshtml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Template\GridVue.cshtml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Template\ServiceTemplate.cshtml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

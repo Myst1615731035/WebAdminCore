@@ -3,10 +3,6 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Data;
 using SqlSugar.Extensions;
-using System.Linq.Expressions;
-using NPOI.SS.Formula.Functions;
-using System.Reflection;
-using MathNet.Numerics.Statistics.Mcmc;
 
 namespace WebUtils
 {
@@ -233,11 +229,11 @@ namespace WebUtils
         #endregion
 
         #region 判空
-        public static bool IsNotEmpty(this object thisValue)
+        public static bool IsNotEmpty(this object? thisValue)
         {
             return thisValue.ObjToString() != "" && thisValue.ObjToString() != "undefined" && thisValue.ObjToString() != "null";
         }
-        public static bool IsEmpty(this object thisValue)
+        public static bool IsEmpty(this object? thisValue)
         {
             return !IsNotEmpty(thisValue);
         }

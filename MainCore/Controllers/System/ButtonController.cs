@@ -4,7 +4,7 @@ using SqlSugar;
 using WebUtils;
 using WebUtils.HttpContextUser;
 using Microsoft.AspNetCore.Authorization;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 
 namespace MainCore.Controllers.System

@@ -1,7 +1,7 @@
 using ApiModel;
 using BaseService;
 using System.Linq.Expressions;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 
 namespace WebService.ISystemService
 {

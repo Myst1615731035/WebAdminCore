@@ -89,6 +89,7 @@ namespace Generate.Service
                             else defaultValue = GetPropertyTypeConvert(c.DataType, c.DefaultValue);
                         }
                         #endregion
+
                         // 填充表的字段信息
                         model.Columns.Add(new ColumnInfo()
                         {

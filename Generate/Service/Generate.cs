@@ -41,7 +41,7 @@ namespace Generate.Service
                 if (!FileHelper.Exists(outputDir, fileName, true) || overWriteExistFile)
                 {
                     // 根据模板生成内容
-                    var text = RazorHelper.Compile(templatePath, FileHelper.ReadFile(templatePath), t).Result;
+                    var text = RazorHelper.Compile(FileHelper.ReadFile(templatePath), t).Result;
                     // 写文件
                     if (text.IsNotEmpty())
                     {
@@ -89,10 +89,11 @@ namespace Generate.Service
                     var defaultValue = p.GetValue(entity);
                     ci.Columns.Add(new ColumnInfo
                     {
-                        Name= p.Name,
+                        Name = p.Name,
                         Description = columnAttr.ColumnDescription,
                         Type = p.PropertyType.IsGenericType ? p.PropertyType.GetGenericArguments()[0].Name : p.PropertyType.Name,
                         IsNullable = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) || new NullabilityInfoContext().Create(p).WriteState is NullabilityState.Nullable),
+                        DefaultValue = defaultValue
                     });
                 });
                 res.Add(ci);

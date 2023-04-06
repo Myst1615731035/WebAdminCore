@@ -4,7 +4,7 @@ using SqlSugar;
 using WebUtils.HttpContextUser;
 using WebUtils;
 using Microsoft.AspNetCore.Authorization;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 
 namespace MainCore.Controllers.System
@@ -37,14 +37,19 @@ namespace MainCore.Controllers.System
         {
             var exp = Expressionable.Create<Menu>();
             // 增加查询条件
-            if (page.IsNotEmpty() &&  page.keyword.IsNotEmpty())
+            var list = new List<Menu>();
+            if (page.IsNotEmpty() && page.keyword.IsNotEmpty())
+            {
                 exp = exp.And(t => t.Name.Contains(page.keyword) || t.Description.Contains(page.keyword));
+                list = await _service.Query(exp.ToExpression(), t => t.Sort);
+            }
+            else list = await _service.QueryTree(t => t.Children, t => t.Pid, "", null, t => t.Sort);
 
             return new ContentJson()
             {
                 msg = "获取成功",
                 success = true,
-                data = await _service.QueryTree(t => t.Children, t => t.Pid, "", exp.ToExpression(), t => t.Sort)
+                data = list ?? new List<Menu>()
             };
         }
 

@@ -2,7 +2,7 @@ using BaseService;
 using WebUtils;
 using System.Linq.Expressions;
 using ApiModel;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 
 namespace WebService.ISystemService
 {

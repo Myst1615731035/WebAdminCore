@@ -36,7 +36,7 @@ namespace MainCore.Controllers
             var res = new ContentJson("生成失败");
             JsonSerializerSettings jsonSetting = new JsonSerializerSettings
             {
-                //Formatting = Formatting.Indented,
+                Formatting = Formatting.Indented,
                 DateFormatString = "yyyy-MM-dd HH:mm:ss"
             };
             try
@@ -54,7 +54,6 @@ namespace MainCore.Controllers
                 {
                     /// 查询未删除的数据
                     var data = await _db.Queryable<dynamic>().AsType(t).Where("IsDelete = 0").ToListAsync();
-
                     FileHelper.WriteFile(Path.Combine(AppConfig.ContentRootPath, "DataSeedJson", $"{t.Name}.json"), data.ToJson(jsonSetting));
                 });
                 res = new ContentJson(true, "生成成功");

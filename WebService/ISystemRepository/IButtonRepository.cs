@@ -1,5 +1,5 @@
 ﻿using BaseRepository;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 
 namespace WebService.ISystemRepository
 {

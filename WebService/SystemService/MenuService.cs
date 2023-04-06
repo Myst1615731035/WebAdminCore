@@ -1,7 +1,7 @@
 using BaseRepository;
 using BaseService;
 using SqlSugar;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 
 namespace WebService.SystemService

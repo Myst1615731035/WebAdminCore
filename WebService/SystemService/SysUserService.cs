@@ -10,7 +10,7 @@ using SixLabors.ImageSharp.ColorSpaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using NPOI.XSSF.UserModel;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 
 namespace WebService.SystemService

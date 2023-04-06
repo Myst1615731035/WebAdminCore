@@ -2,7 +2,7 @@
 using WebModel.RootEntity;
 using WebUtils.Attributes;
 
-namespace WebModel.SystemEntity
+namespace WebModel.Entitys
 {
     ///<summary>
     ///SysUser

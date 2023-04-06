@@ -89,7 +89,10 @@ namespace BaseRepository
         /// <returns></returns>
         public async Task<List<TEntity>> QueryTree(Expression<Func<TEntity, IEnumerable<object>>> childExp, Expression<Func<TEntity, object>> parentExp, object rootValue, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null)
         {
-            return await Db.Queryable<TEntity>().WhereIF(whereExp != null, whereExp).OrderByIF(orderExp != null, orderExp).ToTreeAsync(childExp, parentExp, rootValue);
+            return await Db.Queryable<TEntity>()
+                            .WhereIF(whereExp != null, whereExp)
+                            .OrderByIF(orderExp != null, orderExp)
+                            .ToTreeAsync(childExp, parentExp, rootValue);
         }
         #endregion
 
@@ -346,11 +349,10 @@ namespace BaseRepository
         /// </summary>
         /// <param name="whereExpression"></param>
         /// <param name="orderByExpression"></param>
-        /// <param name="isAsc"></param>
         /// <returns></returns>
-        public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true)
+        public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression)
         {
-            return await Db.Queryable<TEntity>().OrderByIF(orderByExpression != null, orderByExpression, isAsc ? OrderByType.Asc : OrderByType.Desc).WhereIF(whereExpression != null, whereExpression).ToListAsync();
+            return await Db.Queryable<TEntity>().WhereIF(whereExpression != null, whereExpression).OrderByIF(orderByExpression != null, orderByExpression).ToListAsync();
         }
 
         /// <summary>

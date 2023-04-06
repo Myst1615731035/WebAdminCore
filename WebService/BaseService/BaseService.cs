@@ -264,11 +264,11 @@ namespace BaseService
         /// 作　　者:AZLinli.CommonApi
         /// </summary>
         /// <param name="whereExpression">条件表达式</param>
-        /// <param name="strOrderByFileds">排序字段，如name asc,age desc</param>
+        /// <param name="orderByExpression">排序字段，如name asc,age desc</param>
         /// <returns>数据列表</returns>
-        public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true)
+        public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression)
         {
-            return await BaseDal.Query(whereExpression, orderByExpression, isAsc);
+            return await BaseDal.Query(whereExpression, orderByExpression);
         }
 
         public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, string strOrderByFileds)

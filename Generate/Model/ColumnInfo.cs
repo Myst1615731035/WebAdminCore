@@ -1,4 +1,6 @@
-﻿namespace Generate.Model
+﻿using SqlSugar.Extensions;
+
+namespace Generate.Model
 {
     public class ColumnInfo
     {
@@ -37,19 +39,16 @@
         /// 是否存在默认值
         /// </summary>
         public bool HasDefaultValue { get; set; } = false;
-        private string _defaultValue { get; set; }
         /// <summary>
         /// 默认值
         /// </summary>
-        public string? DefaultValue
+        public object? DefaultValue { get; set; }
+
+        public string PropDefaultValueInEntity
         {
             get
             {
-                return $"{(HasDefaultValue ? $" = {_defaultValue};" : "")}";
-            }
-            set
-            {
-                _defaultValue = value;
+                return $"{(HasDefaultValue ? $" = {DefaultValue.ObjToString()};" : "")}";
             }
         }
     }

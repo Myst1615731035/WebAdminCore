@@ -2,7 +2,7 @@ using ApiModel;
 using BaseRepository;
 using BaseService;
 using SqlSugar;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 using WebUtils;
 

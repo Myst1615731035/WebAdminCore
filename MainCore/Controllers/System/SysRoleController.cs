@@ -5,7 +5,7 @@ using WebUtils;
 using WebUtils.HttpContextUser;
 using Newtonsoft.Json.Linq;
 using SqlSugar.Extensions;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 
 namespace MainCore.Controllers

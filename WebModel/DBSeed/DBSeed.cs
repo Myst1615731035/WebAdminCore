@@ -3,6 +3,7 @@ using SqlSugar;
 using SqlSugar.Extensions;
 using System.Reflection;
 using WebUtils;
+using WebUtils.Attributes;
 using WebUtils.Virtual;
 
 namespace WebModel.DBSeed
@@ -20,11 +21,7 @@ namespace WebModel.DBSeed
         public void  DbAsync()
         {
             var referencedAssemblies = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll").Select(Assembly.LoadFrom).ToArray();
-            // 项目框架实体类
-            var models = referencedAssemblies.SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
-                            .Where(x => x.IsClass && x.Namespace != null && x.Namespace.Equals("WebModel.Entitys")).ToList();
-
-            // 业务实体类
+            // 实体类
             var entitys = referencedAssemblies.SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
                             .Where(x => x.IsClass && x.Namespace != null && x.Namespace.Equals("WebModel.Entitys")).ToList();
 
@@ -57,15 +54,8 @@ namespace WebModel.DBSeed
                 if(AppConfig.Get("DataBase", "SetUp", "CreateTable").ObjToBool())
                 {
                     $"Create DataTables (CodeFirst): {AppConfig.Get("DataBase", "SetUp", "CreateTable")}".WriteInfoLine();
-                    #region 主表生成数据表
-                    models.ForEach(m =>
-                    {
-                        CreateTable(m);
-                        // 判断是否需要初始化数据
-                        if (AppConfig.Get("DataBase", "SetUp", "CreateData").ObjToBool()) DataAsync(m);
-                    });
+                    // CodeFirst 初始化数据库表
                     entitys.ForEach(e => CreateTable(e));
-                    #endregion
                 }
             }
             catch (Exception ex)
@@ -84,47 +74,55 @@ namespace WebModel.DBSeed
         {
             var SugarTableAttr = type.GetCustomAttribute<SugarTable>();
             var SplitTableAttr = type.GetCustomAttribute<SplitTableAttribute>();
-            
-            // 存在分表配置的实体类，是否要生成源表
-            if (SplitTableAttr.IsNotEmpty())
-            {
-                if(DBConfig.OriginSplitTableInit) _db.CodeFirst.SplitTables().InitTables(type);
-                else
-                {
-                    var tables = _db.SplitHelper(type).GetTables();
-                    if (tables != null && tables.Any())
-                    {
-                        tables.ForEach(t =>
-                        {
-                            _db.MappingTables.Add(type.Name, t.TableName);
-                            _db.CodeFirst.InitTables(type);
-                        });
-                    }
-                }
-                $"Split Table for {type.Name} created or update successfully!".WriteSuccessLine();
-            }
-            else
+
+            #region 生成表
+            if ((SplitTableAttr.IsNotEmpty() && DBConfig.OriginSplitTableInit) || SplitTableAttr.IsEmpty())
             {
                 // 无分表配置，则直接生成
                 _db.CodeFirst.InitTables(type);
                 $"{type.Name}({SugarTableAttr?.TableName}) created or update successfully!".WriteSuccessLine();
             }
+            #endregion
+
+            #region 生成分表
+            if (SplitTableAttr.IsNotEmpty())
+            {
+                var tables = _db.SplitHelper(type).GetTables();
+                if (tables != null && tables.Any())
+                {
+                    tables.ForEach(t =>
+                    {
+                        _db.MappingTables.Add(type.Name, t.TableName);
+                        _db.CodeFirst.InitTables(type);
+                    });
+                    $"{tables.Count} SplitTable for {type.Name} {(DBConfig.OriginSplitTableInit ? " And Origin table" : "")} created or update successfully!".WriteSuccessLine();
+                }
+            }
+            #endregion
+
+            #region 系统数据初始化
+             DataAsync(type);
+            #endregion
         }
         /// <summary>
         /// 数据导入
         /// </summary>
         private void DataAsync(Type type)
         {
-            var path = Path.Combine(jsonDir, $"{type.Name}.json");
-            if(File.Exists(path))
+            var SystemAuthTableAttr = type.GetCustomAttribute<SystemAuthTable>();
+            if (SystemAuthTableAttr.IsNotEmpty() && AppConfig.Get("DataBase", "SetUp", "CreateData").ObjToBool())
             {
-                Type typeList = typeof(List<>).MakeGenericType(type);
-                object data = JsonConvert.DeserializeObject(FileHelper.ReadFile(path), typeList);
-                //调用对象的方法
-                if (!_db.Queryable<dynamic>().AsType(type).Any() && data.IsNotEmpty())
+                var path = Path.Combine(jsonDir, $"{type.Name}.json");
+                if (File.Exists(path))
                 {
-                    _db.InsertableByObject(data).ExecuteCommand();
-                    $"{type.Name}: Data initialization succeeded".WriteInfoLine();
+                    Type typeList = typeof(List<>).MakeGenericType(type);
+                    object data = JsonConvert.DeserializeObject(File.ReadAllText(path), typeList);
+                    //调用对象的方法
+                    if (!_db.Queryable<dynamic>().AsType(type).Any() && data.IsNotEmpty())
+                    {
+                        _db.InsertableByObject(data).ExecuteCommand();
+                        $"{type.Name}: Data initialization succeeded".WriteInfoLine();
+                    }
                 }
             }
         }

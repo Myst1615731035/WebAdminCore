@@ -1,7 +1,5 @@
 ﻿using Generate.Service;
-using SqlSugar;
 using System.Reflection;
-using WebModel.RootEntity;
 
 #region DBFirst
 //var db = new SqlSugarClient(new ConnectionConfig()
@@ -30,11 +28,13 @@ var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
                     //.Where(t => t.Name == "Distributors")
                     .ToClassInfos();
 types
-    .CreateFile("Template/IRepositoryTemplate.cshtml", @"../../../../WebService", t => $"I{t.EntityName}Repository.cs")
-    .CreateFile("Template/RepositoryTemplate.cshtml", @"../../../../WebService", t => $"{t.EntityName}Repository.cs")
-    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService", t => $"I{t.EntityName}Service.cs")
-    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService", t => $"{t.EntityName}Service.cs")
-    .CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+    .CreateFile("Template/IRepositoryTemplate.cshtml", @"../../../../WebService/IWorkRepository", t => $"I{t.EntityName}Repository.cs")
+    .CreateFile("Template/RepositoryTemplate.cshtml", @"../../../../WebService/WorkRepository", t => $"{t.EntityName}Repository.cs")
+    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService/IWorkService", t => $"I{t.EntityName}Service.cs")
+    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs")
+    .CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs")
+    .CreateFile("Template/GridVue.cshtml", @"../../../../UI/Pages", t => $"{t.EntityName}/index.vue")
+    .CreateFile("Template/FormVue.cshtml", @"../../../../UI/Pages", t => $"{t.EntityName}/form.vue");
 #endregion
 
 Console.ReadLine();

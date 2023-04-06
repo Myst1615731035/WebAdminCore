@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using SqlSugar;
 using SqlSugar.Extensions;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 using WebService.ISystemService;
 using WebUtils;
 using WebUtils.HttpContextUser;

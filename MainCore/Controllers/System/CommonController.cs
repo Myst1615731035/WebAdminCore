@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
-using WebModel.SystemEntity;
+using WebModel.Entitys;
 
 namespace MainCore.Controllers.System
 {

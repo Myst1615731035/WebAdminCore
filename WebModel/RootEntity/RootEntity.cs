@@ -50,7 +50,7 @@ namespace WebModel.RootEntity
         /// <summary>
         /// 数据版本号，乐观锁
         /// </summary>
-        [SugarColumn(IsOnlyIgnoreInsert = true, IsOnlyIgnoreUpdate = true, ColumnDescription = "乐观锁", ColumnDataType = "timestamp", IsEnableUpdateVersionValidation = true)]
-        public byte[]? Version { get; set; }
+        //[SugarColumn(IsOnlyIgnoreInsert = true, IsOnlyIgnoreUpdate = true, ColumnDescription = "乐观锁", ColumnDataType = "timestamp", IsEnableUpdateVersionValidation = true)]
+        //public byte[]? Version { get; set; }
     }
 }
