@@ -9,7 +9,9 @@ import Personal from '../../../views/Home/personal.vue';
 import Page404 from '../../../views/Error/404.vue';
 
 // 导入所有页面的路径
-const modules = import.meta.glob('../../../views/**/*.vue');
+const views = import.meta.glob('../../../views/**/*.vue');
+const pages = import.meta.glob('../../../pages/**/*.vue');
+const modules = Object.assign(views, pages);
 // 默认路由
 const routes = [
 	{ path: '/login', component: Login, name: 'login', iconCls: 'fa-address-card', meta: { title: 'Sign In', notTab: true, notLayout: true } },
@@ -40,7 +42,9 @@ const filterRouter = list => {
 			if (t.Path == '/') router.addRoute({ name: t.Name, path: t.Path, component: Home });
 			else {
 				try {
-					router.addRoute({ name: t.Name, path: t.Path, component: modules[`../../../views${t.Path}.vue`], buttons: t.Buttons });
+					console.log(t.Path);
+					var index = Object.keys(modules).find(f => f.toLocaleLowerCase().indexOf(t.Path.toLocaleLowerCase()) > -1);
+					if (!!index) router.addRoute({ name: t.Name, path: t.Path, component: modules[index], buttons: t.Buttons || [] });
 				} catch (error) {
 					console.info(error);
 				}

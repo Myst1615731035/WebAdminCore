@@ -23,8 +23,12 @@
                         { field: 'Id', title: '主键', visible: false, resetValue: '' },
                         @foreach (var t in @Model.Columns)
                         {
-                            var defaultVal = t.Type == "string" && t.DefaultValue == "" ? "''" : t.DefaultValue;
-                        @:{ field: '@t.Name', title: '@t.Description', resetValue: @defaultVal, span: 24, itemRender: { name: '$input' } },
+                            string defaultVal = t.DefaultValue;
+                            if (t.IsNullable) defaultVal = "null";
+                            if (t.DefaultValue == "") defaultVal = "''";
+                            if (t.DefaultValue == "False") defaultVal = "false";
+                            if (t.DefaultValue == "True") defaultVal = "true";
+                            @:{ field: '@t.Name', title: '@t.Description', resetValue: @defaultVal, span: 24, itemRender: { name: '$input' } },
                         }
                     ],
                     rules: { Name: [{ required: true, message: '请输入角色名称' }] }

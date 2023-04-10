@@ -10,7 +10,6 @@
     export default {
         components: { formPage },
         data() {
-            const query = this.$gridQuery(this.serverApi.sysRole.list);
             return {
                 form: { show: false, data: null },
                 gridOptions: {
@@ -19,7 +18,7 @@
                     resizable: true,
                     keepSource: true,
                     tooltipConfig: { showAll: true },
-                    proxyConfig: { ajax: { query: query,queryAll: query } },
+                    proxyConfig: { ajax: { query: this.$gridQuery(this.serverApi.), queryAll: this.$gridQuery(this.serverApi.) } },
                     rowConfig: { useKey: true, keyField: 'Id', isCurrent: true, isHover: true },
                     toolbarConfig: { buttons: [{ code: 'add', name: '新增', icon: 'fa fa-plus' }, { code: 'edit', name: '编辑', icon: 'fa fa-edit' }] },
                     pagerConfig: { align: 'center', border: true, background: true, perfect: true, pageSize: 50, pageSizes: [50, 100, 200] },
