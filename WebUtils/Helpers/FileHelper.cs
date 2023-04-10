@@ -95,14 +95,17 @@ namespace WebUtils
             var isExists = File.Exists(Path.Combine(dir, file));
             if (!isExists && deep)
             {
-                var dirinfo = new DirectoryInfo(dir);
-                var subdirs = dirinfo.GetDirectories();
-                if (subdirs.Length > 0)
+                if (Directory.Exists(dir))
                 {
-                    foreach (var subdir in subdirs)
+                    var dirinfo = new DirectoryInfo(dir);
+                    var subdirs = dirinfo.GetDirectories();
+                    if (subdirs.Length > 0)
                     {
-                        isExists = Exists(subdir.FullName, file);
-                        if (isExists) break;
+                        foreach (var subdir in subdirs)
+                        {
+                            isExists = Exists(subdir.FullName, file);
+                            if (isExists) break;
+                        }
                     }
                 }
             }
