@@ -5,7 +5,8 @@ using WebUtils;
 using WebUtils.HttpContextUser;
 using Microsoft.AspNetCore.Authorization;
 using WebModel.Entitys;
-using WebService.ISystemService;
+using WebService.IService;
+using WebUtils.BaseService;
 
 namespace MainCore.Controllers.System
 {
@@ -18,10 +19,10 @@ namespace MainCore.Controllers.System
     public class ButtonController : ControllerBase
     {
         #region IOC&DI
-        private readonly IButtonService _service;
+        private readonly IBaseService<Button> _service;
         private readonly IUser _user;
 
-        public ButtonController(IButtonService service, IUser user)
+        public ButtonController(IBaseService<Button> service, IUser user)
         {
             _service = service;
             _user = user;

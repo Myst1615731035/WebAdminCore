@@ -5,7 +5,8 @@ using WebUtils.HttpContextUser;
 using WebUtils;
 using Microsoft.AspNetCore.Authorization;
 using WebModel.Entitys;
-using WebService.ISystemService;
+using WebService.IService;
+using WebUtils.BaseService;
 
 namespace MainCore.Controllers.System
 {
@@ -15,14 +16,14 @@ namespace MainCore.Controllers.System
     public class PermissionController : ControllerBase
     {
         #region IOC&DI
-        private IMenuService _service;
-        private IButtonService _button;
+        private IBaseService<Menu> _service;
+        private IBaseService<Button> _button;
         private IUser _user;
-        public PermissionController(IMenuService services, IUser user, IButtonService button)
+        public PermissionController(IBaseService<Menu> service, IUser user, IBaseService<Button> button)
         {
-            _service = services;
-            _user = user;
+            _service = service;
             _button = button;
+            _user = user;
         }
         #endregion
 

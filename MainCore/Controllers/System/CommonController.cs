@@ -33,23 +33,11 @@ namespace MainCore.Controllers.System
         [HttpPost]
         public async Task<ContentJson> GetCache()
         {
-            var res = new ContentJson(true, "获取成功");
-
-            #region Dict
-            var dict = await _db.Queryable<Dict>()
-            .Select(t => new
+            return new ContentJson(true, "获取成功", new
             {
-                key = t.Code,
-                items = SqlFunc.Subqueryable<DictItem>()
-                            .Where(i => i.Pid == t.Id)
-                            .OrderBy(i => i.Sort)
-                            .ToList(i => new Option() { label = i.Label, enLabel = i.EnLabel, value = i.Value })
-            }).ToListAsync();
-            #endregion
-
-            res.data = new { dict };
-
-            return res;
+                // Dict
+                dict = await _db.Queryable<Dict>().Select(t => new { key = t.Code, items = t.Items }).ToListAsync()
+            });
         }
     }
 }

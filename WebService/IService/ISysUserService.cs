@@ -1,10 +1,10 @@
-using BaseService;
+using WebUtils.BaseService;
 using WebUtils;
 using System.Linq.Expressions;
 using ApiModel;
 using WebModel.Entitys;
 
-namespace WebService.ISystemService
+namespace WebService.IService
 {
     /// <summary>
     /// ISysServices

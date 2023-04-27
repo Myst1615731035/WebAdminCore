@@ -1,26 +1,18 @@
 using ApiModel;
-using BaseRepository;
-using BaseService;
+using WebUtils.BaseService;
+using WebUtils.BaseService;
 using SqlSugar;
 using WebModel.Entitys;
-using WebService.ISystemService;
+using WebService.IService;
 using WebUtils;
 
-namespace WebService.SystemService
+namespace WebService.Service
 {
     /// <summary>
     /// RoleMenuButtonServices
     /// </summary>	
     public partial class RolePermissionService : BaseService<RolePermission>, IRolePermissionService
     {
-        IBaseRepository<RolePermission> dal;
-        ISqlSugarClient db;
-        public RolePermissionService(IBaseRepository<RolePermission> _dal)
-        {
-            dal = _dal;
-            db = dal.Db;
-        }
-
         /// <summary>
         /// 获取角色的权限列表
         /// </summary>
@@ -28,7 +20,7 @@ namespace WebService.SystemService
         public async Task<List<PermissionItem>> GetRolePermissions()
         {
             //菜单权限
-            var menu = db.Queryable<SysRole>()
+            var menu = Db.Queryable<SysRole>()
                             .LeftJoin<RolePermission>((r, rp) => r.Id == rp.RoleId)
                             .InnerJoin<Menu>((r, rp, m) => rp.PermissionId == m.Id)
                             .InnerJoin<Interface>((r, rp, m, i) => m.Fid == i.Id)
@@ -39,7 +31,7 @@ namespace WebService.SystemService
                                 Url = i.Url,
                             }).MergeTable();
             // 按钮权限
-            var button = db.Queryable<SysRole>()
+            var button = Db.Queryable<SysRole>()
                             .LeftJoin<RolePermission>((r, rp) => r.Id == rp.RoleId)
                             .InnerJoin<Button>((r, rp, b) => rp.PermissionId == b.Id)
                             .InnerJoin<Interface>((r, rp, b, i) => b.Fid == i.Id)
@@ -49,7 +41,7 @@ namespace WebService.SystemService
                                 RoleId = r.Id,
                                 Url = i.Url,
                             }).MergeTable();
-            return await db.UnionAll(menu, button).ToListAsync();
+            return await Db.UnionAll(menu, button).ToListAsync();
         }
 
         /// <summary>
@@ -60,7 +52,7 @@ namespace WebService.SystemService
         public async Task<List<Menu>> GetRoleAuthTree(string id)
         {
             // 菜单树
-            var menus = await db.Queryable<Menu>()
+            var menus = await Db.Queryable<Menu>()
                           .LeftJoin<RolePermission>((m, rp) => m.Id == rp.PermissionId && rp.RoleId == id)
                           .Select((m, rp) => new Menu()
                           {
@@ -98,18 +90,18 @@ namespace WebService.SystemService
             if (roleId.IsNotEmpty())
             {
                 //查找菜单的叶子节点，el-tree不需要设置上级节点, 只查询已授权的菜单Id
-                var query1 = await db.Queryable<Menu>().LeftJoin<Menu>((a, b) => a.Id == b.Pid)
+                var query1 = await Db.Queryable<Menu>().LeftJoin<Menu>((a, b) => a.Id == b.Pid)
                                 .LeftJoin<RolePermission>((a, b, c) => a.Id == c.PermissionId)
                                 .Where((a, b, c) => b.Id == null && c.RoleId == roleId)
                                 //.Select((a, b, c) => (object)a.Id);
                                 .Select((a, b, c) => a.Id).ToListAsync();
                 //只差已授权的按钮Id
-                var query2 = await db.Queryable<RolePermission>().InnerJoin<Button>((rp, b) => rp.PermissionId == b.Id)
+                var query2 = await Db.Queryable<RolePermission>().InnerJoin<Button>((rp, b) => rp.PermissionId == b.Id)
                                 .Where((rp, b) => rp.RoleId == roleId && b.Id != null)
                                 //.Select(t => (object)t.PermissionId);
                                 .Select((rp, b) => rp.PermissionId).ToListAsync();
 
-                //list = await db.Union(query1, query2).Select<string>().ToListAsync();
+                //list = await Db.Union(query1, query2).Select<string>().ToListAsync();
                 list.AddRange(query1);
                 list.AddRange(query2);
             }

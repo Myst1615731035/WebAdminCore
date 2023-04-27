@@ -6,7 +6,8 @@ using WebUtils.HttpContextUser;
 using Newtonsoft.Json.Linq;
 using SqlSugar.Extensions;
 using WebModel.Entitys;
-using WebService.ISystemService;
+using WebService.IService;
+using WebUtils.BaseService;
 
 namespace MainCore.Controllers
 {
@@ -18,10 +19,9 @@ namespace MainCore.Controllers
     public class SysRoleController : ControllerBase
     {
         #region IOC&DI
-        private readonly ISysRoleService _service;
-        private readonly IUser _user;
+        private readonly IBaseService<SysRole> _service;
         private readonly IRolePermissionService _auth;
-        private readonly ISqlSugarClient _db;
+        private readonly IUser _user;
 
         /// <summary>
         /// 构造函数
@@ -29,12 +29,11 @@ namespace MainCore.Controllers
         /// <param name="service"></param>
         /// <param name="user"></param>
         /// <param name="logger"></param>
-        public SysRoleController(ISysRoleService service, IUser user, IRolePermissionService auth, ISqlSugarClient db)
+        public SysRoleController(IBaseService<SysRole> service, IUser user, IRolePermissionService auth)
         {
             _service = service;
             _user = user;
             _auth = auth;
-            _db = db;
         }
         #endregion
 
@@ -192,18 +191,18 @@ namespace MainCore.Controllers
                 {
                     var list = new List<RolePermission>();
                     perIds.ForEach(t => list.Add(new RolePermission() { RoleId = roleId, PermissionId = t }));
-                    _db.AsTenant().BeginTran();
+                    _service.Db.AsTenant().BeginTran();
                     try
                     {
                         await _auth.Delete(t => t.RoleId == roleId);
                         await _auth.Add(list);
                         result = new ContentJson(true, "授权成功");
-                        _db.AsTenant().CommitTran();
+                        _service.Db.AsTenant().CommitTran();
                     }
                     catch(Exception ex)
                     {
                         LogHelper.LogException(ex);
-                        _db.AsTenant().RollbackTran();
+                        _service.Db.AsTenant().RollbackTran();
                     }
                 }
             }

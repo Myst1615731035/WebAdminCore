@@ -1,8 +1,8 @@
 using ApiModel;
-using BaseService;
+using WebUtils.BaseService;
 using WebModel.Entitys;
 
-namespace WebService.ISystemService
+namespace WebService.IService
 {
     /// <summary>
     /// IRoleMenuButtonServices

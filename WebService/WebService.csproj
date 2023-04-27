@@ -7,15 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebModel\WebModel.csproj" />
-    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
+    <Compile Remove="IWorkRepository\**" />
+    <Compile Remove="IWorkService\**" />
+    <Compile Remove="WorkRepository\**" />
+    <Compile Remove="WorkService\**" />
+    <EmbeddedResource Remove="IWorkRepository\**" />
+    <EmbeddedResource Remove="IWorkService\**" />
+    <EmbeddedResource Remove="WorkRepository\**" />
+    <EmbeddedResource Remove="WorkService\**" />
+    <None Remove="IWorkRepository\**" />
+    <None Remove="IWorkService\**" />
+    <None Remove="WorkRepository\**" />
+    <None Remove="WorkService\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="WorkRepository\" />
-    <Folder Include="WorkService\" />
-    <Folder Include="IWorkRepository\" />
-    <Folder Include="IWorkService\" />
+    <ProjectReference Include="..\WebModel\WebModel.csproj" />
+    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
   </ItemGroup>
 
 </Project>

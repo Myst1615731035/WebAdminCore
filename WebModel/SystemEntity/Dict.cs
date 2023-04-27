@@ -20,7 +20,18 @@ namespace WebModel.Entitys
         [SugarColumn(ColumnDescription = "描述", ColumnDataType = "varchar", Length = 500)]
         public string? Description { get; set; }
 
-        [SugarColumn(IsIgnore = true, ColumnDescription = "字典项列表")]
+        [SugarColumn(IsJson = true, ColumnDescription = "字典项列表")]
         public List<DictItem>? Items { get; set; } = new List<DictItem>();
+    }
+
+    /// <summary>
+    /// 字典子类
+    /// </summary>
+    public partial class DictItem
+    {
+        public string? Label { get; set; }
+        public string? EnLabel { get; set; }
+        public int Value { get; set; }
+        public string? Description { get; set; }
     }
 }

@@ -1,33 +1,19 @@
-using BaseRepository;
-using BaseService;
+using WebUtils.BaseService;
 using SqlSugar;
 using WebUtils;
-using Newtonsoft.Json.Linq;
 using ApiModel;
 using System.Linq.Expressions;
-using NPOI.SS.Formula.Functions;
-using SixLabors.ImageSharp.ColorSpaces;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using NPOI.XSSF.UserModel;
 using WebModel.Entitys;
-using WebService.ISystemService;
+using WebService.IService;
+using SqlSugar.Extensions;
 
-namespace WebService.SystemService
+namespace WebService.Service
 {
     /// <summary>
     /// SysUserServices
     /// </summary>	
     public partial class SysUserServices : BaseService<SysUser>, ISysUserService
     {
-        IBaseRepository<SysUser> dal;
-        ISqlSugarClient db;
-        public SysUserServices(IBaseRepository<SysUser> _dal)
-        {
-            dal = _dal;
-            db = dal.Db;
-        }
-
         #region 获取用户信息
         /// <summary>
         /// 用户登录获取Token信息
@@ -37,7 +23,7 @@ namespace WebService.SystemService
         /// <returns></returns>
         public async Task<TokenModelJwt> GetUserInfoToken(string account, string password)
         {
-            var query = db.Queryable<SysUser>()
+            var query = Db.Queryable<SysUser>()
                             .Where(u => u.Account == account && u.Password == password && !u.IsDelete)
                             .Select(u => new TokenModelJwt()
                             {
@@ -58,7 +44,7 @@ namespace WebService.SystemService
         /// <returns></returns>
         public async Task<object> GetUserInfo(string id)
         {
-            var query = db.Queryable<SysUser>()
+            var query = Db.Queryable<SysUser>()
                 .Where(u => u.Id == id && !u.IsDelete)
                 .Select(u => new
                 {
@@ -75,7 +61,7 @@ namespace WebService.SystemService
                                 .SelectStringJoin((ur, r) => r.Name, ","),
                 });
             var obj = (await query.FirstAsync()).ToJson().ToJObject();
-            var roles = await db.Queryable<SysUser, UserRole, SysRole>((u, ur, r) => new JoinQueryInfos(JoinType.Left, u.Id == ur.UserId, JoinType.Left, ur.RoleId == r.Id))
+            var roles = await Db.Queryable<SysUser, UserRole, SysRole>((u, ur, r) => new JoinQueryInfos(JoinType.Left, u.Id == ur.UserId, JoinType.Left, ur.RoleId == r.Id))
                                 .Where((u, ur, r) => u.Id == id)
                                 .Select((u, ur, r) => r).ToListAsync();
             return obj;
@@ -88,7 +74,7 @@ namespace WebService.SystemService
         public async Task<List<Menu>> GetUserAuth(string id)
         {
             //找出该用户的所有角色ID
-            var roleIds = await db.Queryable<SysUser, UserRole, SysRole>((u, ur, r) => new JoinQueryInfos(
+            var roleIds = await Db.Queryable<SysUser, UserRole, SysRole>((u, ur, r) => new JoinQueryInfos(
                             JoinType.Inner, u.Id == ur.UserId && !u.IsDelete,
                             JoinType.Inner, ur.RoleId == r.Id && !r.IsDelete
                         ))
@@ -96,7 +82,7 @@ namespace WebService.SystemService
                         .Select((u, ur, r) => r.Id).Distinct().ToListAsync();
 
             //根据用户所有的角色信息查找出已授权的权限Id
-            var query = db.Queryable<RolePermission>().LeftJoin<Menu>((rpm, m) => rpm.PermissionId == m.Id)
+            var query = Db.Queryable<RolePermission>().LeftJoin<Menu>((rpm, m) => rpm.PermissionId == m.Id)
                             .Where((rpm, m) => roleIds.Contains(rpm.RoleId) && !m.IsDelete)
                             .Select((rpm, m) => new Menu()
                             {
@@ -124,12 +110,11 @@ namespace WebService.SystemService
             return await query.ToTreeAsync(t => t.Children, t => t.Pid, "");
         }
         #endregion
-
-
+        
         #region 获取用户列表
         public async Task<Pagination> GetUserList(Expression<Func<SysUser, bool>> expression, Pagination page)
         {
-            var query = db.Queryable<SysUser>()
+            var query = Db.Queryable<SysUser>()
                           .WhereIF(expression != null, expression)
                           .Select(t => new SysUser
                           {
@@ -166,19 +151,18 @@ namespace WebService.SystemService
         }
         #endregion
 
-
         #region 保存用户信息
         public async Task<bool> SaveUser(SysUser entity)
         {
-            db.Ado.BeginTran();
+            Db.Ado.BeginTran();
             try
             {
                 var newUserRoles = new List<UserRole>();
                 if (entity.Id.IsNotEmpty())
                 {
-                    var oldRoles = await db.Queryable<UserRole>().Where(t => t.UserId == entity.Id).ToListAsync();
+                    var oldRoles = await Db.Queryable<UserRole>().Where(t => t.UserId == entity.Id).ToListAsync();
                     if (!(entity.RoleIds.All(t => oldRoles.Any(s => s.Equals(t))) && entity.RoleIds.Count == oldRoles.Count))
-                        await db.Deleteable<UserRole>().Where(t => t.UserId == entity.Id).ExecuteCommandAsync();
+                        await Db.Deleteable<UserRole>().Where(t => t.UserId == entity.Id).ExecuteCommandAsync();
                 }
                 entity.RoleIds.ForEach(t =>
                 {
@@ -188,14 +172,14 @@ namespace WebService.SystemService
                         RoleId = t
                     });
                 });
-                await db.Insertable(newUserRoles).ExecuteCommandAsync();
-                await dal.Storageable(entity);
-                db.Ado.CommitTran();
+                await Db.Insertable(newUserRoles).ExecuteCommandAsync();
+                await Storageable(entity);
+                Db.Ado.CommitTran();
                 return true;
             }
             catch (Exception ex)
             {
-                db.Ado.RollbackTran();
+                Db.Ado.RollbackTran();
                 LogHelper.LogException(ex);
                 return false;
             }
