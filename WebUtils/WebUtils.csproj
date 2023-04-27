@@ -16,7 +16,7 @@
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.3.0" />
-    <PackageReference Include="SqlSugarCore" Version="5.1.4.62-preview03" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.70-preview03" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.96" />
   </ItemGroup>
 

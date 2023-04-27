@@ -1,12 +1,15 @@
 ﻿using ApiModel;
-using NPOI.SS.Formula.Functions;
 using SqlSugar;
 using System.Data;
 using System.Linq.Expressions;
 
-namespace BaseRepository
+namespace WebUtils.BaseService
 {
-    public interface IBaseRepository<TEntity> where TEntity : class
+    /// <summary>
+    /// ORM泛型基类接口
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public interface IBaseService<TEntity> where TEntity : class
     {
         ISqlSugarClient Db { get; }
 
@@ -18,8 +21,7 @@ namespace BaseRepository
         /// </summary>
         /// <param name="objId"></param>
         /// <returns></returns>
-        Task<TEntity> QueryById(object objId);
-        Task<TEntity> QueryByIdWithCache(object objId, bool blnUseCache = false);
+        Task<TEntity> QueryById(object objId, bool withCache = false);
         /// <summary>
         /// 根据id数组查询实体list
         /// </summary>

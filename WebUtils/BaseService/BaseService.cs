@@ -1,14 +1,16 @@
 ﻿using ApiModel;
-using NPOI.SS.Formula.Functions;
 using SqlSugar;
 using SqlSugar.Extensions;
 using System.Data;
 using System.Linq.Expressions;
-using WebUtils;
 
-namespace BaseRepository
+namespace WebUtils.BaseService
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, new()
+    /// <summary>
+    /// ORM泛型基类
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
     {
         private readonly SqlSugarScope _dbBase = DBHelper.Db;
 
@@ -51,24 +53,18 @@ namespace BaseRepository
         {
             return await Db.Queryable<TEntity>().Where(whereExpression).FirstAsync();
         }
-        public async Task<TEntity> QueryById(object objId)
-        {
-            var query = Db.Queryable<TEntity>().In(objId);
-            return await query.IncludesAllFirstLayer().SingleAsync();
-        }
         /// <summary>
         /// 功能描述:根据ID查询一条数据
         /// 作　　者:CommonApi
         /// </summary>
         /// <param name="objId">id（必须指定主键特性 [SugarColumn(IsPrimaryKey=true)]），如果是联合主键，请使用Where条件</param>
-        /// <param name="blnUseCache">是否使用缓存</param>
+        /// <param name="withCache">是否使用缓存</param>
         /// <returns>数据实体</returns>
-        public async Task<TEntity> QueryByIdWithCache(object objId, bool blnUseCache = false)
+        public async Task<TEntity> QueryById(object objId, bool withCache = false)
         {
-            var query = Db.Queryable<TEntity>().WithCacheIF(blnUseCache).In(objId);
-            return await query.SingleAsync();
+            var query = Db.Queryable<TEntity>().WithCacheIF(withCache).In(objId);
+            return await query.IncludesAllFirstLayer().SingleAsync();
         }
-
         /// <summary>
         /// 功能描述:根据ID查询数据
         /// 作　　者:CommonApi

@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Logging;
 using System.Reflection;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.AspNetCore.Mvc;
+using WebUtils.BaseService;
+using WebUtils.BaseService;
 
 namespace WebExtention.AutofacDI
 {
@@ -25,6 +27,10 @@ namespace WebExtention.AutofacDI
             #endregion
 
             var cacheType = new List<Type>();
+
+            #region 泛型仓储注入
+            builder.RegisterGeneric(typeof(BaseService<>)).As(typeof(IBaseService<>)).InstancePerDependency();
+            #endregion
 
             #region 带有接口层的服务注入
             // 获取 WebModel.dll 程序集注册 Model

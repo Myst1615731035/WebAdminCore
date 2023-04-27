@@ -3,6 +3,7 @@ using Autofac.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SqlSugar.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

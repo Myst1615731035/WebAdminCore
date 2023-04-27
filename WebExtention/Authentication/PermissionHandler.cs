@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using WebUtils;
 using WebUtils.HttpContextUser;
 using SqlSugar.Extensions;
-using WebService.ISystemService;
+using WebService.IService;
 
 namespace WebExtention.Authentication
 {

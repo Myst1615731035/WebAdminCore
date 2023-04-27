@@ -32,7 +32,7 @@ namespace WebExtention.Injection
                 //限流
                 app.UseIpLimitMiddle();
                 // 非数据请求的请求路径，跳转到根路径做页面映射
-                app.UsePathBase("/adminpage/");
+                //app.UsePathBase("/adminpage/");
                 app.UseRewriter(new RewriteOptions().Add(new URLRewrite()));
                 
                 #region MiddleWare
