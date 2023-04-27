@@ -10,5 +10,6 @@
 **/obj
 **/Properties
 **/node_modules
+UI/src/pages
 MainCore/Logs
 MainCore/DataProtection
