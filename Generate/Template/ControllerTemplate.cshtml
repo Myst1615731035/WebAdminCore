@@ -2,7 +2,7 @@
 using SqlSugar;
 using WebUtils;
 using WebModel.Entitys;
-using WebService.IService;
+using WebUtils.BaseService;
 using WebUtils.HttpContextUser;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +18,10 @@ namespace MainCore.Controllers
 	public class @($"{Model.EntityName}Controller") : ControllerBase
     {
         #region IOC&DI
-		private readonly @($"I{Model.EntityName}Service") _service;
+        private readonly @($"IBaseService<{Model.EntityName}>") _service;
 		private readonly IUser _user;
 
-        public @($"{Model.EntityName}Controller") (@($"I{Model.EntityName}Service") service,IUser user)
+        public @($"{Model.EntityName}Controller") (@($"IBaseService<{Model.EntityName}>") service,IUser user)
 		{
 			_service = service;
 			_user = user;

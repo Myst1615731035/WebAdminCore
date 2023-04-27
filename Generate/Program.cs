@@ -1,6 +1,4 @@
-﻿using Generate.Model;
-using Generate.Service;
-using NPOI.SS.Formula.Functions;
+﻿using Generate.Service;
 using System.Reflection;
 using WebModel.RootEntity;
 using WebUtils;
@@ -32,15 +30,13 @@ var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
                     .SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
                     .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<SystemAuthTable>().IsEmpty())
                     .ToClassInfos();
-types
-    .CreateFile("Template/IRepositoryTemplate.cshtml", @"../../../../WebService/IWorkRepository", t => $"I{t.EntityName}Repository.cs")
-    .CreateFile("Template/RepositoryTemplate.cshtml", @"../../../../WebService/WorkRepository", t => $"{t.EntityName}Repository.cs")
-    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService/IWorkService", t => $"I{t.EntityName}Service.cs")
-    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs")
-    .CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+//types
+//    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService/IWorkService", t => $"I{t.EntityName}Service.cs")
+//    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs");
+types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
 types.FilterRootColumns(typeof(RootEntity<string>))
     .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
     .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");
 #endregion
 
-Console.ReadLine();
+"生成完成".WriteSuccessLine();

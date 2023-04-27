@@ -1,11 +1,9 @@
 ﻿@{
 	var name = $"{@Model.EntityName}Service";
 }
-using BaseRepository;
-using BaseService;
 using SqlSugar;
 using WebModel.Entitys;
-using WebService.IService;
+using WebUtils.BaseService;
 
 namespace WebService.Service
 {
@@ -16,7 +14,7 @@ namespace WebService.Service
 	{
 		IBaseRepository<@Model.EntityName> dal;
 		ISqlSugarClient db;
-		public @($"{name}(IBaseRepository<{Model.EntityName}> _dal)")
+		public @($"{name}(IBaseService<{Model.EntityName}> _dal)")
 		{
 			dal = _dal;
 			db = dal.Db;
