@@ -1,4 +1,15 @@
 import 'xe-utils';
+import objectMethods from 'xe-utils/object';
+import arrayMethods from 'xe-utils/array';
+import baseMethods from 'xe-utils/base';
+import numberMethods from 'xe-utils/number';
+import dateMethods from 'xe-utils/date';
+import stringMethods from 'xe-utils/string';
+import functionMethods from 'xe-utils/function';
+import urlMethods from 'xe-utils/url';
+import webMethods from 'xe-utils/web';
+const _utils = Object.assign(objectMethods, arrayMethods, baseMethods, numberMethods, dateMethods, stringMethods, functionMethods, urlMethods, webMethods);
+
 import VXETable from 'vxe-table';
 import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx';
 import VXETablePluginExportPDF from 'vxe-table-plugin-export-pdf';
@@ -153,6 +164,8 @@ const install = app => {
 	VXETable.use(VXETablePluginElement);
 	VXETable.formats.mixin(formatOptions);
 	app.use(VXETable);
+	// 公用函数
+	app.config.globalProperties._utils = _utils;
 	// 弹窗
 	app.config.globalProperties.$modal = VXETable.modal.open;
 	app.config.globalProperties.$alert = VXETable.modal.alert;

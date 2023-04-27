@@ -1,6 +1,7 @@
 ﻿using ApiModel;
 using NPOI.SS.Formula.Functions;
 using SqlSugar;
+using SqlSugar.Extensions;
 using System.Data;
 using System.Linq.Expressions;
 using WebUtils;
@@ -46,10 +47,14 @@ namespace BaseRepository
 
         #region 单表方法
         #region 查
+        public async Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression)
+        {
+            return await Db.Queryable<TEntity>().Where(whereExpression).FirstAsync();
+        }
         public async Task<TEntity> QueryById(object objId)
         {
             var query = Db.Queryable<TEntity>().In(objId);
-            return await query.SingleAsync();
+            return await query.IncludesAllFirstLayer().SingleAsync();
         }
         /// <summary>
         /// 功能描述:根据ID查询一条数据
@@ -458,6 +463,7 @@ namespace BaseRepository
         {
             RefAsync<int> totalCount = 0;
             var list = Db.Queryable<TEntity>()
+                         .IncludesAllFirstLayer()
                          .WhereIF(expression != null, expression)
                          .OrderByIF(!string.IsNullOrEmpty(pageModel.sort), pageModel.sort);
 

@@ -12,6 +12,7 @@ namespace BaseRepository
 
         #region 单表方法
         #region 查
+        Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression);
         /// <summary>
         /// 根据Id查询实体
         /// </summary>

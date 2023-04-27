@@ -1,5 +1,6 @@
 ﻿using Generate.Model;
 using Generate.Service;
+using NPOI.SS.Formula.Functions;
 using System.Reflection;
 using WebModel.RootEntity;
 using WebUtils;
@@ -29,11 +30,8 @@ using WebUtils.Attributes;
 var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
                     .Select(Assembly.LoadFrom).ToArray()
                     .SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
-                    .Where(t => t.Namespace == "WebModel.Entitys")
+                    .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<SystemAuthTable>().IsEmpty())
                     .ToClassInfos();
-
-Func<ClassInfo, bool> noCreateSelectFunc = t => t.Type.IsNotEmpty() && t.Type.GetCustomAttribute<SystemAuthTable>().IsNotEmpty();
-
 types
     .CreateFile("Template/IRepositoryTemplate.cshtml", @"../../../../WebService/IWorkRepository", t => $"I{t.EntityName}Repository.cs")
     .CreateFile("Template/RepositoryTemplate.cshtml", @"../../../../WebService/WorkRepository", t => $"{t.EntityName}Repository.cs")
@@ -41,8 +39,8 @@ types
     .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs")
     .CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
 types.FilterRootColumns(typeof(RootEntity<string>))
-    .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue", noCreateSelectFunc: noCreateSelectFunc)
-    .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue", noCreateSelectFunc: noCreateSelectFunc);
+    .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
+    .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");
 #endregion
 
 Console.ReadLine();

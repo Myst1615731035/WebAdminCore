@@ -239,29 +239,6 @@ namespace WebUtils
         }
         #endregion
 
-        #region ToInt
-        public static int ObjToInt(this object thisValue)
-        {
-            int reval = 0;
-            if (thisValue == null) return 0;
-            if (thisValue != null && thisValue != DBNull.Value && int.TryParse(thisValue.ToString(), out reval))
-            {
-                return reval;
-            }
-            return reval;
-        }
-
-        public static int ObjToInt(this object thisValue, int errorValue)
-        {
-            int reval = 0;
-            if (thisValue != null && thisValue != DBNull.Value && int.TryParse(thisValue.ToString(), out reval))
-            {
-                return reval;
-            }
-            return errorValue;
-        }
-        #endregion
-
         #region ToInt64
         #endregion
         
@@ -298,27 +275,6 @@ namespace WebUtils
         public static string ObjToString(this object thisValue, string errorValue)
         {
             if (thisValue != null) return thisValue.ToString().Trim();
-            return errorValue;
-        }
-        #endregion
-
-        #region ToDecimal
-        public static Decimal ObjToDecimal(this object thisValue)
-        {
-            Decimal reval = 0;
-            if (thisValue != null && thisValue != DBNull.Value && decimal.TryParse(thisValue.ToString(), out reval))
-            {
-                return reval;
-            }
-            return 0;
-        }
-        public static Decimal ObjToDecimal(this object thisValue, decimal errorValue)
-        {
-            Decimal reval = 0;
-            if (thisValue != null && thisValue != DBNull.Value && decimal.TryParse(thisValue.ToString(), out reval))
-            {
-                return reval;
-            }
             return errorValue;
         }
         #endregion

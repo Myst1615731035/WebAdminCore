@@ -72,7 +72,7 @@ namespace WebExtention.Injection
                 #endregion
 
                 #region Scoped DI
-                AppConfig.serviceProvider = app.Services;
+                AppConfig.Instance._ServiceProvider = app.Services;
                 var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
                 var dataSeed = scope.ServiceProvider.GetRequiredService<IDataSeedBase>();
                 app.UseDBSeedMiddleware(dataSeed);

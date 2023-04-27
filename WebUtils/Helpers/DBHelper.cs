@@ -46,7 +46,7 @@ namespace WebUtils
                         {
                             //无法获取使用AddScoped注入的对象，但可以获取AddTransient和AddSingleton注入的对象
                             //因此：手动获取请求生命周期内的注入对象
-                            var accessor = AppConfig.serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                            var accessor = AppConfig.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
                             var user = new AspNetUser(accessor);
 
                             #region 插入数据时

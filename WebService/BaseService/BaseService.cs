@@ -16,6 +16,10 @@ namespace BaseService
 
         #region 单表方法
         #region 查询
+        public async Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression)
+        {
+            return await BaseDal.First(whereExpression);
+        }
         public async Task<TEntity> QueryById(object objId)
         {
             return await BaseDal.QueryById(objId);

@@ -5,20 +5,45 @@ namespace WebUtils
 {
     public class AppConfig
     {
+        #region 单例
+        private static object lockObj = new object();
+        private static AppConfig _instance;
+        public static AppConfig Instance
+        {
+            get
+            {
+                if (_instance == null)
+                 {
+                    lock (lockObj)
+                    {
+                        if (_instance == null) _instance = new AppConfig();
+                    }
+                }
+                return _instance;
+            }
+        }
+        private IConfiguration? _Configuration { get; set; }
+        public IServiceProvider? _ServiceProvider { get; set; }
+        public string? _ContentRootPath { get; set; }
+        public string? _WebRootPath { get; set; }
+        #endregion
+
         #region 构造类
-        private static IConfiguration? Configuration { get; set; }
-        public static IServiceProvider? serviceProvider { get; set; }
-        public static string? ContentRootPath { get; set; }
-        public static string? WebRootPath { get; set; }
+        public static IConfiguration? Configuration => Instance._Configuration;
+        public static IServiceProvider? ServiceProvider => Instance._ServiceProvider;
+        public static string? ContentRootPath => Instance._ContentRootPath;
+        public static string? WebRootPath => Instance._WebRootPath;
+        private AppConfig() { }
+
         /// <summary>
         /// 通过程序配置项进行构造
         /// </summary>
         /// <param name="configuration"></param>
         public AppConfig(IConfiguration configuration, string contentRootPath, string webRootPath)
         {
-            Configuration = configuration;
-            ContentRootPath = contentRootPath;
-            WebRootPath = webRootPath;
+            Instance._Configuration = configuration;
+            Instance._ContentRootPath = contentRootPath;
+            Instance._WebRootPath = webRootPath;
         }
 
         /// <summary>
@@ -28,7 +53,7 @@ namespace WebUtils
         public AppConfig(string path)
         {
             //这样的话，可以直接读目录里的json文件，而不是 bin 文件夹下的，所以不用修改复制属性
-            Configuration = new ConfigurationBuilder()
+            _Configuration = new ConfigurationBuilder()
                 .Add(new JsonConfigurationSource { Path = path, Optional = false, ReloadOnChange = true })
                 .Build();
         }
