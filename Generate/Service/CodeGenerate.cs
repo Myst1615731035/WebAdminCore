@@ -5,7 +5,7 @@ using WebUtils;
 
 namespace Generate.Service
 {
-    public static class Generate
+    public static class CodeGenerate
     {
         /// <summary>
         /// 过滤基类字段
@@ -49,7 +49,15 @@ namespace Generate.Service
                 if (!FileHelper.Exists(outputDir, fileName, true) || overWriteExistFile)
                 {
                     // 根据模板生成内容
-                    var text = RazorHelper.Compile(FileHelper.ReadFile(templatePath), t).Result;
+                    var text = RazorHelper.Compile(FileHelper.ReadFile(templatePath), t, build =>
+                    {
+                        build.AddAssemblyReference(typeof(SqlSugar.Extensions.UtilExtensions));
+                        build.AddAssemblyReference(typeof(Newtonsoft.Json.JsonConvert));
+                        build.AddAssemblyReference(typeof(TemplateService));
+                        build.AddUsing("SqlSugar.Extensions");
+                        build.AddUsing("Generate.Service");
+                        build.AddUsing("Newtonsoft.Json");
+                    }).Result;
                     // 写文件
                     FileHelper.WriteFile(filePath, text);
                     $"{t.EntityName}: {fileName} create success!".WriteSuccessLine();
@@ -93,6 +101,7 @@ namespace Generate.Service
                         Name = p.Name,
                         Description = columnAttr.ColumnDescription,
                         Type = p.PropertyType.IsGenericType ? p.PropertyType.GetGenericArguments()[0].Name : p.PropertyType.Name,
+                        TypeInfo = p.PropertyType,
                         IsNullable = (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) || new NullabilityInfoContext().Create(p).WriteState is NullabilityState.Nullable),
                         DefaultValue = defaultValue
                     });

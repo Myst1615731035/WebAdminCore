@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebModel.Entitys;
 using WebService.IService;
 using WebUtils.BaseService;
+using WebModel.AppdixEntity;
 
 namespace MainCore.Controllers.System
 {
@@ -106,30 +107,6 @@ namespace MainCore.Controllers.System
                 result.data = entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null;
             }
             return result;
-        }
-        /// <summary>
-        /// 保存为按钮
-        /// </summary>
-        /// <param name="btn"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ContentJson> SaveBtn([FromBody] Button btn)
-        {
-            var res = new ContentJson("保存失败");
-            // 异常情况：
-            // 1. 按钮的归属页面为空
-            if (btn.Mid.IsEmpty() || !await _service.Any(t => t.Id == btn.Mid)) res.msg = $"{res.msg}，按钮的归属页面未知，无法保存";
-            // 2. 同一个页面下，存在相同编码，相同名称，相同方法的按钮
-            if (btn.Id.IsNotEmpty() && await _button.Any(t => t.Mid == btn.Mid && t.Id != btn.Id &&
-            ((!SqlFunc.IsNullOrEmpty(t.Name) && t.Name == btn.Name) || (!SqlFunc.IsNullOrEmpty(t.Code) && t.Code == btn.Code) || (!SqlFunc.IsNullOrEmpty(t.Function) && t.Function == btn.Function))))
-                res.msg = $"{res.msg}，按钮的归属页面未知，无法保存";
-
-            if (await _button.Storageable(btn) > 0)
-            {
-                res = new ContentJson(true, "保存成功");
-                res.data = btn.Id.IsNotEmpty() ? await _service.QueryById(btn.Id) : null;
-            }
-            return res;
         }
         /// <summary>
         /// 保存列表排序

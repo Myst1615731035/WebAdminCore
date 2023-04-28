@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using WebModel.AppdixEntity;
 using WebModel.RootEntity;
 using WebUtils.Attributes;
 
@@ -22,16 +23,5 @@ namespace WebModel.Entitys
 
         [SugarColumn(IsJson = true, ColumnDescription = "字典项列表")]
         public List<DictItem>? Items { get; set; } = new List<DictItem>();
-    }
-
-    /// <summary>
-    /// 字典子类
-    /// </summary>
-    public partial class DictItem
-    {
-        public string? Label { get; set; }
-        public string? EnLabel { get; set; }
-        public int Value { get; set; }
-        public string? Description { get; set; }
     }
 }

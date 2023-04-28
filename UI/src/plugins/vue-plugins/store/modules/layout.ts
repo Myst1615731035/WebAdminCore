@@ -1,7 +1,7 @@
 export default {
 	namespaced: false,
 	state: () => ({
-		logo: { icon: 'fa fa-sitemap', title: '内容管理系统', subTitle: 'CMS' },
+		logo: { icon: 'fa fa-sitemap', title: 'Inventory Management System', subTitle: 'CRM' },
 		tagsList: [],
 		collapse: true,
 		menu: [],

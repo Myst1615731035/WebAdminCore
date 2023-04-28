@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using WebModel.Entitys;
 using WebService.IService;
 using SqlSugar.Extensions;
+using WebModel.AppdixEntity;
 
 namespace WebService.Service
 {
@@ -94,18 +95,6 @@ namespace WebService.Service
                                 Sort = m.Sort,
                                 Description = m.Description,
                                 Visiable = m.Visiable,
-                                Buttons = SqlFunc.Subqueryable<RolePermission>()
-                                                .InnerJoin<Button>((rpb, b) => rpb.PermissionId == b.Id)
-                                                .Where((rpb, b) => roleIds.Contains(rpm.RoleId) && b.Mid == m.Id && !b.IsDelete)
-                                                .ToList((rpb, b) => new Button()
-                                                {
-                                                    Id = b.Id,
-                                                    Mid = b.Mid,
-                                                    Name = b.Name,
-                                                    Description = b.Description,
-                                                    Sort = b.Sort,
-                                                    IsDelete = b.IsDelete,
-                                                })
                             }).MergeTable().OrderBy(t => t.Sort);
             return await query.ToTreeAsync(t => t.Children, t => t.Pid, "");
         }

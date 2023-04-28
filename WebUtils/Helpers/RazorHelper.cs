@@ -1,4 +1,5 @@
-﻿using RazorEngineCore;
+﻿using MathNet.Numerics;
+using RazorEngineCore;
 using System.Collections.Concurrent;
 
 namespace WebUtils
@@ -17,7 +18,7 @@ namespace WebUtils
         /// <param name="template">模板内容</param>
         /// <param name="model">模板内的数据对象</param>
         /// <returns></returns>
-        public static async Task<string> Compile(string template, object? model = null)
+        public static async Task<string> Compile(string template, object? model = null, Action<IRazorEngineCompilationOptionsBuilder> builderAction = null)
         {
             try
             {
@@ -27,13 +28,7 @@ namespace WebUtils
                 {
                     lock (lockObj)
                     {
-                        if (!Cache.ContainsKey(key)) Cache.TryAdd(key, razor.Compile(template, build =>
-                        {
-                            build.AddAssemblyReference(typeof(SqlSugar.Extensions.UtilExtensions));
-                            build.AddAssemblyReference(typeof(Newtonsoft.Json.JsonConvert));
-                            build.AddUsing("SqlSugar.Extensions");
-                            build.AddUsing("Newtonsoft.Json");
-                        }));
+                        if (!Cache.ContainsKey(key)) Cache.TryAdd(key, razor.Compile(template, builderAction));
                     }
                 }
                 IRazorEngineCompiledTemplate? compiled = Cache.GetValueOrDefault(key);

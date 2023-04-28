@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using WebModel.AppdixEntity;
 using WebModel.RootEntity;
 using WebUtils.Attributes;
 
@@ -41,7 +42,7 @@ namespace WebModel.Entitys
         [SugarColumn(IsIgnore = true)]
         public List<Menu> Children { get; set; } = new List<Menu>();
 
-        [SugarColumn(IsIgnore = true)]
-        public List<Button> Buttons { get; set; } = new List<Button>();
+        [SugarColumn(IsJson = true, ColumnDescription = "当前页面的按钮数据")]
+        public List<Button>? Buttons { get; set; } = new List<Button>();
     }
 }

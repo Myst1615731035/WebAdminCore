@@ -27,6 +27,7 @@ namespace Generate.Model
                 _type = value;
             }
         }
+        public Type TypeInfo { get; set; }
         /// <summary>
         /// Nullable
         /// </summary>
