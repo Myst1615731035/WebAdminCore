@@ -47,7 +47,7 @@ namespace WebUtils
         }
 
         /// <summary>
-        /// json转List<T>
+        /// json转List<TResult>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="json"></param>
@@ -405,14 +405,22 @@ namespace WebUtils
         #endregion
 
         #region Update Type Object
-        public static T UpdateProp<T>(this T obj, T newObj)
+        /// <summary>
+        /// 泛型获取数据字段的变化
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="newObj"></param>
+        /// <returns></returns>
+        public static T UpdateProp<T>(this T obj, T newObj) where T : class, new()
         {
             if (newObj.IsEmpty()) return obj;
             Type type = typeof(T);
             type.GetProperties().ToList().ForEach(t =>
             {
                 var newVal = t.GetValue(newObj);
-                if (newVal.IsNotEmpty()) t.SetValue(obj, newVal);
+                var oldVal = t.GetValue(obj);
+                if (newVal.IsNotEmpty() && newVal != oldVal) t.SetValue(obj, newVal);
             });
             return obj;
         }

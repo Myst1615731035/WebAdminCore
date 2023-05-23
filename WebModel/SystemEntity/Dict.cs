@@ -12,10 +12,10 @@ namespace WebModel.Entitys
     [SugarTable("Sys_Dict")]
     public partial class Dict : RootEntity<string>
     {
-        [SugarColumn(IsNullable = false, ColumnDescription = "编码", ColumnDataType = "varchar", Length = 50)]
+        [SugarColumn(ColumnDescription = "编码", ColumnDataType = "varchar", Length = 50)]
         public string Code { get; set; }
 
-        [SugarColumn(IsNullable = false, ColumnDescription = "字典名称", ColumnDataType = "varchar", Length = 50)]
+        [SugarColumn(ColumnDescription = "字典名称", ColumnDataType = "varchar", Length = 50)]
         public string Name { get; set; }
 
         [SugarColumn(ColumnDescription = "描述", ColumnDataType = "varchar", Length = 500)]

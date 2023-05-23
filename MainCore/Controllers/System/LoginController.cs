@@ -4,6 +4,10 @@ using WebUtils;
 using Microsoft.AspNetCore.Authorization;
 using WebService.IService;
 using SqlSugar.Extensions;
+using WebModel.Entitys;
+using WebUtils.HttpContextUser;
+using SqlSugar;
+using NPOI.OpenXmlFormats.Dml.Chart;
 
 namespace MainCore.Controllers
 {
@@ -13,10 +17,12 @@ namespace MainCore.Controllers
     public class LoginController : ControllerBase
     {
         #region 注入
-        private ISysUserService services;
-        public LoginController(ISysUserService _services)
+        private ISysUserService _service;
+        private IUser _user;
+        public LoginController(ISysUserService service, IUser user)
         {
-            services = _services;
+            _service = service;
+            _user = user;
         }
         #endregion
 
@@ -32,10 +38,18 @@ namespace MainCore.Controllers
             var res = new ContentJson("登录失败");
             string account = data.account, password = data.password;
             password = MD5Helper.MD5Encrypt32(password);
-            var tokenModel = await services.GetUserInfoToken(account, password);
+            var tokenModel = await _service.Db.Queryable<SysUser>()
+                            .Where(u => u.Account == account && u.Password == password && !u.IsDelete)
+                            .Select(u => new TokenModelJwt()
+                            {
+                                Uid = u.Id,
+                                Name = u.Name,
+                                Work = "",
+                                Roles = SqlFunc.Subqueryable<SysRole>().Where(r=> SqlFunc.JsonArrayAny(u.RoleIds, r.Id) && !r.IsDelete).ToList(r => r.Id)
+                            }).FirstAsync();
             if (tokenModel.IsNotEmpty() && tokenModel.Uid.IsNotEmpty())
             {
-                if (tokenModel.Role.IsEmpty()) res.msg += "; 用户角色有误，请检查";
+                if (tokenModel.Roles.IsEmpty() || tokenModel.Roles.Count == 0) res.msg += "; 用户角色有误，请检查";
                 else res = new ContentJson()
                 {
                     success = true,

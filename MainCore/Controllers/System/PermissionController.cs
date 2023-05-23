@@ -5,9 +5,7 @@ using WebUtils.HttpContextUser;
 using WebUtils;
 using Microsoft.AspNetCore.Authorization;
 using WebModel.Entitys;
-using WebService.IService;
 using WebUtils.BaseService;
-using WebModel.AppdixEntity;
 
 namespace MainCore.Controllers.System
 {
@@ -93,19 +91,20 @@ namespace MainCore.Controllers.System
                 result.msg = $"该上级目录下已存在\"{entity.Name}\"的同名目录/页面,请确认";
                 return result;
             }
-            var parent = await _service.QueryById(entity.Pid);
-            if (parent.IsNotEmpty() && parent.Type == 1)
+            if (await _service.Any(t=>t.Id == entity.Pid && t.Type == 1))
             {
                 result.msg = "只允许在目录下添加目录/页面, 请确认上级目录选择是否正确";
                 return result;
             }
             #endregion
 
-            if (await _service.Storageable(entity) > 0)
+            _service.BeginTran();
+            if (await _service.Storageable(entity) > 0 && await _button.Storageable(entity.Buttons) > 0)
             {
+                _service.CommitTran();
                 result = new ContentJson(true, "保存成功");
                 result.data = entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null;
-            }
+            }else _service.RollbackTran();
             return result;
         }
         /// <summary>

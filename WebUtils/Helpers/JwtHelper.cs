@@ -32,11 +32,9 @@ namespace WebUtils
                 new Claim(JwtRegisteredClaimNames.Iss,iss),
                 new Claim(JwtRegisteredClaimNames.Aud,aud),
             };
-
             // 可以将一个用户的多个角色全部赋予；
-            // 作者：DX 提供技术支持；
-            claims.AddRange(tokenModel.Role?.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(s => new Claim(ClaimTypes.Role, s)));
-
+            claims.AddRange(tokenModel.Roles.Select(s => new Claim(ClaimTypes.Role, s)));
+            
             //秘钥 (SymmetricSecurityKey 对安全性的要求，密钥的长度太短会报出异常)
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -60,12 +58,11 @@ namespace WebUtils
             if (token.IsNotEmpty() && jwtHandler.CanReadToken(token) && VerifyToken(token))
             {
                 JwtSecurityToken jwtToken = jwtHandler.ReadJwtToken(token);
-                object role;
-                jwtToken.Payload.TryGetValue(ClaimTypes.Role, out role);
+                jwtToken.Payload.TryGetValue(ClaimTypes.Role, out object roles);
                 tokenModelJwt = new TokenModelJwt
                 {
                     Uid = jwtToken.Id.ObjToString(),
-                    Role = role != null ? role.ToString() : "",
+                    Roles = roles != null ? roles.ObjToString().Split(",").ToList() : new List<string>(),
                 };
             }
             return tokenModelJwt;
@@ -99,7 +96,7 @@ namespace WebUtils
         /// <summary>
         /// 角色
         /// </summary>
-        public string? Role { get; set; }
+        public List<string> Roles { get; set; } = new List<string>();
         /// <summary>
         /// 职能
         /// </summary>

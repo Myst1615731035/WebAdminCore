@@ -7,13 +7,13 @@ namespace WebModel.RootEntity
         /// <summary>
         /// 建议使用GUID作为主键
         /// </summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true, ColumnDataType = "varchar", Length = 50, ColumnDescription = "主键")]
+        [SugarColumn(IsPrimaryKey = true, ColumnDataType = "varchar", Length = 50, ColumnDescription = "主键")]
         public T Id { get; set; }
         /// <summary>
         /// 排序
         /// </summary>
-        [SugarColumn(IsNullable = false, ColumnDescription = "排序", DefaultValue = "0")]
-        public int Sort { get; set; }
+        [SugarColumn(ColumnDescription = "排序", DefaultValue = "0")]
+        public int? Sort { get; set; }
 
         #region 新增
         /// <summary>
@@ -44,7 +44,7 @@ namespace WebModel.RootEntity
         /// <summary>
         /// 是否已删除, 默认否
         /// </summary>
-        [SugarColumn(IsNullable = false, ColumnDescription = "是否逻辑删除，默认为否(0)", DefaultValue = "0")]
+        [SugarColumn(ColumnDescription = "是否逻辑删除，默认为否(0)", DefaultValue = "0")]
         public bool IsDelete { get; set; } = false;
 
         /// <summary>

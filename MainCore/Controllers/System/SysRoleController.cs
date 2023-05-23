@@ -20,7 +20,8 @@ namespace MainCore.Controllers
     {
         #region IOC&DI
         private readonly IBaseService<SysRole> _service;
-        private readonly IRolePermissionService _auth;
+        private readonly IBaseService<RolePermission> _auth;
+        private readonly IBaseService<Menu> _menu;
         private readonly IUser _user;
 
         /// <summary>
@@ -29,9 +30,10 @@ namespace MainCore.Controllers
         /// <param name="service"></param>
         /// <param name="user"></param>
         /// <param name="logger"></param>
-        public SysRoleController(IBaseService<SysRole> service, IUser user, IRolePermissionService auth)
+        public SysRoleController(IBaseService<SysRole> service, IBaseService<Menu> menu, IUser user, IBaseService<RolePermission> auth)
         {
             _service = service;
+            _menu = menu;
             _user = user;
             _auth = auth;
         }
@@ -160,18 +162,10 @@ namespace MainCore.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> GetRolePermission([FromBody] JObject data)
+        public async Task<ContentJson> GetRolePermission([FromQuery] string roleId)
         {
-            var res = new ContentJson(true, "获取成功");
-            var roleId = data["id"].ObjToString();
-            if (roleId.IsNotEmpty())
-            {
-                res = new ContentJson(true, "获取成功", new 
-                {
-                    permissionTree = await _auth.GetRoleAuthTree(roleId),
-                    hasAuthed = await _auth.GetRoleAuthLeafChecked(roleId),
-                });
-            }
+            var res = new ContentJson("该角色权限数据获取失败", new List<string>());
+            if (roleId.IsNotEmpty()) res = new ContentJson(true, "获取成功", await _auth.Db.Queryable<RolePermission>().Where(t => t.RoleId == roleId).Select(t => t.PermissionId).ToListAsync());
             return res;
         }
         /// <summary>
@@ -180,33 +174,30 @@ namespace MainCore.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> SaveRoleAuth([FromBody] JObject data)
+        public async Task<ContentJson> SaveRoleAuth([FromBody] List<string> data, [FromQuery] string roleId)
         {
-            var result = new ContentJson("授权失败");
-            var roleId = data["roleId"].ObjToString();
-            var perIds = data["list"].ToList<string>();
-            if (roleId.IsNotEmpty())
+            var res = new ContentJson("授权失败");
+            if (data.IsEmpty()) res.msg = "未获取到授权的权限信息";
+            if (roleId.IsNotEmpty() && await _service.Any(t => t.Id == roleId))
             {
-                if(await _service.Any(t=>t.Id == roleId))
+                var list = new List<RolePermission>();
+                data.ForEach(t => list.Add(new RolePermission { RoleId = roleId, PermissionId = t }));
+                _service.BeginTran();
+                try
                 {
-                    var list = new List<RolePermission>();
-                    perIds.ForEach(t => list.Add(new RolePermission() { RoleId = roleId, PermissionId = t }));
-                    _service.Db.AsTenant().BeginTran();
-                    try
-                    {
-                        await _auth.Delete(t => t.RoleId == roleId);
-                        await _auth.Add(list);
-                        result = new ContentJson(true, "授权成功");
-                        _service.Db.AsTenant().CommitTran();
-                    }
-                    catch(Exception ex)
-                    {
-                        LogHelper.LogException(ex);
-                        _service.Db.AsTenant().RollbackTran();
-                    }
+                    await _auth.Delete(t => t.RoleId == roleId);
+                    if(list.Count > 0) await _auth.Insert(list);
+                    _service.CommitTran();
+                    res = new ContentJson(true, "授权成功");
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogException(ex);
+                    _service.RollbackTran();
                 }
             }
-            return result;
+            else res.msg = "无效的角色信息";
+            return res;
         }
         #endregion
     }

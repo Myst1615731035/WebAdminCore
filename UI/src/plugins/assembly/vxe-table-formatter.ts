@@ -22,10 +22,10 @@ const formatDate = ({ cellValue }, fmt) => {
 // 字典数据格式化
 const formatDict = ({ cellValue }, key) => {
 	if (IsNotEmpty(key) && IsNotEmpty($store.state.cache.storage.dict)) {
-		var list = $store.state.cache.storage.dict.find(t => t.key == key);
-		if (!!list) {
-			var option = list.items.find(t => t.value == cellValue);
-			return !!option ? option.label : '';
+		var obj = $store.state.cache.storage.dict.find(t => t.key == key);
+		if (!!obj) {
+			var option = obj.items.find(t => t.Value == cellValue);
+			return !!option ? option.Label : '';
 		}
 	}
 	return '';
@@ -35,16 +35,28 @@ const formatList = ({ cellValue }, key, list = null) => {
 	if (IsNotEmpty(key)) {
 		if (list == null || list == undefined) list = $store.state.cache.storage[key];
 		if (IsNotEmpty(list)) {
-			var option = list.find(t => t.value == cellValue);
-			return !!option ? option.label : '';
+			var option = list.find(t => t.Value == cellValue);
+			return !!option ? option.Label : '';
 		}
 	}
 	return '';
 };
+// 自定义数据列表格式化
+const formatDynamicList = ({ cellValue }, list, key, label) => {
+	if (!!cellValue) {
+		if (!!key && !!list && list.length > 0 && Array.isArray(list) && !!label) {
+			var pair = list.find(t => t[key] == cellValue);
+			return (pair || {})[label] || '';
+		}
+	}
+	return '';
+};
+
 export default {
 	formatBool,
 	formatBoolWithData,
 	formatDate,
 	formatDict,
-	formatList
+	formatList,
+	formatDynamicList
 };

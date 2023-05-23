@@ -11,29 +11,25 @@ namespace WebModel.Entitys
     [SugarTable("Sys_SysUser")]
     public partial class SysUser : RootEntity<string>
     {
-        [SugarColumn(IsNullable = false, ColumnDescription = "账户", ColumnDataType = "varchar", Length = 50)]
+        [SugarColumn(ColumnDescription = "账户", ColumnDataType = "varchar", Length = 50)]
         public string Account { get; set; }
 
-        [SugarColumn(IsNullable = false, ColumnDescription = "密码", ColumnDataType = "varchar", Length = 50)]
+        [SugarColumn(ColumnDescription = "密码", ColumnDataType = "varchar", Length = 50)]
         public string Password { get; set; }
         [SugarColumn(IsIgnore = true, ColumnDescription = "用户的新密码, 仅作为用户更新密码的验证，不做保存")]
         public string? NewPassword { get; set; }
 
-        [SugarColumn(IsNullable = false, ColumnDescription = "昵称", ColumnDataType = "varchar", Length = 50)]
+        [SugarColumn(ColumnDescription = "昵称", ColumnDataType = "varchar", Length = 50)]
         public string Name { get; set; }
 
-        [SugarColumn(IsNullable = true, ColumnDescription = "备注", ColumnDataType = "varchar", Length = 500)]
+        [SugarColumn(ColumnDescription = "备注", ColumnDataType = "varchar", Length = 500)]
         public string? Remark { get; set; }
 
         #region 登录相关
-        [SugarColumn(IsNullable = true, ColumnDescription = "头像", ColumnDataType = "varchar", Length = 500)]
+        [SugarColumn(ColumnDescription = "头像", ColumnDataType = "varchar", Length = 500)]
         public string? Avatar { get; set; }
 
-        [SugarColumn(IsIgnore = true, ColumnDescription = "角色名称")]
-        public string? RoleNames { get; set; } = "";
-        [SugarColumn(IsIgnore = true, ColumnDescription = "角色主键")]
-        public string? RoleIdStr { get; set; } = "";
-        [SugarColumn(IsIgnore = true, ColumnDescription = "角色主键")]
+        [SugarColumn(IsJson = true, ColumnDescription = "用户授权的角色ID", ColumnDataType = "nvarchar(max)")]
         public List<string>? RoleIds { get; set; } = new List<string>();
         #endregion
 
@@ -57,21 +53,34 @@ namespace WebModel.Entitys
         public string? Address { get; set; }
         #endregion
 
-        #region 用户验证信息
+        #region 用户登录信息
         /// <summary>
-        /// 关键业务修改时间
+        /// 最近登录IP
         /// </summary>
-        public DateTime? CriticalModifyTime { get; set; } = DateTime.Now;
+        [SugarColumn(ColumnDescription = "最近登录IP", ColumnDataType = "varchar", Length = 500)]
+        public string? LastLoginIP { get; set; }
+        /// <summary>
+        /// 最近登录时间
+        /// </summary>
+        [SugarColumn(ColumnDescription = "最近登录时间")]
+        public DateTime? LastLoginTime { get; set; }
 
         /// <summary>
-        ///最后异常时间 
+        ///最近登录异常时间 
         /// </summary>
-        public DateTime? LastErrorTime { get; set; } = DateTime.Now;
+        [SugarColumn(ColumnDescription = "最近登录异常时间")]
+        public DateTime? LastErrorTime { get; set; }
 
         /// <summary>
-        ///错误次数 
+        /// 错误次数 
         /// </summary>
+        [SugarColumn(ColumnDescription = "登录异常错误次数")]
         public int? ErrorCount { get; set; }
+        #endregion
+
+        #region 其他字段
+        [SugarColumn(IsJson = true, ColumnDescription = "用户产品分类权限",ColumnDataType = "nvarchar(max)")]
+        public List<string>? ClassIds { get; set; } = new List<string>();
         #endregion
     }
 }

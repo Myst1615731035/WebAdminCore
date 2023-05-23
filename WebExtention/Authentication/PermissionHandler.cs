@@ -10,6 +10,8 @@ using WebUtils;
 using WebUtils.HttpContextUser;
 using SqlSugar.Extensions;
 using WebService.IService;
+using WebModel.Entitys;
+using WebUtils.BaseService;
 
 namespace WebExtention.Authentication
 {
@@ -22,7 +24,7 @@ namespace WebExtention.Authentication
         /// 验证方案提供对象
         /// </summary>
         public IAuthenticationSchemeProvider Schemes { get; set; }
-        private readonly IRolePermissionService _rolePermissionService;
+        private readonly IBaseService<RolePermission> _rolePermissionService;
         private readonly IHttpContextAccessor _accessor;
         private readonly ISysUserService _userServices;
         private readonly IUser _user;
@@ -35,7 +37,7 @@ namespace WebExtention.Authentication
         /// <param name="accessor"></param>
         /// <param name="userServices"></param>
         /// <param name="user"></param>
-        public PermissionHandler(IAuthenticationSchemeProvider schemes, IRolePermissionService rolePermissionService, IHttpContextAccessor accessor, ISysUserService userServices, IUser user)
+        public PermissionHandler(IAuthenticationSchemeProvider schemes, IBaseService<RolePermission> rolePermissionService, IHttpContextAccessor accessor, ISysUserService userServices, IUser user)
         {
             _accessor = accessor;
             _userServices = userServices;
@@ -57,7 +59,7 @@ namespace WebExtention.Authentication
             #region 获取所有角色的接口权限列表
             if (!requirement.Permissions.Any())
             {
-                requirement.Permissions = await _rolePermissionService.GetRolePermissions();
+                requirement.Permissions = new List<PermissionItem>();
             }
             #endregion
 
@@ -150,7 +152,7 @@ namespace WebExtention.Authentication
                         if (value != null)
                         {
                             var user = await _userServices.QueryById(_user.ID, true);
-                            if (user.CriticalModifyTime > value.ObjToDate())
+                            if (user.LastLoginTime > value.ObjToDate())
                             {
                                 var res = new ApiResponse(StatusCode.CODE401, "很抱歉,授权已失效,请重新授权").MessageModel;
                                 context.Fail(new AuthorizationFailureReason(this, res.msg));

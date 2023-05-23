@@ -1,12 +1,12 @@
-// 添加缓存刷新功能
-import refresh from './js/refreshLoad.js';
-// 添加缓存获取的通用方法
-import getcache from './js/getCache.js';
+// 剪贴板方法
 import VueClipBoard from 'vue-clipboard2';
+const modules = import.meta.globEager('./modules/*.ts');
+
 export default {
 	install: app => {
-		app.use(VueClipBoard)
-			.use(refresh)
-			.use(getcache);
+		app.use(VueClipBoard);
+		for (var t in modules) {
+			if (!!t && !!modules[t] && !!modules[t].default) app.use(modules[t].default);
+		}
 	}
 };

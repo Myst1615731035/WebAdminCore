@@ -1,4 +1,5 @@
 ﻿using ApiModel;
+using NPOI.SS.Formula.Functions;
 using SqlSugar;
 using SqlSugar.Extensions;
 using System.Data;
@@ -47,6 +48,21 @@ namespace WebUtils.BaseService
         }
         #endregion
 
+        #region 事务方法
+        public void BeginTran()
+        {
+            Db.AsTenant().BeginTran();
+        }
+        public void CommitTran()
+        {
+            Db.AsTenant().CommitTran();
+        }
+        public void RollbackTran()
+        {
+            Db.AsTenant().RollbackTran();
+        }
+        #endregion
+
         #region 单表方法
         #region 查
         public async Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression)
@@ -62,7 +78,7 @@ namespace WebUtils.BaseService
         /// <returns>数据实体</returns>
         public async Task<TEntity> QueryById(object objId, bool withCache = false)
         {
-            var query = Db.Queryable<TEntity>().WithCacheIF(withCache).In(objId);
+            var query = Db.Queryable<TEntity>().IncludesAllFirstLayer().WithCacheIF(withCache).In(objId);
             return await query.IncludesAllFirstLayer().SingleAsync();
         }
         /// <summary>
@@ -73,8 +89,7 @@ namespace WebUtils.BaseService
         /// <returns>数据实体列表</returns>
         public async Task<List<TEntity>> QueryByIDs(object[] lstIds)
         {
-            //return await Task.Run(() => Db.Queryable<TEntity>().In(lstIds).ToList());
-            return await Db.Queryable<TEntity>().In(lstIds).ToListAsync();
+            return await Db.Queryable<TEntity>().IncludesAllFirstLayer().In(lstIds).ToListAsync();
         }
         #endregion
 
@@ -91,6 +106,7 @@ namespace WebUtils.BaseService
         public async Task<List<TEntity>> QueryTree(Expression<Func<TEntity, IEnumerable<object>>> childExp, Expression<Func<TEntity, object>> parentExp, object rootValue, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null)
         {
             return await Db.Queryable<TEntity>()
+                            .IncludesAllFirstLayer()
                             .WhereIF(whereExp != null, whereExp)
                             .OrderByIF(orderExp != null, orderExp)
                             .ToTreeAsync(childExp, parentExp, rootValue);
@@ -146,7 +162,7 @@ namespace WebUtils.BaseService
         /// </summary>
         /// <param name="list">实体集合</param>
         /// <returns>影响行数</returns>
-        public async Task<int> Add(List<TEntity> list)
+        public async Task<int> Insert(List<TEntity> list)
         {
             if (list.IsNotEmpty() && list.Count > 0)
             {
@@ -309,18 +325,6 @@ namespace WebUtils.BaseService
         }
 
         /// <summary>
-        /// 功能描述:按照特定列查询数据列表
-        /// 作　　者:CommonApi
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        public async Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> expression)
-        {
-            return await Db.Queryable<TEntity>().Select(expression).ToListAsync();
-        }
-
-        /// <summary>
         /// 功能描述:按照特定列查询数据列表带条件排序
         /// 作　　者:CommonApi
         /// </summary>
@@ -329,9 +333,9 @@ namespace WebUtils.BaseService
         /// <param name="expression">查询实体条件</param>
         /// <param name="strOrderByFileds">排序条件</param>
         /// <returns></returns>
-        public async Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> expression, Expression<Func<TEntity, bool>> whereExpression, string strOrderByFileds)
+        public async Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null)
         {
-            return await Db.Queryable<TEntity>().OrderByIF(!string.IsNullOrEmpty(strOrderByFileds), strOrderByFileds).WhereIF(whereExpression != null, whereExpression).Select(expression).ToListAsync();
+            return await Db.Queryable<TEntity>().OrderByIF(orderExp.IsNotEmpty(), orderExp).WhereIF(whereExp.IsNotEmpty(), whereExp).Select(resultExp).ToListAsync();
         }
 
         /// <summary>
@@ -353,7 +357,7 @@ namespace WebUtils.BaseService
         /// <returns></returns>
         public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression)
         {
-            return await Db.Queryable<TEntity>().WhereIF(whereExpression != null, whereExpression).OrderByIF(orderByExpression != null, orderByExpression).ToListAsync();
+            return await Db.Queryable<TEntity>().IncludesAllFirstLayer().WhereIF(whereExpression != null, whereExpression).OrderByIF(orderByExpression != null, orderByExpression).ToListAsync();
         }
 
         /// <summary>
@@ -462,6 +466,41 @@ namespace WebUtils.BaseService
                          .IncludesAllFirstLayer()
                          .WhereIF(expression != null, expression)
                          .OrderByIF(!string.IsNullOrEmpty(pageModel.sort), pageModel.sort);
+
+            if (pageModel.isAll)
+            {
+                var data = await list.ToListAsync();
+                pageModel.response = data;
+                pageModel.total = data.Count;
+                pageModel.pageCount = 1;
+            }
+            else
+            {
+                pageModel.response = await list.ToPageListAsync(pageModel.currentPage, pageModel.pageSize, totalCount);
+                int pageCount = (Math.Ceiling(totalCount.ObjToDecimal() / pageModel.pageSize.ObjToDecimal())).ObjToInt();
+                pageModel.total = totalCount;
+                pageModel.pageCount = pageCount;
+            }
+            return pageModel;
+        }
+
+
+        /// <summary>
+        /// 分页查询[使用版本，其他分页未测试]
+        /// </summary>
+        /// <param name="whereExpression">条件表达式</param>
+        /// <param name="intPageIndex">页码（下标0）</param>
+        /// <param name="intPageSize">页大小</param>
+        /// <param name="strOrderByFileds">排序字段，如name asc,age desc</param>
+        /// <returns></returns>
+        public async Task<Pagination> QueryPage<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Pagination pageModel)
+        {
+            RefAsync<int> totalCount = 0;
+            var list = Db.Queryable<TEntity>()
+                         .IncludesAllFirstLayer()
+                         .OrderByIF(!string.IsNullOrEmpty(pageModel.sort), pageModel.sort)
+                         .WhereIF(whereExp != null, whereExp)
+                         .Select(resultExp);
 
             if (pageModel.isAll)
             {

@@ -43,7 +43,7 @@ const filterRouter = list => {
 			else {
 				try {
 					var index = Object.keys(modules).find(f => f.toLocaleLowerCase().indexOf(t.Path.toLocaleLowerCase()) > -1);
-					if (!!index) router.addRoute({ name: t.Name, path: t.Path, component: modules[index], buttons: t.Buttons || [] });
+					if (!!index) router.addRoute({ name: t.Name, path: t.Path, component: modules[index], params: { buttons: t.Buttons || [] } });
 				} catch (error) {
 					console.info(error);
 				}

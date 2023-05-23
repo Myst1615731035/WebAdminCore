@@ -4,7 +4,7 @@
 			<template #header>
 				<div class="card-header">
 					<span>角色列表</span>
-					<vxe-button @click="GetRoles()">刷新</vxe-button>
+					<vxe-button @click="InitData()">刷新</vxe-button>
 				</div>
 			</template>
 			<vxe-list ref="roleList" :data="roles">
@@ -24,12 +24,12 @@
 				</div>
 			</template>
 			<el-tree
-				ref="permissionList"
+				ref="menutree"
 				:props="treeProps"
-				:data="permissions"
-				:default-checked-keys="checkedKeys"
-				show-checkbox
+				:data="menus"
 				node-key="Id"
+				:show-checkbox="true"
+				:default-checked-keys="signIds"
 				default-expand-all
 				:highlight-current="true"
 				:indent="30"
@@ -41,7 +41,7 @@
 							<vxe-button v-if="!!data.Buttons && data.Buttons.length > 0" @click="SelectBtns(data)" content="全选" style="margin-left: 0.625rem;"></vxe-button>
 							<vxe-button v-if="!!data.Buttons && data.Buttons.length > 0" @click="SelectBtns(data, true)" content="反选"></vxe-button>
 						</div>
-						<vxe-checkbox-group v-model="checkedKeys" v-if="!!data.Buttons && data.Buttons.length > 0" class="btn-list">
+						<vxe-checkbox-group v-if="!!data.Buttons && data.Buttons.length > 0" v-model="signIds" class="btn-list">
 							<vxe-checkbox v-for="t in data.Buttons" :label="t.Id" :content="t.Name" :key="t.Id"></vxe-checkbox>
 						</vxe-checkbox-group>
 					</div>
@@ -52,71 +52,67 @@
 </template>
 
 <script>
-let self;
 export default {
 	created() {
-		self = this;
-		self.GetRoles();
+		this.InitData();
 	},
 	data() {
-		return { roles: [], permissions: [], checkedKeys: [], treeProps: { label: 'Name', children: 'Children', class: 'tree-item' }, curRole: {} };
+		return {
+			menus: [],
+			signIds: [],
+			roles: [],
+			treeProps: { label: 'Name', children: 'Children', class: 'tree-item' },
+			curRole: {}
+		};
 	},
 	methods: {
+		InitData() {
+			this.GetRoles();
+			this.GetMenus();
+		},
 		// 获取角色列表
 		GetRoles() {
-			self.roles = [];
-			self.permission = [];
-			self.$post(self.$store.state.serverApi.sysRole.list, { isAll: true }).then(res => {
+			this.$post(this.serverApi.sysRole.list, { isAll: true }).then(res => {
 				if (res.success) {
-					self.roles = res.data.response;
-					if (self.roles.length > 0) {
-						if (IsEmpty(self.roles.find(t => t.Id == self.curRole.Id))) self.curRole = self.roles[0];
-						self.GetRolePermission(self.curRole.Id);
+					this.roles = res.data.response;
+					if (this.roles.length > 0) {
+						if (!!!this.roles.find(t => t.Id == this.curRole.Id)) this.curRole = this.roles[0];
+						this.GetRolePermission(this.curRole.Id);
 					}
 				}
 			});
 		},
-		// 获取单个角色的授权列表
+		GetMenus() {
+			this.$postPage(this.serverApi.permission.list, { isAll: true }).then(res => (this.menus = res));
+		},
+		// 获取角色的授权的权限ID
 		GetRolePermission(id) {
-			self.permissions = [];
-			self.checkedKeys = [];
-			self.$post(self.$store.state.serverApi.authority.rolePermission, { id }).then(res => {
-				if (res.success) {
-					self.permissions = Object.freeze(res.data.permissionTree);
-					self.checkedKeys = res.data.hasAuthed || [];
-				}
-			});
+			this.$post(`${this.serverApi.authority.rolePermission}?roleId=${id}`).then(res => (this.signIds = res.success ? res.data : []));
 		},
 		// 选择角色触发事件
 		SelectRole(role) {
-			if (role.Id != self.curRole.Id) {
-				self.curRole = role;
-				self.GetRolePermission(self.curRole.Id);
+			if (role.Id != this.curRole.Id) {
+				this.curRole = role;
+				this.GetRolePermission(this.curRole.Id);
 			}
 		},
 		// 保存角色授权
 		SaveRoleAuth() {
-			if (!!self.curRole.Id) {
-				var permissionSelected = self.$refs.permissionList.getCheckedKeys().concat(self.$refs.permissionList.getHalfCheckedKeys());
-				permissionSelected = Array.from(new Set(permissionSelected.concat(this.checkedKeys)));
-				self.$post(self.serverApi.authority.saveRoleAuth, { roleId: self.curRole.Id, list: permissionSelected }).then(res => {
-					self.GetRolePermission(self.curRole.Id);
-					self.$alertRes(res);
+			if (!!this.curRole.Id) {
+				// 获取所有已选择或半选的数据
+				var result = Array.from(new Set(this.signIds.concat(this.$refs.menutree.getCheckedKeys().concat(this.$refs.menutree.getHalfCheckedKeys()))));
+				this.$post(`${this.serverApi.authority.saveRoleAuth}?roleId=${this.curRole.Id}`, result).then(res => {
+					if (res.success) this.GetRolePermission(this.curRole.Id);
+					this.$alertRes(res);
 				});
 			}
 		},
 		SelectBtns(menu, reverse = false) {
 			var btnIds = menu.Buttons.map(t => t.Id);
 			if (reverse) {
-				btnIds.forEach(t => {
-					var checkIndex = this.checkedKeys.indexOf(t);
-					if (checkIndex > -1) this.checkedKeys.splice(checkIndex, 1);
-					else this.checkedKeys.push(t);
-				});
-			} else {
-				var list = this.checkedKeys.concat(btnIds);
-				this.checkedKeys = Array.from(new Set(this.checkedKeys.concat(btnIds)));
-			}
+				var res = btnIds.filter(t => !this.signIds.includes(t));
+				this.signIds = this.signIds.filter(t => !btnIds.includes(t)).concat(res);
+			} else this.signIds = Array.from(new Set(this.signIds.concat(btnIds)));
 		}
 	}
 };
@@ -138,6 +134,10 @@ export default {
 }
 .permission-list {
 	width: 65%;
+}
+.permission-list .el-tree-node__content {
+	height: 1.875rem;
+	line-height: 1.875rem;
 }
 .list-item {
 	display: block;
@@ -167,12 +167,11 @@ export default {
 	float: right;
 	padding-right: 2rem;
 }
-
-.custom-tree-node .vxe-checkbox--icon {
+.btn-list .vxe-checkbox--icon {
 	display: none !important;
 }
 
-.custom-tree-node .vxe-checkbox--label {
+.btn-list .vxe-checkbox--label {
 	padding: 0.25rem 0.6rem;
 	display: inline-block;
 	border-style: solid;
@@ -184,5 +183,9 @@ export default {
 .custom-tree-node .vxe-button {
 	height: 100% !important;
 	padding: 0.25rem 0.6rem !important;
+}
+.custom-tree-node .vxe-checkbox > input:checked + .vxe-checkbox--icon + .vxe-checkbox--label {
+	background-color: #409eff;
+	color: white;
 }
 </style>

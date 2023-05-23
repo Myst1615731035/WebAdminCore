@@ -5,14 +5,13 @@
 </template>
 
 <script>
-const pageTitle = '角色';
 export default {
 	props: ['show'],
 	props: { data: { type: Object, default: {} } },
 	data() {
 		return {
 			modalShow: this.show,
-			modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.4, height: window.innerHeight * 0.4 },
+			modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.4, height: window.innerHeight * 0.6, confirmButtonText: '保存' },
 			formOption: {
 				data: {},
 				className: 'form-content',
@@ -23,8 +22,8 @@ export default {
 				items: [
 					{ field: 'Id', title: '主键', visible: false, resetValue: '' },
 					{ field: 'Name', title: '角色名称', resetValue: '', span: 24, itemRender: { name: '$input' } },
-					{ field: 'Sort', title: '排序', resetValue: 0, span: 12, itemRender: { name: '$input', props: { type: 'number' } } },
-					{ field: 'IsDelete', title: '状态', resetValue: false, span: 12, itemRender: { name: '$switch', props: this.$store.state.cache.IsDeleteSwitch } },
+					{ field: 'Sort', title: '排序', resetValue: 0, span: 24, itemRender: { name: '$input', props: { type: 'number' } } },
+					{ field: 'IsDelete', title: '状态', resetValue: false, span: 24, itemRender: { name: '$switch', props: this.$store.state.cache.IsDeleteSwitch } },
 					{ field: 'Description', title: '说明', resetValue: '', span: 24, itemRender: { name: '$textarea', props: { rows: 5 } } }
 				],
 				rules: { Name: [{ required: true, message: '请输入角色名称' }], IsDelete: [{ required: true, message: '请选择角色状态' }] }
@@ -43,6 +42,7 @@ export default {
 			deep: true,
 			handler: function(val) {
 				this.formOption.data = val || {};
+				this.modalOption.title = `${IsEmpty(val) ? '新增' : '编辑'}`;
 			}
 		}
 	},

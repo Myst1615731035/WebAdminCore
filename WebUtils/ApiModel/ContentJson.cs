@@ -4,13 +4,12 @@ namespace ApiModel
 {
     public class ContentJson
     {
-        public ContentJson(string? _msg = null)
+        public ContentJson(string? _msg = null, object data = null)
         {
-            if (_msg.IsNotEmpty())
-            {
-                this.msg = _msg;
-            }
+            if (_msg.IsNotEmpty()) this.msg = _msg;
+            if(data.IsNotEmpty()) this.data = data;
         }
+
 
         public ContentJson(bool _success, string? _msg = null, object data = null)
         {

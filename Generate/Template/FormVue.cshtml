@@ -13,14 +13,14 @@ export default {
     data() {
         return {
             modalShow: this.show,
-            modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.4, height: window.innerHeight * 0.4 },
+            modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.8, height: window.innerHeight * 0.6 },
             formOption: {
-                data: {},
-                className: 'form-content',
-                titleOverflow: true,
-                titleWidth: 100,
-                titleAlign: 'right',
-                preventSubmit: true,
+				data: {},
+				titleWidth: 100,
+				titleAlign: 'right',
+				titleOverflow: true,
+				preventSubmit: true,
+				className: 'form-content',
                 items: [
                     { field: 'Id', title: '主键', visible: false, resetValue: '' },
                     @foreach (var t in @Model.Columns)
@@ -62,7 +62,7 @@ export default {
         },
         async confirm() {
             let err = await this.$refs.form.validate().catch(err => err);
-            if (IsEmpty(err)) this.$post(this.$store.state.serverApi.sysRole.save, this.formOption.data).then(res => this.$formSubmitAfter(this, res));
+            if (IsEmpty(err)) this.$post(this.serverApi..save, this.formOption.data).then(res => this.$formSubmitAfter(this, res));
             else this.$fromValidErrorMsg();
         },
         async close() { }

@@ -19,7 +19,14 @@ export default {
 	data() {
 		return {
 			modalShow: this.show,
-			modalOption: { title: '导航排序 - 拖动排序', type: 'confirm', showFooter: true, width: window.innerWidth * 0.6, height: window.innerHeight * 0.9 },
+			modalOption: {
+				title: '导航排序 - 拖动排序',
+				type: 'confirm',
+				showFooter: true,
+				width: window.innerWidth * 0.6,
+				height: window.innerHeight * 0.9,
+				confirmButtonText: '保存'
+			},
 			treeConfig: {
 				data: [],
 				draggable: true,

@@ -1,12 +1,11 @@
 import _config from '../../../../public/Settings.js';
 import axios from 'axios';
-import router from '../../vue-plugins/router/router.js';
+import router from '../../vue-plugins/router/router.ts';
 import defaultRoute from '../../vue-plugins/router/defaultRoute';
 import store from '../../vue-plugins/store/store';
 import { modal, saveFile } from 'vxe-table';
 const { message: $message } = modal;
 const loginInfo = store.getters.get('loginInfo');
-const { cursite } = store.getters.get('website');
 
 // 引入element-ui loading组件
 const Loading = ElLoading;
@@ -25,10 +24,6 @@ axios.interceptors.request.use(
 		var curTime = new Date();
 		var expiretime = new Date(Date.parse(loginInfo.tokenExpire));
 		if (loginInfo.token && (curTime < expiretime && loginInfo.tokenExpire)) config.headers.Authorization = 'Bearer ' + loginInfo.token;
-		if (!!cursite && !!cursite.Id && !!cursite.Idtag) {
-			config.headers.SiteId = cursite.Id;
-			config.headers.SiteCode = cursite.Idtag;
-		}
 		saveRefreshtime();
 		return config;
 	},

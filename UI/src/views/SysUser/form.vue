@@ -1,37 +1,17 @@
 <template>
-	<vxe-modal ref="modal" v-model="show" v-bind="modalOption" @show="modalShow" @confirm="confirm" @hide="modalHide" :before-hide-method="beforeHideMethod">
+	<vxe-modal ref="modal" v-model="modalShow" v-bind="modalOption" @show="open" @confirm="confirm" @close="close" :before-hide-method="beforeHideMethod">
 		<vxe-form ref="form" v-bind="formOption"></vxe-form>
 	</vxe-modal>
 </template>
 
 <script>
-const pageTitle = '用户';
-const data = {
-	Id: '',
-	Account: '',
-	Password: '',
-	Name: '',
-	Remark: null,
-	RoleIds: [],
-	IDCard: null,
-	Tel: null,
-	Email: null,
-	Address: null,
-	Sex: null,
-	Birth: null,
-	Sort: 0,
-	IsDelete: false
-};
-let self, IsDeleteSwitch;
 export default {
-	created() {
-		self = this;
-	},
-	props: { params: { type: Object, required: true } },
+	props: ['show'],
+	props: { data: { type: Object, default: {} } },
 	data() {
 		return {
-			show: false,
-			modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.4, height: window.innerHeight * 0.6 },
+			modalShow: this.show,
+			modalOption: { title: '', type: 'confirm', showFooter: true, width: window.innerWidth * 0.4, height: window.innerHeight * 0.6, confirmButtonText: '保存' },
 			formOption: {
 				data: {},
 				className: 'form-content',
@@ -72,54 +52,35 @@ export default {
 		};
 	},
 	watch: {
-		params: {
+		modalShow: {
+			immediate: true,
+			handler: function(val) {
+				this.$emit('update:show', val);
+			}
+		},
+		data: {
 			immediate: true,
 			deep: true,
 			handler: function(val) {
-				if (val.show) {
-					// 新增
-					if (IsEmpty(val.data)) {
-						this.formOption.data = DeepClone(data);
-						this.modalOption.title = `新增${pageTitle}`;
-					} else {
-						// 编辑
-						this.formOption.data = DeepClone(val.data);
-						this.modalOption.title = `编辑${pageTitle}`;
-					}
-					this.show = true;
-				}
+				this.formOption.data = val || {};
+				this.modalOption.title = `${IsEmpty(val) ? '新增' : '编辑'}`;
 			}
 		}
 	},
 	methods: {
-		async confirm() {
-			if (await self.dataValidate()) {
-				self.$post(self.$store.state.serverApi.sysUser.save, this.formOption.data).then(res => {
-					if (res.success) {
-						self.$parent.updateRow(res.response);
-						self.$refs.modal.close();
-					} else self.$refs.modal.beforeHideMethod(true);
-					self.$alertRes(res);
-				});
-			} else {
-				self.$message({ content: `参数不符，请检查`, status: 'warning' });
-				self.$refs.modal.beforeHideMethod(true);
-				return;
-			}
-		},
-		async dataValidate() {
-			let form = await self.$refs.form.validate().catch(form => form);
-			return IsEmpty(form);
-		},
-		async modalShow() {
+		async open() {
+			if (IsEmpty(this.data)) this.$refs.form.reset();
 			this.$postPage(this.serverApi.sysRole.list, { isAll: true }).then(res => {
 				var item = this.formOption.items.find(t => t.field == 'RoleIds');
 				if (!!item) item.itemRender.props.options = res.response;
 			});
 		},
-		modalHide() {
-			this.formOption.data = {};
-		}
+		async confirm() {
+			let err = await this.$refs.form.validate().catch(err => err);
+			if (IsEmpty(err)) this.$post(this.serverApi.sysUser.save, this.formOption.data).then(res => this.$formSubmitAfter(this, res));
+			else this.$fromValidErrorMsg();
+		},
+		async close() {}
 	}
 };
 </script>

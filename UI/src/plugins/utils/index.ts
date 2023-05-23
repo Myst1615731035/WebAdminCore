@@ -1,13 +1,8 @@
-// axios
-import axios from './http/index';
-// ExcelHelper
-import excel from './excel/index';
-// 全局函数
-import common from './common/index';
+const modules = import.meta.globEager('./modules/*.ts');
 export default {
-	install: app =>
-		app
-			.use(axios)
-			.use(excel)
-			.use(common)
+	install: app =>{
+		for (var t in modules) {
+		    if(!!t && !!modules[t] && !!modules[t].default) app.use(modules[t].default)
+		}
+	}
 };

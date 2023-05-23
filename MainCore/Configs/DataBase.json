@@ -9,7 +9,7 @@
                 "ConfigId": "Main",
                 "HitRate": 50,
                 "DbType": 1,
-                "ConnectionString": "Data Source=127.0.0.1;Initial Catalog=HRP;User ID=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;"
+                "ConnectionString": "Data Source=127.0.0.1;Initial Catalog=StockData;User ID=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;"
             }
         ],
         "SplitTables": [],
@@ -18,9 +18,9 @@
         //公有字段，对应 RootEntity
         "PublicColumn": [],
         "SetUp": {
-            "CreateDB": true,
+            "CreateDB": false,
             "CreateTable": true,
-            "CreateData": true
+            "CreateData": false
         }
     }
 }

@@ -19,13 +19,6 @@ namespace MainCore.Controllers.System
         }
         #endregion
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ContentJson> Test()
-        {
-            return new ContentJson();
-        }
-
         /// <summary>
         /// 获取缓存数据
         /// </summary>
@@ -33,11 +26,29 @@ namespace MainCore.Controllers.System
         [HttpPost]
         public async Task<ContentJson> GetCache()
         {
-            return new ContentJson(true, "获取成功", new
+            var data = new Dictionary<string, object?>
             {
-                // Dict
-                dict = await _db.Queryable<Dict>().Select(t => new { key = t.Code, items = t.Items }).ToListAsync()
+                {"dict", null },
+                {"productClass",null },
+                { "products", null },
+                {"warehouse",null },
+                {"users",null },
+            };
+
+            await _db.ThenMapperAsync(data, async t =>
+            {
+                data[t.Key] = t.Key switch
+                {
+                    "dict" => await _db.Queryable<Dict>().Select(t => new { key = t.Code, items = t.Items }).ToListAsync(),
+                    "productClass"=> await _db.Queryable<ProductClass>().Select(t => new Option{ Value = t.Id, Label = t.Name }).ToListAsync(),
+                    "products"=> await _db.Queryable<Product>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
+                    "warehouse" => await _db.Queryable<Warehouse>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
+                    "users"=> await _db.Queryable<SysUser>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
+                    _ => new List<object>(),
+                };
             });
+
+            return new ContentJson(true, "获取成功", data);
         }
     }
 }

@@ -17,9 +17,9 @@ import VXETablePluginRenderer from 'vxe-table-plugin-renderer';
 import VXETablePluginMenus from 'vxe-table-plugin-menus';
 import VXETablePluginElement from 'vxe-table-plugin-element';
 import formatOptions from './vxe-table-formatter';
-import '../vxe-table-plugins'; // Vxe-Table 自建扩展插件
-import http from '../utils/http';
-const { postPage: $postPage } = http;
+import customComponents from '../vxe-table-plugins'; // Vxe-Table 自建扩展插件
+import request from '../utils/modules/request';
+const { postPage: $postPage } = request;
 
 VXETable.setup({
 	size: 'medium', // 全局尺寸
@@ -27,32 +27,23 @@ VXETable.setup({
 	version: 0,
 	loadingText: '加载中...', // 自定义loading提示内容，如果为null则不显示文本
 	table: {
-		showHeader: true,
-		keepSource: true,
-		showOverflow: true,
-		showHeaderOverflow: true,
-		showFooterOverflow: true,
-		size: 'medium',
-		autoResize: true,
+		height: 'auto',
 		stripe: false,
 		border: true,
 		round: true,
-		emptyText: '暂无数据',
-		rowConfig: { keyField: '_X_ROW_KEY' },
-		radioConfig: { trigger: 'default' },
-		checkboxConfig: { strict: false, highlight: false, range: false, trigger: 'default' },
-		sortConfig: { remote: false, trigger: 'default', orders: ['asc', 'desc', null], sortMethod: null },
-		filterConfig: { remote: false, filterMethod: null },
-		expandConfig: { trigger: 'default', showIcon: true },
-		treeConfig: { rowField: 'id', parentField: 'parentId', children: 'children', hasChild: 'hasChild', mapChildren: '_X_ROW_CHILD', indent: 20, showIcon: true },
-		tooltipConfig: { enterable: true },
-		menuConfig: { visibleMethod() {} },
-		editConfig: { mode: 'cell', showAsterisk: true },
-		importConfig: { modes: ['insert', 'covering'] },
-		exportConfig: { modes: ['current', 'selected'] },
-		customConfig: { storage: false },
-		scrollX: { gt: 60 },
-		scrollY: { gt: 100 }
+		size: 'medium',
+		loading: true,
+		headerAlign: 'center',
+		resizable: true,
+		showHeaderOverflow: true,
+		showOverflow: true,
+		keepSource: true,
+		tooltipConfig: { showAll: true },
+		rowConfig: { isCurrent: true, isHover: true },
+		editConfig: { trigger: 'click', mode: 'row', showStatus: true },
+		columnConfig: {
+			minWidth: 60
+		}
 	},
 	grid: {
 		size: 'medium',
@@ -125,7 +116,7 @@ VXETable.setup({
 		title: '',
 		resize: true,
 		escClosable: true,
-		confirmButtonText: '保存',
+		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		showZoom: true,
 		lockView: false
@@ -141,10 +132,12 @@ const alertResponse = res => {
 const formSubmitResponse = (node, res = {}) => {
 	if (!!node) {
 		var parent = node.$parent;
-		if (!!parent && !!parent.updateRow && typeof parent.updateRow == 'function' && !!res.success) parent.updateRow(res.response || res.data);
-		alertResponse(res);
 		var modal = node.$refs.modal;
-		if (!!modal && !!modal.close && typeof modal.close == 'function') modal.close();
+		if (!!res.success) {
+			if (!!parent && !!parent.updateRow && typeof parent.updateRow == 'function') parent.updateRow(res.response || res.data);
+			if (!!modal && !!modal.close && typeof modal.close == 'function') modal.close();
+		} else if (!!modal && !!modal.beforeHideMethod && typeof modal.beforeHideMethod == 'function') modal.beforeHideMethod(true);
+		alertResponse(res);
 	}
 };
 const gridQueryParam = (page, sorts, filters, form) => {
@@ -163,7 +156,7 @@ const install = app => {
 	VXETable.use(VXETablePluginMenus);
 	VXETable.use(VXETablePluginElement);
 	VXETable.formats.mixin(formatOptions);
-	app.use(VXETable);
+	app.use(VXETable).use(customComponents);
 	// 公用函数
 	app.config.globalProperties._utils = _utils;
 	// 弹窗
@@ -176,17 +169,25 @@ const install = app => {
 	app.config.globalProperties.$saveFile = VXETable.saveFile;
 	app.config.globalProperties.$readFile = VXETable.readFile;
 	// 自定义快捷功能
-	// 表格请求的公用方法
+	// 常规表格请求的公用方法
 	app.config.globalProperties.$gridQuery = url => {
 		return ({ page, sorts, filters, form }) => new Promise((resolve, reject) => resolve($postPage(url, gridQueryParam(page, sorts, filters, form)))).then(res => res || {});
 	};
+	// 树形表格的数据请求方法
 	app.config.globalProperties.$treeGridQuery = url => {
 		return ({ page, sorts, filters, form }) => new Promise((resolve, reject) => resolve($postPage(url, gridQueryParam(page, sorts, filters, form)))).then(res => res || {});
 	};
+	// 表格数据删除方法
+	app.config.globalProperties.$gridDelRow = url => {
+		return;
+	};
+	// 请求结果提示
 	app.config.globalProperties.$alertRes = alertResponse;
+	// 表单提交结果处理
 	app.config.globalProperties.$formSubmitAfter = formSubmitResponse;
+	// 表单校验失败的提示
 	app.config.globalProperties.$fromValidErrorMsg = () => VXETable.modal.message({ content: `数据错误，请检查`, status: 'warning' });
-	//定义弹窗公用取消函数
+	//阻止弹窗关闭
 	app.config.globalProperties.beforeHideMethod = fromFormValid => {
 		if (fromFormValid === true || fromFormValid.type == 'confirm') return new Error();
 	};

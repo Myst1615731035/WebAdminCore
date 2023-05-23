@@ -3,12 +3,17 @@ export default {
 	state: () => ({
 		login: '/api/Login/Token',
 		cache: '/api/Common/GetCache',
-		user: { getInfo: '/api/SysUser/GetInfoByToken', getAuth: '/api/SysUser/GetUserAuth' },
-		permission: { list: '/api/Permission/GetTree', save: '/api/Permission/Save', saveBtn: '/api/Permission/SaveBtn', saveSort: '/api/Permission/SaveSort' },
 		authority: { rolePermission: '/api/SysRole/GetRolePermission', saveRoleAuth: '/api/SysRole/SaveRoleAuth' },
-		dictionary: { list: '/api/Dictionary/GetList', itemList: '/api/Dictionary/GetItemList', save: '/api/Dictionary/Save' },
-		sysUser: { list: '/api/SysUser/GetList', save: '/api/SysUser/Save', resetpw: '/api/SysUser/ReSetPassword', saveUserSite: '/api/SysUser/SaveUserSite' },
-		sysRole: { list: '/api/SysRole/GetList', save: '/api/SysRole/Save' },
-		instock: { list: '/api/Instock/GetList', save: '/api/Instock/Save' }
+		user: { getInfo: '/api/SysUser/GetInfoByToken', getAuth: '/api/SysUser/GetUserAuth' },
+		permission: { list: '/api/Permission/GetTree', save: '/api/Permission/Save', saveSort: '/api/Permission/SaveSort', delete: '/api/Permission/Delete' },
+		dictionary: { list: '/api/Dictionary/GetList', save: '/api/Dictionary/Save', delete: '/api/Dictionary/Delete' },
+		sysUser: { list: '/api/SysUser/GetList', save: '/api/SysUser/Save', resetpw: '/api/SysUser/ReSetPassword', delete: '/api/SysUser/Delete' },
+		sysRole: { list: '/api/SysRole/GetList', save: '/api/SysRole/Save', delete: '/api/SysRole/Delete' },
+		instock: { list: '/api/Instock/GetList', save: '/api/Instock/Save' },
+		outstock: { list: '/api/Outstock/GetList', save: '/api/Outstock/Save' },
+		product: { list: '/api/product/GetList', save: '/api/product/Save' },
+		productClass: { list: '/api/productClass/GetList', save: '/api/productClass/Save' },
+		warehouse: { list: '/api/warehouse/GetList', save: '/api/warehouse/Save' },
+		gene: { list: '/api/gene/GetList', save: '/api/gene/Save' },
 	})
 };

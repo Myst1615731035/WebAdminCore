@@ -5,8 +5,6 @@ using SqlSugar;
 using WebUtils;
 using WebUtils.HttpContextUser;
 using SqlSugar.Extensions;
-using Newtonsoft.Json.Linq;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using WebModel.Entitys;
 using WebService.IService;
 
@@ -54,16 +52,21 @@ namespace MainCore.Controllers
                 var model = JwtHelper.SerializeJwt(token);
                 if (model.IsNotEmpty() && model.Uid.IsNotEmpty())
                 {
-                    var user = await _service.GetUserInfo(model.Uid.ObjToString());
-                    if (user.IsNotEmpty())
-                    {
-                        res = new ContentJson()
-                        {
-                            success = true,
-                            msg = "获取成功",
-                            data = user
-                        };
-                    }
+                    string userId = model.Uid.ObjToString();
+                    var user = await _service.Db.Queryable<SysUser>().Where(u => u.Id == userId && !u.IsDelete)
+                                    .Select(u => new
+                                    {
+                                        UserId = u.Id,
+                                        u.Account,
+                                        u.Name,
+                                        u.Avatar,
+                                        u.Sex,
+                                        u.Email,
+                                        u.Remark,
+                                        RoleNames = SqlFunc.Subqueryable<SysRole>()
+                                                    .Where(r => SqlFunc.JsonArrayAny(u.RoleIds, r.Id) && !r.IsDelete).ToList(r => r.Name)
+                                    }).FirstAsync();
+                    if (user.IsNotEmpty()) res = new ContentJson(true, "获取成功", user);
                 }
             }
             return res;
@@ -103,12 +106,7 @@ namespace MainCore.Controllers
             var exp = Expressionable.Create<SysUser>();
             // 增加查询条件
             if (page.keyword.IsNotEmpty()) exp = exp.And(t => t.Name.Contains(page.keyword) || t.Account.Contains(page.keyword) || t.Email.Contains(page.keyword));
-            return new ContentJson()
-            {
-                msg = "success",
-                success = true,
-                data = await _service.GetUserList(exp.ToExpression(), page)
-            };
+            return new ContentJson(true, "获取成功", await _service.QueryPage(exp.ToExpression(), page));
         }
 
         /// <summary>
@@ -144,10 +142,9 @@ namespace MainCore.Controllers
             var res = new ContentJson("保存失败");
             // 新增
             if (entity.Id.IsEmpty()) entity.Password = MD5Helper.MD5Encrypt32(entity.Password);
-
-            // 更新数据
-            if (entity.Id.IsNotEmpty())
+            else
             {
+                // 更新数据
                 // 获取原用户信息
                 var user = await _service.QueryById(entity.Id);
                 // 处理新密码
@@ -159,16 +156,15 @@ namespace MainCore.Controllers
                         res.msg = "原始密码验证错误，请确认";
                         return res;
                     }
+                    // 处理其他数据
+                    entity.Password = MD5Helper.MD5Encrypt32(entity.NewPassword);
                 }
-                // 处理其他数据
-                entity.Password = MD5Helper.MD5Encrypt32(entity.NewPassword);
                 entity = user.UpdateProp(entity);
             }
-            
-            if (await _service.SaveUser(entity))
+
+            if (await _service.Storageable(entity) > 0)
             {
-                res = new ContentJson(true, "保存成功");
-                res.data = entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null;
+                res = new ContentJson(true, "保存成功", entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null);
             }
             return res;
         }
@@ -178,7 +174,7 @@ namespace MainCore.Controllers
         {
             var res = new ContentJson("无效用户");
             var user = await _service.QueryById(Id);
-            if(user.IsNotEmpty() && user.Id.IsNotEmpty())
+            if (user.IsNotEmpty() && user.Id.IsNotEmpty())
             {
                 var newPw = RandomHelper.GetRandomString(12);
                 user.Password = MD5Helper.MD5Encrypt32(newPw);

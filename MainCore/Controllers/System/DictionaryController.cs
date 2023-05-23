@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using NPOI.OpenXmlFormats.Dml.Chart;
 using SqlSugar;
 using SqlSugar.Extensions;
+using System;
+using WebModel.AppdixEntity;
 using WebModel.Entitys;
 using WebService.IService;
 using WebUtils;
@@ -71,7 +73,24 @@ namespace MainCore.Controllers.System
             var res = new ContentJson("保存失败");
             //重复判断
             if (await _service.Db.Queryable<Dict>().Where(t => t.Name == entity.Name && t.Id != entity.Id).AnyAsync()) res.msg = "已存在相同名称的字典项";
-            else if (await _service.Storageable(entity) > 0) res = new ContentJson(true, "保存成功");
+            else
+            {
+                entity.Items.Sort((a, b) => a.Value.CompareTo(b.Value));
+                if (await _service.Storageable(entity) > 0) res = new ContentJson(true, "保存成功", entity);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取字典数据实体
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ContentJson> Delete(string Id)
+        {
+            var res = new ContentJson("删除失败");
+            if(await _service.DeleteById(Id)) res = new ContentJson(true, "删除成功");
             return res;
         }
         #endregion

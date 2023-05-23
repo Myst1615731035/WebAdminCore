@@ -37,9 +37,10 @@ for (var i in formRenders) {
 }
 VXETable.renderer.mixin(modules);
 
-// import radioBtnGroup from './form-render/radioBtnGroup.vue';
-// VXETable.renderer.add('$radioBtnGroup', {
-// 	renderItemContent(renderOpts, params) {
-// 		return h(radioBtnGroup, FormItemRender(radioBtnGroup, renderOpts, params));
-// 	}
-// });
+export default {
+	install: app => {
+		for (var m in modules) {
+			app.component(`uc-${m.substring(1)}`, modules[m].default);
+		}
+	}
+};

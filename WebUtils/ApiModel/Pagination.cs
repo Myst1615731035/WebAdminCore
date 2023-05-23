@@ -56,8 +56,7 @@ namespace ApiModel
 
     public class Option
     {
-        public object value { get; set; }
-        public string label { get; set; }
-        public string enLabel { get; set; }
+        public object Value { get; set; }
+        public string Label { get; set; }
     }
 }

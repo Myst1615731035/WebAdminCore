@@ -33,7 +33,7 @@ var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
 //types
 //    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService/IWorkService", t => $"I{t.EntityName}Service.cs")
 //    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs");
-types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+//types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
 types.FilterRootColumns(typeof(RootEntity<string>))
     .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
     .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");

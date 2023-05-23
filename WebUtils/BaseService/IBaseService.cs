@@ -13,6 +13,13 @@ namespace WebUtils.BaseService
     {
         ISqlSugarClient Db { get; }
 
+        #region 事务方法
+        void BeginTran();
+        void CommitTran();
+        void RollbackTran();
+
+        #endregion
+
         #region 单表方法
         #region 查
         Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression);
@@ -61,7 +68,7 @@ namespace WebUtils.BaseService
         /// </summary>
         /// <param name="listEntity"></param>
         /// <returns></returns>
-        Task<int> Add(List<TEntity> listEntity);
+        Task<int> Insert(List<TEntity> listEntity);
 
         /// <summary>
         /// 批量插入实体(雪花)
@@ -165,22 +172,14 @@ namespace WebUtils.BaseService
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression);
 
         /// <summary>
-        /// 根据表达式，指定返回对象模型，查询
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> expression);
-
-        /// <summary>
         /// 根据表达式，指定返回对象模型，排序，查询
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="expression"></param>
-        /// <param name="whereExpression"></param>
-        /// <param name="strOrderByFileds"></param>
+        /// <param name="resultExp"></param>
+        /// <param name="whereExp"></param>
+        /// <param name="orderExp"></param>
         /// <returns></returns>
-        Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> expression, Expression<Func<TEntity, bool>> whereExpression, string strOrderByFileds);
+        Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression <Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null);
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, string strOrderByFileds);
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression);
         Task<List<TEntity>> Query(string strWhere, string strOrderByFileds);
@@ -199,7 +198,14 @@ namespace WebUtils.BaseService
         /// <param name="expression"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        Task<Pagination> QueryPage(Expression<Func<TEntity, bool>> expression, Pagination page);
+        Task<Pagination> QueryPage(Expression<Func<TEntity, bool>> whereExp, Pagination pageModel);
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        Task<Pagination> QueryPage<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Pagination pageModel);
 
         /// <summary>
         /// 三表联查

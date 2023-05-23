@@ -1,52 +1,30 @@
 <template>
 	<div class="container-grid">
-		<vxe-grid ref="grid" v-bind="gridOptions" @toolbar-button-click="toolBtnClick" @toolbar-tool-click="toolBtnClick"></vxe-grid>
-		<pageForm :params="params"></pageForm>
+		<vxe-grid ref="grid" v-bind="gridOptions" @cell-dblclick="toolClick({ code: 'edit' })" @toolbar-button-click="toolClick" @toolbar-tool-click="toolClick"></vxe-grid>
+		<pageForm v-model="form.show" :data="form.data"></pageForm>
 	</div>
 </template>
 
 <script>
-const query = ({ page, sorts, filters, form }) => {
-	return new Promise((resolve, reject) => {
-		page = Object.assign(Object.assign({ isAll: page == undefined }, page), {
-			keyword: form.keyword,
-			form: Object.assign({}, form),
-			sorts: Object.assign({}, sorts),
-			filters: Object.assign({}, filters)
-		});
-		resolve(self.$postPage(self.$store.state.serverApi.sysUser.list, page));
-	}).then(res => res);
-};
 import pageForm from './form.vue';
-let self;
 export default {
-	created() {
-		self = this;
-	},
 	components: { pageForm },
 	data() {
+		const query = this.$gridQuery(this.serverApi.sysUser.list);
 		return {
-			params: {},
-			assign: { userId: '', userName: '', show: false, siteids: [] },
+			form: { show: false, data: null },
 			gridOptions: {
-				border: true,
+				height: 'auto',
 				headerAlign: 'center',
 				resizable: true,
-				showHeaderOverflow: true,
-				showOverflow: true,
-				highlightHoverRow: true,
 				keepSource: true,
-				height: 'auto',
-				highlightCurrentRow: true,
-				highlightHoverRow: true,
-				showOverflow: true,
 				tooltipConfig: { showAll: true },
-				rowConfig: { useKey: true, keyField: 'Id' },
+				rowConfig: { useKey: true, isCurrent: true, isHover: true },
 				toolbarConfig: {
 					buttons: [
 						{ code: 'add', name: '新增', icon: 'fa fa-plus' },
 						{ code: 'edit', name: '编辑', icon: 'fa fa-edit' },
-						{ code: 'assign', name: '站点授权', icon: 'fa fa-tags' }
+						{ code: 'del', name: '删除', icon: 'fa fa-trash' }
 					],
 					tools: [{ code: 'resetpw', name: '重置密码', icon: 'fa fa-circle' }]
 				},
@@ -59,7 +37,7 @@ export default {
 					{ field: 'Account', title: '账户' },
 					{ field: 'Sex', title: '性别', width: 120 },
 					{ field: 'Birth', title: '生日', width: 140 },
-					{ field: 'IsDelete', title: '状态', width: 120, align: 'center' }
+					{ field: 'IsDelete', title: '状态', width: 120, align: 'center', formatter: ['formatBool', true] }
 				],
 				formConfig: {
 					titleWidth: 100,
@@ -68,12 +46,12 @@ export default {
 					items: [
 						{ field: 'keyword', span: 4, itemRender: { name: '$input', props: { placeholder: 'search...', clearable: true } } },
 						{
-							span: 20,
-							align: 'right',
+							span: 4,
+							align: 'left',
 							collapseNode: false,
 							itemRender: {
 								name: '$buttons',
-								children: [{ props: { type: 'submit', content: 'search', status: 'primary' } }, { props: { type: 'reset', content: 'reset' } }]
+								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fa fa-refresh' } }]
 							}
 						}
 					]
@@ -82,25 +60,33 @@ export default {
 		};
 	},
 	methods: {
-		toolBtnClick({ code }) {
-			switch (code) {
-				case 'add':
+		toolClick({ code }) {
+			const funcs = {
+				add: () => {
 					this.$refs.grid.clearCurrentRow();
-					this.params = { show: true };
-					break;
-				case 'edit':
+					this.form = { show: true, data: null };
+				},
+				edit: () => {
 					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row)) this.params = { show: true, data: row };
-					else self.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
-					break;
-				case 'assign':
+					if (IsNotEmpty(row)) this.form = { show: true, data: row };
+					else this.$message({ content: `请选择需要处理的记录`, status: 'warning' });
+				},
+				del: () => {
 					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row)) this.assign = { show: true, userId: row.Id, userName: row.Name, siteids: Object.freeze(row.SiteIds) };
-					else self.$message({ content: `请选择用户`, status: 'warning' });
-					break;
-				case 'resetpw':
+					if (IsEmpty(row)) this.$message({ content: `请选择需要处理的记录`, status: 'warning' });
+					else {
+						this.$confirm({ content: '确认删除?' }).then(res => {
+							if (res == 'confirm')
+								this.$post(`${this.serverApi.dictionary.delete}?Id=${row.Id}`).then(res => {
+									this.$alertRes(res);
+									if (res.success) this.$refs.grid.remove(row);
+								});
+						});
+					}
+				},
+				resetpw: () => {
 					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row))
+					if (IsNotEmpty(row)) {
 						this.$confirm({ content: `是否重置用户: ${row.Name} 的密码?`, confirmButtonText: '重置' }).then(res => {
 							if (res == 'confirm') {
 								this.$get(`${this.serverApi.sysUser.resetpw}?Id=${row.Id}`).then(res => {
@@ -124,20 +110,15 @@ export default {
 								});
 							}
 						});
-					else self.$message({ content: `请选择用户`, status: 'warning' });
-					break;
-			}
-		},
-		cellDbClick() {
-			this.toolBtnClick({ code: 'edit' });
+					} else this.$message({ content: `请选择用户`, status: 'warning' });
+				}
+			};
+			if (!!funcs[code] && this.$CheckGridBtnAuth(this.$route, code)) funcs[code]();
 		},
 		updateRow(newRow) {
 			const row = this.$refs.grid.getCurrentRecord();
-			if (IsEmpty(row)) {
-				this.$refs.grid.commitProxy('query');
-			} else {
-				this.$refs.grid.reloadRow(row, newRow);
-			}
+			if (IsEmpty(row)) this.$refs.grid.commitProxy('query');
+			else this.$refs.grid.reloadRow(row, newRow);
 		}
 	}
 };

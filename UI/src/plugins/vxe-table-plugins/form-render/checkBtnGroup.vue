@@ -60,17 +60,17 @@ export default {
 	border-width: 1px 1px 1px 0;
 	max-width: 50em;
 }
-
 .check-btn-group .check-btn-label:first-child .vxe-checkbox--label {
 	border-left: 1px solid #dcdfe6;
 	border-radius: 4px 0 0 4px;
 }
-
 .check-btn-group .check-btn-label:last-child .vxe-checkbox--label {
 	border-radius: 0 4px 4px 0;
 }
-
 .vxe-checkbox > input:checked + .vxe-checkbox--icon + .vxe-checkbox--label {
+	color: #606266;
+}
+.check-btn-group .vxe-checkbox > input:checked + .vxe-checkbox--icon + .vxe-checkbox--label {
 	background-color: #409eff;
 	color: white;
 }
