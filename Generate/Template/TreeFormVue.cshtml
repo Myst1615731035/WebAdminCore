@@ -23,6 +23,13 @@ export default {
 				className: 'form-content',
                 items: [
                     { field: 'Id', title: '主键', visible: false, resetValue: '', itemRender: { name: '$text' }  },
+                    {
+                        field: 'Pid',
+                        title: '上级',
+                        resetValue: '',
+                        span: 24,
+                        itemRender: { name: '$treeSelect', props: { data: [], checkStrictly: true, placeholder: '选择上级' } },
+                    },
                     @foreach (var t in @Model.Columns)
                     {
                         @:{ field: '@t.Name', title: '@t.Description.Replace("'","\"")', resetValue: @(TemplateService.GetFormVueDefultValue(t)), span: 24, itemRender: { name: '$input' } },
@@ -58,7 +65,11 @@ export default {
     },
     methods: {
         async open() {
-            if (IsEmpty(this.data)) this.$refs.form.reset();
+            this.$post(this.serverApi.@(Model.EntityName).list, { isOption: true }).then((res) => {
+                //父级筛选项
+                this.formOption.items.find((t) => t.field == 'Pid').itemRender.props.data = res.data;
+                if (IsEmpty(this.data)) this.$refs.form.reset();
+            });
         },
         async confirm() {
             let err = await this.$refs.form.validate().catch(err => err);

@@ -28,15 +28,22 @@ using WebUtils.Attributes;
 var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
                     .Select(Assembly.LoadFrom).ToArray()
                     .SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
-                    .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<SystemAuthTable>().IsEmpty())
+                    .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<DataSeedAttribute>().IsEmpty())
                     .ToClassInfos();
-//types
-//    .CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService/IWorkService", t => $"I{t.EntityName}Service.cs")
-//    .CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService/WorkService", t => $"{t.EntityName}Service.cs");
-//types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
-types.FilterRootColumns(typeof(RootEntity<string>))
+// 生成Controller
+types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+
+// 生成UI 基本表格模式, 无下级字段
+types.Where(t => !t.Type.GetProperties().Any(p => p.Name.Equals("Children", StringComparison.OrdinalIgnoreCase))).ToList()
+    .FilterRootColumns(typeof(RootEntity<string>))
     .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
     .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");
+
+// 生成UI 树形表格模式
+types.Where(t => t.Type.GetProperties().Any(p => p.Name.Equals("Children", StringComparison.OrdinalIgnoreCase))).ToList()
+    .FilterRootColumns(typeof(RootEntity<string>))
+    .CreateFile("Template/TreeGridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
+    .CreateFile("Template/TreeFormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");
 #endregion
 
 "生成完成".WriteSuccessLine();

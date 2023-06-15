@@ -39,10 +39,13 @@ namespace MainCore.Controllers
 		{
 			var exp = Expressionable.Create<@Model.EntityName>();
 			// 增加查询条件
-			return new ContentJson{
+			return new ContentJson
+            {
 				msg = "success",
 				success = true,
-				data = await _service.QueryPage(exp.ToExpression(), page)
+				data = page.isOption ?
+                        await _service.QueryPage(page, t=> new @Model.EntityName { Id = t.Id, Name = t.Name },  exp.ToExpression())
+                        : await _service.QueryPage(page,exp.ToExpression())
 			};
 		}
 
@@ -78,8 +81,7 @@ namespace MainCore.Controllers
 			var res = new ContentJson("保存失败");
 			if (await _service.Storageable(entity) > 0)
 			{
-				res = new ContentJson(true, "保存成功");
-				res.data = entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null;
+                res = new ContentJson(true, "保存成功", entity);
 			}
 			return res;
 		}
@@ -90,39 +92,11 @@ namespace MainCore.Controllers
 		/// <param name="entity"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public async Task<ContentJson> Delete([FromBody] @Model.EntityName entity)
+		public async Task<ContentJson> Delete([FromQuery] string Id)
 		{
 			//结果定义
-			var res = new ContentJson("保存失败");
-			if (entity.Id.IsNotEmpty())
-			{
-				if (await _service.Delete(entity))
-				{
-					res.msg = "数据已删除";
-					res.success = true;
-				}
-			}
-			return res;
-		}
-
-		/// <summary>
-		/// 删除实体
-		/// </summary>
-		/// <param name="entity"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public async Task<ContentJson> DeleteById([FromBody] object Id)
-		{
-			//结果定义
-			var res = new ContentJson("保存失败");
-			if (Id.IsNotEmpty())
-			{
-				if (await _service.DeleteById(Id))
-				{
-					res.msg = "数据已删除";
-					res.success = true;
-				}
-			}
+			var res = new ContentJson("删除失败");
+            if(await _service.DeleteById(Id)) res = new ContentJson(true, "删除成功");
 			return res;
 		}
 		#endregion
