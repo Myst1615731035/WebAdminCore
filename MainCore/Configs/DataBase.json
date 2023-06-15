@@ -9,14 +9,14 @@
                 "ConfigId": "Main",
                 "HitRate": 50,
                 "DbType": 1,
-                "ConnectionString": "Data Source=127.0.0.1;Initial Catalog=WebSiteCore2;User ID=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;",
+                "ConnectionString": "Data Source=127.0.0.1;Initial Catalog=WebAdminCore;User ID=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;",
             }
         ],
         "OriginSplitTableInit": false,
         "SetUp": {
-            "CreateDB": false,
-            "CreateTable": false,
-            "CreateData": false
+            "CreateDB": true,
+            "CreateTable": true,
+            "CreateData": true
         }
     }
 }

@@ -17,3 +17,4 @@ MainCore/Controllers/Works
 MainCore/DataProtection
 WebModel/WorkEntity
 WebModel/WorkRoot
+UI/package-lock.json

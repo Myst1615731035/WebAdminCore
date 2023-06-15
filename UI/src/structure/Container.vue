@@ -30,7 +30,7 @@
 				</el-col>
 				<el-col :span="12" style="text-align: right">
 					<!-- Right -->
-					<topBtn></topBtn>
+					<!-- <topBtn></topBtn> -->
 					<vxe-button size="mini" content="任务栏" @click="drawerConfig.show = true"></vxe-button>
 				</el-col>
 			</el-row>
@@ -48,10 +48,10 @@
 </template>
 
 <script>
-import topBtn from './works/topBtn.vue';
+// import topBtn from './works/topBtn.vue';
 export default {
 	name: 'container',
-	components: { topBtn },
+	// components: { topBtn },
 	data() {
 		return {
 			tags: [],

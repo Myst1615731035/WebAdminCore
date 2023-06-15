@@ -1,13 +1,13 @@
 import { toRaw } from 'vue';
 import { createStore, createLogger } from 'vuex';
-import createPersistedState from 'vuex-persistedstate';
+import createPersistedState from 'vuex-plugin-persistedstate';
 
 // 全局获取vuex的分区数据
 const modules = {};
 const files = import.meta.globEager('./modules/*.ts');
 if (IsNotEmpty(files)) Object.keys(files).forEach(t => (modules[`${t.match(/[^/]+(?!.*\/)+(?=.ts)/gi)[0]}`] = files[t].default));
 // 日志
-const debug = process.env.NODE_ENV !== 'production';
+const debug = process.env.NODE_ENV != 'production';
 // 数据持久化处理
 let plugins = [createPersistedState()];
 if (debug) plugins.push(createLogger());

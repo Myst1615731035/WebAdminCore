@@ -3,6 +3,7 @@
 </template>
 
 <script>
+// 多租户处理
 export default {
 	data() {
 		return { siteId: '', optionProp: { label: 'Name', value: 'Id' }, siteList: [] };

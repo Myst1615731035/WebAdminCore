@@ -29,7 +29,6 @@ namespace MainCore.Controllers.System
             var data = new Dictionary<string, object?>
             {
                 {"dict", null },
-                { "area", null }
             };
 
             await _db.ThenMapperAsync(data, async t =>
@@ -37,7 +36,6 @@ namespace MainCore.Controllers.System
                 data[t.Key] = t.Key switch
                 {
                     "dict" => await _db.Queryable<Dict>().Select(t => new { key = t.Code, items = t.Items }).ToListAsync(),
-                    "area" => await _db.Queryable<Area>().Select(t => new Option{ Label = t.Name, Value = t.Id }).ToListAsync(),
                     _ => new List<object>(),
                 };
             });

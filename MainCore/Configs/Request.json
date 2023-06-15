@@ -2,7 +2,7 @@
     //Http请求配置
     "HttpRequest": {
         "Https": false,
-        "AbsolutPath": "/adminpage",
+        "AbsolutPath": "", // 系统部署在多级路径下时，请将域名后的路径填入，用于路径解析处理， 例如：https://www.baidu.com/admin/；此处填入: /admin
         "Cors": {
             "PolicyName": "CorsIpAccess",
             "EnableAllIPs": false,

@@ -4,18 +4,16 @@ import request from './../../utils/modules/request';
 const { GetUserInfo } = request;
 // 添加缓存刷新功能
 export default {
-	install: app => {
+	install: (app) => {
 		// 判断登录状态
-		if (IsNotEmpty(window.localStorage.Token)) {
+		if (IsNotEmpty($store.getters.get('loginInfo', 'token'))) {
 			// 获取本地菜单缓存
-			var permission = JSON.parse(window.localStorage.Permission || '[]');
+			var permission = $store.getters.get('layout', 'menu');
 			if (IsNotEmpty(permission)) $router.filterRouter(permission);
 			// 本地菜单缓存失效;从服务器获取权限菜单
 			else GetUserInfo();
-			// 获取本地上次访问的地址
-			if (IsNotEmpty(window.localStorage.CurrentRoute)) $store.commit('saveCurrentRoute', JSON.parse(window.localStorage.CurrentRoute));
 		}
 		// 登录状态失效则跳转到登录页面
 		else $router.push('/login');
-	}
+	},
 };

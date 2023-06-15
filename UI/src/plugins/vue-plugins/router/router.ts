@@ -17,14 +17,14 @@ const routes = [
 	{ path: '/login', component: Login, name: 'login', iconCls: 'fa-address-card', meta: { title: 'Sign In', notTab: true, notLayout: true } },
 	{ path: '/personal', component: Personal, name: '个人信息', hidden: true },
 	{ path: '/:pathMatch(.*)', hidden: true, redirect: { path: '/404' } },
-	{ path: '/404', component: Page404, name: 'NoPage', meta: { title: 'NoPage', requireAuth: false, NoTabPage: true, notLayout: true }, hidden: true }
+	{ path: '/404', component: Page404, name: 'NoPage', meta: { title: 'NoPage', requireAuth: false, NoTabPage: true, notLayout: true }, hidden: true },
 ];
 const router = createRouter({ history: createWebHistory(_config.absolutPath), routes });
 
 // 全局路由公约，在路由跳转之前
 router.beforeEach(async (to, from, next) => {
 	if (to.path == '/login') next();
-	else if (IsNotEmpty(window.localStorage.Token))
+	else if (IsNotEmpty($store.getters.get('loginInfo', 'token')))
 		if (to.matched.length > 0) next();
 		else next('/404');
 	else next('/login');
@@ -36,13 +36,13 @@ router.afterEach(async (to, from, failure) => {
 });
 
 // 对获取到的后台数据进行筛选后添加路由
-const filterRouter = list => {
-	list.filter(t => {
+const filterRouter = (list) => {
+	list.filter((t) => {
 		if (IsNotEmpty(t.Path) && t.Children.length == 0) {
 			if (t.Path == '/') router.addRoute({ name: t.Name, path: t.Path, component: Home });
 			else {
 				try {
-					var index = Object.keys(modules).find(f => f.toLocaleLowerCase().indexOf(t.Path.toLocaleLowerCase()) > -1);
+					var index = Object.keys(modules).find((f) => f.toLocaleLowerCase().indexOf(t.Path.toLocaleLowerCase()) > -1);
 					if (!!index) router.addRoute({ name: t.Name, path: t.Path, component: modules[index], params: { buttons: t.Buttons || [] } });
 				} catch (error) {
 					console.info(error);

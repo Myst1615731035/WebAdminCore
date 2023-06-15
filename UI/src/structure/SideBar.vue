@@ -8,7 +8,6 @@
 			<div v-else>{{ layout.logo.subTitle }}</div>
 		</el-header>
 		<el-main style="overflow-y: auto">
-			<multiTenant></multiTenant>
 			<el-menu :unique-opened="false" :default-active="layout.currentRoute.path" :background-color="'#304156'" :text-color="'#fff'" :router="true">
 				<sideMenu v-for="(nav, index) in layout.menu" :nav="nav" :key="index"></sideMenu>
 			</el-menu>
@@ -19,10 +18,10 @@
 <script>
 import { useStore } from 'vuex';
 import sideMenu from './SideMenu.vue';
-import multiTenant from './MultiTenant.vue';
+// import multiTenant from './MultiTenant.vue';
 export default {
 	name: 'sidebar',
-	components: { sideMenu, multiTenant },
+	components: { sideMenu },
 	setup() {
 		const $store = useStore();
 		const { layout } = $store.state;
