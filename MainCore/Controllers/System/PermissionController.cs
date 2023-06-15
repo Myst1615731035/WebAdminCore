@@ -43,7 +43,9 @@ namespace MainCore.Controllers.System
                 exp = exp.And(t => t.Name.Contains(page.keyword) || t.Description.Contains(page.keyword));
                 list = await _service.Query(exp.ToExpression(), t => t.Sort);
             }
-            else list = await _service.QueryTree(t => t.Children, t => t.Pid, "", null, t => t.Sort);
+            else list = page.isOption ?
+                    await _service.QueryTree(t=>new Menu { Id = t.Id, Pid = t.Pid, Name = t.Name, Sort = t.Sort, }, t => t.Children, t => t.Pid, "", null, t => t.Sort)
+                    : await _service.QueryTree(t => t.Children, t => t.Pid, "", null, t => t.Sort);
 
             return new ContentJson()
             {
@@ -99,7 +101,7 @@ namespace MainCore.Controllers.System
             #endregion
 
             _service.BeginTran();
-            if (await _service.Storageable(entity) > 0 && await _button.Storageable(entity.Buttons) > 0)
+            if (await _service.Storageable(entity) > 0 && (entity.Buttons.Count == 0 || await _button.Storageable(entity.Buttons) > 0))
             {
                 _service.CommitTran();
                 result = new ContentJson(true, "保存成功");

@@ -4,7 +4,7 @@ using WebUtils.Attributes;
 
 namespace WebModel.Entitys
 {
-    [SystemAuthTable]
+    [DataSeed]
     [SugarTable("Sys_Button")]
     public partial class Button: RootEntity<string>
     {

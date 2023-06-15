@@ -46,7 +46,7 @@ export default {
 							//登录成功
 							self.logining = false;
 							self.loginStr = '登录成功';
-							self.$Notic({ title: 'Success', message: h('i', { style: 'color: teal' }, 'Welcome'), type: 'success', duration: 5000 });
+							self.$notify({ title: 'Success', message: h('i', { style: 'color: teal' }, 'Welcome'), type: 'success', duration: 5000 });
 							//提交数据仓库
 							self.$store.commit('saveToken', res.data.token);
 							self.$store.commit('saveTokenExpire', new Date(new Date().setMinutes(new Date().getMinutes() + res.data.expire)));

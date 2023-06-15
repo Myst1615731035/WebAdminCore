@@ -19,8 +19,9 @@ export default {
 				resizable: true,
 				keepSource: true,
 				tooltipConfig: { showAll: true },
-				proxyConfig: { ajax: { query: query, queryAll: query } },
 				rowConfig: { useKey: true, isCurrent: true, isHover: true },
+				proxyConfig: { ajax: { query: query, queryAll: query } },
+				pagerConfig: { align: 'center', border: true, background: true, perfect: true, pageSize: 50, pageSizes: [50, 100, 200] },
 				toolbarConfig: {
 					buttons: [
 						{ code: 'add', name: '新增', icon: 'fa fa-plus' },
@@ -28,7 +29,6 @@ export default {
 						{ code: 'del', name: '删除', icon: 'fa fa-trash' }
 					]
 				},
-				pagerConfig: { align: 'center', border: true, background: true, perfect: true, pageSize: 50, pageSizes: [50, 100, 200] },
 				columns: [
 					{ type: 'seq', title: '序号', width: 60, align: 'center' },
 					{ type: 'checkbox', width: 60, align: 'center' },
@@ -48,7 +48,7 @@ export default {
 							collapseNode: false,
 							itemRender: {
 								name: '$buttons',
-								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fa fa-refresh' } }]
+								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: {type: 'reset', icon: 'fas fa-redo' } }]
 							}
 						}
 					]

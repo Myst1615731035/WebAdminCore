@@ -7,10 +7,11 @@ namespace WebModel.Entitys
     ///<summary>
     ///SysUser
     ///</summary>
-    [SystemAuthTable]
+    [DataSeed]
     [SugarTable("Sys_SysUser")]
     public partial class SysUser : RootEntity<string>
     {
+        #region 账户信息
         [SugarColumn(ColumnDescription = "账户", ColumnDataType = "varchar", Length = 50)]
         public string Account { get; set; }
 
@@ -24,13 +25,14 @@ namespace WebModel.Entitys
 
         [SugarColumn(ColumnDescription = "备注", ColumnDataType = "varchar", Length = 500)]
         public string? Remark { get; set; }
+        #endregion
 
         #region 登录相关
         [SugarColumn(ColumnDescription = "头像", ColumnDataType = "varchar", Length = 500)]
         public string? Avatar { get; set; }
 
         [SugarColumn(IsJson = true, ColumnDescription = "用户授权的角色ID", ColumnDataType = "nvarchar(max)")]
-        public List<string>? RoleIds { get; set; } = new List<string>();
+        public List<string> RoleIds { get; set; } = new List<string>();
         #endregion
 
         #region 个人信息
@@ -78,9 +80,9 @@ namespace WebModel.Entitys
         public int? ErrorCount { get; set; }
         #endregion
 
-        #region 其他字段
-        [SugarColumn(IsJson = true, ColumnDescription = "用户产品分类权限",ColumnDataType = "nvarchar(max)")]
-        public List<string>? ClassIds { get; set; } = new List<string>();
+        #region 业务相关
+        [SugarColumn(IsJson = true, ColumnDescription = "用户拥有的站点权限", ColumnDataType = "nvarchar(max)")]
+        public List<string>? SiteIds { get; set; } = new List<string>();
         #endregion
     }
 }

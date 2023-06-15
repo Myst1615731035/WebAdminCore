@@ -27,6 +27,62 @@ namespace WebUtils
             }
             return obj;
         }
+
+        public static bool GetValue<T>(this JObject? data, string key, Func<object, T> func, out T value)
+        {
+            value = Activator.CreateInstance<T>();
+
+            if (data.IsNotEmpty())
+            {
+                value = func.Invoke(data[key]);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetValue(this JObject? data, string key, out JToken value)
+        {
+            value = null;
+            if (data.IsNotEmpty())
+            {
+                value = data[key];
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetValue(this JObject? data, string key, out string value)
+        {
+            value = null;
+            if (data.IsNotEmpty() && data.ContainsKey(key))
+            {
+                value = data[key].ObjToString();
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetValue(this JObject? data, string key, out int? value)
+        {
+            value = null;
+            if (data.IsNotEmpty())
+            {
+                value = data[key].ObjToInt();
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetValue(this JObject? data, string key, out bool? value)
+        {
+            value = null;
+            if (data.IsNotEmpty())
+            {
+                value = data[key].ObjToBool();
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region ToList || ToTree
@@ -145,21 +201,14 @@ namespace WebUtils
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string ToJson(this object obj, bool indented = false)
+        public static string ToJson(this object? obj, string? emptyValue = "", JsonSerializerSettings config = null)
         {
             if (obj.IsNotEmpty())
             {
-                return indented ? JsonConvert.SerializeObject(obj, Formatting.Indented): JsonConvert.SerializeObject(obj);
+                if (config.IsNotEmpty()) return JsonConvert.SerializeObject(obj, config);
+                else return JsonConvert.SerializeObject(obj);
             }
-            return JsonConvert.SerializeObject(new { });
-        }
-        public static string ToJson(this object obj, JsonSerializerSettings settings)
-        {
-            if (obj.IsNotEmpty())
-            {
-                return JsonConvert.SerializeObject(obj, settings);
-            }
-            return JsonConvert.SerializeObject(new { });
+            return emptyValue;
         }
         #endregion
 
@@ -226,6 +275,27 @@ namespace WebUtils
             }
             return entity;
         }
+
+        /// <summary>
+        /// 根据字段名获取对象中对应字段的值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
+        /// <param name="FieldName"></param>
+        /// <returns></returns>
+        public static object GetValue<T>(this T entity, string FieldName) where T : class
+        {
+            try
+            {
+                Type Ts = entity.GetType();
+                object o = Ts.GetProperty(FieldName).GetValue(entity, null);
+                return o;
+            }
+            catch
+            {
+                return null;
+            }
+        }
         #endregion
 
         #region 判空
@@ -272,10 +342,10 @@ namespace WebUtils
             }
             return "";
         }
-        public static string ObjToString(this object thisValue, string errorValue)
+
+        public static string IsNull(this string? str, string ifNullStr)
         {
-            if (thisValue != null) return thisValue.ToString().Trim();
-            return errorValue;
+            return str.IsEmpty() ? ifNullStr : str.ObjToString();
         }
         #endregion
 
@@ -317,6 +387,17 @@ namespace WebUtils
             System.DateTime dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
             dateTime = dateTime.AddSeconds(timestamp).ToLocalTime();
             return dateTime;
+        }
+        #endregion
+
+        #region DateToString
+        public static string ToDateString(this DateTime time, string format = "yyyy-MM-dd HH:mm:ss")
+        {
+            if (time.IsNotEmpty())
+            {
+                return time.ToString(format);
+            }
+            return "";
         }
         #endregion
 
@@ -423,6 +504,14 @@ namespace WebUtils
                 if (newVal.IsNotEmpty() && newVal != oldVal) t.SetValue(obj, newVal);
             });
             return obj;
+        }
+        #endregion
+
+        #region URL
+        public static string ToUrl(this string url)
+        {
+            url = url.ObjToString().Trim().TrimStart(':').TrimStart('/').TrimEnd('/');
+            return !url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? $"http://{url}" : url;
         }
         #endregion
     }

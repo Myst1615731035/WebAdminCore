@@ -50,7 +50,7 @@ export default {
 							collapseNode: false,
 							itemRender: {
 								name: '$buttons',
-								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fa fa-refresh' } }]
+								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fas fa-redo' } }]
 							}
 						}
 					]

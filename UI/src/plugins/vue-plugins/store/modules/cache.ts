@@ -2,7 +2,8 @@ export default {
 	namespaced: false,
 	state: () => ({
 		IsDelete: [{ value: false, label: '激活' }, { value: true, label: '关闭' }],
-		IsDeleteSwitch: { openValue: false, openLabel: '激活', closeValue: true, closeLabel: '关闭' },
+		TrueSwitch: { openValue: false, openLabel: '√', closeValue: true, closeLabel: 'X' },
+		FalseSwitch: { openValue: true, openLabel: '√', closeValue: false, closeLabel: 'X' },
 		storage:{}
 	}),
 	mutations: {

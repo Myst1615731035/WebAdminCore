@@ -76,7 +76,7 @@ namespace WebExtention.Injection
                 });
 
                 var services = builder.Services;
-                services.AddSingleton(new AppConfig(builder.Configuration, builder.Environment.ContentRootPath, builder.Environment.WebRootPath));
+                services.AddSingleton(new AppConfig(builder));
                 services.Configure<KestrelServerOptions>(x =>
                     {
                         x.AllowSynchronousIO = true;
@@ -86,6 +86,10 @@ namespace WebExtention.Injection
                     {
                         x.AllowSynchronousIO = true;
                         x.MaxRequestBodySize = int.MaxValue;
+                    })
+                    .Configure<ApiBehaviorOptions>(o =>
+                    {
+                        o.SuppressModelStateInvalidFilter = true;
                     });
                 #endregion
 
@@ -168,6 +172,8 @@ namespace WebExtention.Injection
                 {
                     //全局错误捕获
                     o.Filters.Add(typeof(GlobalExceptionsFilter));
+                    // 自定义接口模型验证
+                    o.Filters.Add(new GlobalModelStatusFilter());
                     if(AppConfig.Get("Program", "GlobalPermissionCheck").ObjToBool())
                         o.Conventions.Insert(0, new GlobalRouteAuthorizeConvention());
                     if(AppConfig.Get("Program", "GlobalRouterPrefixCheck").ObjToBool())

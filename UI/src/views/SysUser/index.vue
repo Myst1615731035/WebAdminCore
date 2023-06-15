@@ -2,17 +2,20 @@
 	<div class="container-grid">
 		<vxe-grid ref="grid" v-bind="gridOptions" @cell-dblclick="toolClick({ code: 'edit' })" @toolbar-button-click="toolClick" @toolbar-tool-click="toolClick"></vxe-grid>
 		<pageForm v-model="form.show" :data="form.data"></pageForm>
+		<siteList v-model="assign.show" :userId="assign.userId" :userName="assign.userName" :siteids="assign.siteids"></siteList>
 	</div>
 </template>
 
 <script>
 import pageForm from './form.vue';
+import siteList from './siteAssign.vue';
 export default {
-	components: { pageForm },
+	components: { pageForm, siteList },
 	data() {
 		const query = this.$gridQuery(this.serverApi.sysUser.list);
 		return {
 			form: { show: false, data: null },
+			assign: { show: false, userId: '', userName: '', siteids: [] },
 			gridOptions: {
 				height: 'auto',
 				headerAlign: 'center',
@@ -24,7 +27,8 @@ export default {
 					buttons: [
 						{ code: 'add', name: '新增', icon: 'fa fa-plus' },
 						{ code: 'edit', name: '编辑', icon: 'fa fa-edit' },
-						{ code: 'del', name: '删除', icon: 'fa fa-trash' }
+						{ code: 'del', name: '删除', icon: 'fa fa-trash' },
+						{ code: 'assign', name: '站点授权', icon: 'fa fa-tags' }
 					],
 					tools: [{ code: 'resetpw', name: '重置密码', icon: 'fa fa-circle' }]
 				},
@@ -51,7 +55,7 @@ export default {
 							collapseNode: false,
 							itemRender: {
 								name: '$buttons',
-								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fa fa-refresh' } }]
+								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fas fa-redo' } }]
 							}
 						}
 					]
@@ -77,7 +81,7 @@ export default {
 					else {
 						this.$confirm({ content: '确认删除?' }).then(res => {
 							if (res == 'confirm')
-								this.$post(`${this.serverApi.dictionary.delete}?Id=${row.Id}`).then(res => {
+								this.$post(`${this.serverApi.sysUser.delete}?Id=${row.Id}`).then(res => {
 									this.$alertRes(res);
 									if (res.success) this.$refs.grid.remove(row);
 								});
@@ -111,6 +115,11 @@ export default {
 							}
 						});
 					} else this.$message({ content: `请选择用户`, status: 'warning' });
+				},
+				assign: () => {
+					var row = this.$refs.grid.getCurrentRecord();
+					if (IsNotEmpty(row)) this.assign = { show: true, userId: row.Id, userName: row.Name, siteids: row.SiteIds };
+					else this.$message({ content: `请选择用户`, status: 'warning' });
 				}
 			};
 			if (!!funcs[code] && this.$CheckGridBtnAuth(this.$route, code)) funcs[code]();

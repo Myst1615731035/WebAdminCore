@@ -1,5 +1,5 @@
-﻿using MathNet.Numerics;
-using RazorEngineCore;
+﻿using RazorEngineCore;
+using SqlSugar.Extensions;
 using System.Collections.Concurrent;
 
 namespace WebUtils
@@ -8,7 +8,7 @@ namespace WebUtils
     {
         private static object lockObj = new object();
         private static IRazorEngine razor => new RazorEngine();
-        private static ConcurrentDictionary<int, IRazorEngineCompiledTemplate> Cache = new ConcurrentDictionary<int, IRazorEngineCompiledTemplate>();
+        private static ConcurrentDictionary<int, IRazorEngineCompiledTemplate<RazorTemplate>> Cache = new ConcurrentDictionary<int, IRazorEngineCompiledTemplate<RazorTemplate>>();
 
         /// <summary>
         /// 通过cshtml模板代码获取html内容，同一模板请使用统一的key值
@@ -28,11 +28,19 @@ namespace WebUtils
                 {
                     lock (lockObj)
                     {
-                        if (!Cache.ContainsKey(key)) Cache.TryAdd(key, razor.Compile(template, builderAction));
+                        if (!Cache.ContainsKey(key))
+                        {
+                            var init = razor.Compile<RazorTemplate>(template, builderAction);
+                            Cache.TryAdd(key, init);
+                        }
                     }
                 }
-                IRazorEngineCompiledTemplate? compiled = Cache.GetValueOrDefault(key);
-                if (compiled.IsNotEmpty()) html = await compiled.RunAsync(model);
+                var compiled = Cache.GetValueOrDefault(key);
+                if (compiled.IsNotEmpty()) html = await compiled.RunAsync(t =>
+                {
+                    t.Model = (model.IsNotEmpty() && model.IsAnonymous()) ? new AnonymousTypeWrapper(model) : model;
+                    t.Html = new RazorHtmlHelper(t);
+                });
                 return html;
             }
             catch (Exception ex)
@@ -42,4 +50,24 @@ namespace WebUtils
             }
         }
     }
+
+    #region 实现Razor模板渲染中的@Html
+    public class RazorTemplate : RazorEngineTemplateBase
+    {
+        public RazorHtmlHelper Html { get; set; }
+    }
+    public class RazorHtmlHelper
+    {
+        private readonly RazorTemplate _instance;
+        public RazorHtmlHelper(RazorTemplate instance)
+        {
+            this._instance = instance;
+        }
+
+        public string Raw(object? content)
+        {
+            return content.ObjToString();
+        }
+    }
+    #endregion
 }

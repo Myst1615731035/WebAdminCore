@@ -11,9 +11,7 @@ namespace WebUtils
         public static readonly string MainDbConfigId = AppConfig.Get("DataBase", "MainDb");//主库配置
         public static readonly bool MutilDb = AppConfig.Get("DataBase", "MutilDb").ObjToBool();//多库?
         public static readonly bool CQRSEnabled = AppConfig.Get("DataBase", "CQRSEnabled").ObjToBool();//读写分离?
-        public static readonly List<string> SplitTables = AppConfig.GetList<string>("DataBase", "SplitTables");//分表表名列表
         public static readonly bool OriginSplitTableInit = AppConfig.Get("DataBase", "OriginSplitTableInit").ObjToBool();//分表是否生成源表
-        public static readonly List<string> SplitTableFields = AppConfig.GetList<string>("DataBase", "SplitTableFields");//分表区分字段
         public static (List<DBSetting> allDbs, List<DBSetting> slaveDbs) MutilDbs => GetMutilDbs();//多库配置
 
         private static (List<DBSetting>, List<DBSetting>) GetMutilDbs()

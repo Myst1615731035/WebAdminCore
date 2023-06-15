@@ -1,1 +1,4 @@
-export default { host: '', absolutPath:'' }
+export default {
+	host: '',
+	absolutPath: '/adminpage'
+}

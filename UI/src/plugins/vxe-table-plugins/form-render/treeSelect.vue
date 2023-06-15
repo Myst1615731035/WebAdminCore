@@ -1,5 +1,5 @@
 <template>
-	<el-tree-select ref="treeSelect" v-model="data[field]" v-bind="config" @change="change" @clear="clear" @focus="focus" @blur="blur"></el-tree-select>
+	<el-tree-select ref="treeSelect" v-model="data[field]" v-bind="config" :filter-node-method="query" @change="change" @clear="clear" @focus="focus" @blur="blur"></el-tree-select>
 </template>
 
 <script>
@@ -8,7 +8,7 @@ export default {
 	props: {
 		data: { type: Object, require: true },
 		field: { type: String, require: true },
-		props: { type: Object }
+		props: { type: Object },
 	},
 	emits: ['change', 'clear', 'focus', 'blur'],
 	computed: {
@@ -21,13 +21,18 @@ export default {
 					clearable: true,
 					placeholder: '',
 					checkStrictly: false,
-					props: { label: 'Name', value: 'Id', children: 'Children' }
+					props: { label: 'Name', value: 'Id', children: 'Children' },
 				},
 				this.props
 			);
-		}
+		},
 	},
 	methods: {
+		query(value, data) {
+			value = (value || '').toLocaleLowerCase();
+			var labelKey = (this.config.props || {}).label || '';
+			return (data[labelKey] || '').toLocaleLowerCase().indexOf(value) > -1;
+		},
 		change(val) {
 			var option = this.$refs.treeSelect.getCurrentNode(val);
 			this.$emit('change', { value: val, row: !!val ? option : null });
@@ -41,8 +46,8 @@ export default {
 		},
 		blur(event) {
 			this.$emit('blur', { event });
-		}
-	}
+		},
+	},
 };
 </script>
 

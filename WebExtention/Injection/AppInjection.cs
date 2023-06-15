@@ -32,7 +32,7 @@ namespace WebExtention.Injection
                 //限流
                 app.UseIpLimitMiddle();
                 // 非数据请求的请求路径，跳转到根路径做页面映射
-                //app.UsePathBase("/adminpage/");
+                if (AppConfig.Get("HttpRequest", "AbsolutPath").IsNotEmpty()) app.UsePathBase($"/{AppConfig.Get("HttpRequest", "AbsolutPath").Trim().TrimStart('/').TrimEnd('/')}/");
                 app.UseRewriter(new RewriteOptions().Add(new URLRewrite()));
                 
                 #region MiddleWare
@@ -72,7 +72,7 @@ namespace WebExtention.Injection
                 #endregion
 
                 #region Scoped DI
-                AppConfig.Instance._ServiceProvider = app.Services;
+                AppConfig.ServiceProvider = app.Services;
                 var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
                 var dataSeed = scope.ServiceProvider.GetRequiredService<IDataSeedBase>();
                 app.UseDBSeedMiddleware(dataSeed);

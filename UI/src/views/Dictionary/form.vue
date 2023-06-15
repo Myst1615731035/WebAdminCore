@@ -21,12 +21,12 @@ export default {
 				preventSubmit: true,
 				className: 'form-content',
 				items: [
-					{ field: 'Id', title: '主键', resetValue: '', visible: false },
+					{ field: 'Id', title: '主键', visible: false, resetValue: '', itemRender: { name: '$text' } },
 					{ field: 'Name', title: '字典名称', resetValue: '', span: 24, itemRender: { name: '$input' } },
 					{ field: 'Description', title: '字典描述', resetValue: '', span: 24, itemRender: { name: '$input' } },
 					{ field: 'Code', title: '字典Key', resetValue: '', span: 24, itemRender: { name: '$input' } },
 					{ field: 'Sort', title: '排序', resetValue: 0, span: 12, itemRender: { name: '$input', props: { type: 'number' } } },
-					{ field: 'IsDelete', title: '状态', resetValue: false, span: 12, itemRender: { name: '$switch', props: this.$store.state.cache.IsDeleteSwitch } }
+					{ field: 'IsDelete', title: '状态', resetValue: false, span: 12, itemRender: { name: '$switch', props: this.$store.state.cache.TrueSwitch } }
 				],
 				rules: { Name: [{ required: true, message: '请输入字典名称' }], Code: [{ required: true, message: '请输入字典key' }] }
 			},
@@ -66,8 +66,8 @@ export default {
 			immediate: true,
 			deep: true,
 			handler: function(val) {
-				this.formOption.data = val || {};
-				this.gridOption.data = (val || {}).Items || [];
+				this.formOption.data = DeepClone(val || {});
+				this.gridOption.data = this.formOption.data.Items || [];
 				this.modalOption.title = `${IsEmpty(val) ? '新增' : '编辑'}`;
 			}
 		}

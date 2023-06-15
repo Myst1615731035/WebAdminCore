@@ -9,7 +9,6 @@ import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-impo
 // import VitePluginCompression from 'vite-plugin-compression';
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-	const productBase = '/adminpage/';
 	let configs = {
 		plugins: [
 			vue(),
@@ -57,7 +56,6 @@ export default defineConfig(({ command, mode }) => {
 					open: true,
 					proxy: {
 						'/api': { target: 'http://127.0.0.1:10011', ws: true, changeOrigin: true },
-						'/template/': { target: 'http://127.0.0.1:10011', ws: true, changeOrigin: true },
 						'/export/': { target: 'http://127.0.0.1:10011', ws: true, changeOrigin: true },
 						'/is4api': { target: 'http://127.0.0.1:9090', ws: true, changeOrigin: true }
 					}

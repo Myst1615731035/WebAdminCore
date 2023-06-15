@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlSugar;
+using SqlSugar.Extensions;
+using System.Data;
 using System.IO;
 using System.Reflection;
 using WebUtils;
@@ -37,7 +40,7 @@ namespace MainCore.Controllers
             JsonSerializerSettings jsonSetting = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
-                DateFormatString = "yyyy-MM-dd HH:mm:ss"
+                DateFormatString = "yyyy-MM-dd HH:mm:ss",
             };
             try
             {
@@ -47,20 +50,56 @@ namespace MainCore.Controllers
                 // 项目框架实体类
                 var models = modelAssembly.SelectMany(a => a.DefinedTypes)
                                 .Select(type => type.AsType())
-                                .Where(x => x.IsClass && x.Namespace != null && x.Namespace.Equals("WebModel.Entitys") && x.GetCustomAttribute<SystemAuthTable>().IsNotEmpty())
+                                .Where(x => x.IsClass && x.Namespace != null && x.Namespace.Equals("WebModel.Entitys") && x.GetCustomAttribute<DataSeedAttribute>().IsNotEmpty())
                                 .ToList();
                 // 对实体类进行循环获取
-                models.ForEach(async t =>
+                models.ForEach(t =>
                 {
                     /// 查询未删除的数据
-                    var data = await _db.Queryable<dynamic>().AsType(t).Where("IsDelete = 0").ToListAsync();
-                    FileHelper.WriteFile(Path.Combine(AppConfig.ContentRootPath, "DataSeedJson", $"{t.Name}.json"), data.ToJson(jsonSetting));
+                    var data = FormatList(t, _db.Queryable<object>().AsType(t).Where("IsDelete = 0").ToDataTable());
+                    FileHelper.WriteFile(Path.Combine(AppConfig.ContentRootPath, "DataSeedJson", $"{t.Name}.json"), data.ToJson(config: jsonSetting));
                 });
                 res = new ContentJson(true, "生成成功");
             }
             catch (Exception ex)
             {
                 res.msg = $"{res.msg}, {ex.Message}";
+            }
+            return res;
+        }
+
+        private static object FormatList(Type type, DataTable dt)
+        {
+            var res = new List<object>();
+            if (dt.IsNotEmpty() && dt.Rows.Count > 0)
+            {
+                var props = type.GetProperties().ToList();
+                foreach (DataRow row in dt.Rows)
+                {
+                    var model = Activator.CreateInstance(type);
+                    props.ForEach(p =>
+                    {
+                        if (dt.Columns.Contains(p.Name))
+                        {
+                            object value = row[p.Name];
+                            if (value == DBNull.Value) value = null;
+                            if (p.PropertyType.IsGenericType)
+                            {
+                                if (p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)) //new NullabilityInfoContext().Create(p).WriteState is NullabilityState.Nullable)
+                                {
+                                    if (value.IsEmpty()) value = Activator.CreateInstance(p.PropertyType);
+                                }
+                                else
+                                {
+                                    if (value.IsNotEmpty()) value = JsonConvert.DeserializeObject(value.ObjToString(), p.PropertyType);
+                                    else value = Activator.CreateInstance(p.PropertyType);
+                                }
+                            }
+                            p.SetValue(model, value);
+                        }
+                    });
+                    res.Add(model);
+                }
             }
             return res;
         }

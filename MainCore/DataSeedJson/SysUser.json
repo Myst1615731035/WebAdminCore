@@ -1,1 +1,42 @@
-﻿[{"Id":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","Account":"admin","Password":"E10ADC3949BA59ABBE56E057F20F883E","Name":"admin","Remark":null,"Avatar":null,"Sex":null,"Birth":null,"IDCard":null,"Tel":null,"Email":null,"Address":null,"CriticalModifyTime":"2023-02-22 10:09:00","LastErrorTime":"2023-02-22 10:09:00","ErrorCount":null,"Sort":0,"CreateId":"","CreateName":"","CreateTime":"2023-02-01 09:46:05","ModifyId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","ModifyName":"admin","ModifyTime":"2023-02-22 13:17:39","IsDelete":false,"Version":"AAAAAAADU5U=",}]
+﻿[
+  {
+    "Account": "admin",
+    "Password": "E10ADC3949BA59ABBE56E057F20F883E",
+    "NewPassword": null,
+    "Name": "admin",
+    "Remark": null,
+    "Avatar": null,
+    "RoleIds": [
+      "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB"
+    ],
+    "Sex": null,
+    "Birth": null,
+    "IDCard": null,
+    "Tel": null,
+    "Email": null,
+    "Address": null,
+    "LastLoginIP": null,
+    "LastLoginTime": null,
+    "LastErrorTime": "2023-02-22 10:09:00",
+    "ErrorCount": null,
+    "SiteIds": [
+      "3b181bdd-af45-4a2e-98a8-59dc2e888ab5",
+      "5556cfae-b68e-478b-92a8-0d9580359431",
+      "56037176-954c-4eb9-a26a-f1c56ebfc3c9",
+      "56b139e9-be83-4272-9790-9876dec68dcd",
+      "62ff35ad-daa8-4a22-94d6-95dfacb4db0b",
+      "9de14d6c-4d93-498b-9f64-4db140e4b6bb",
+      "c12b5ed9-0b9c-4b37-bc3c-9622ad12ce41",
+      "d4d7834b-2086-4d04-be47-43046ba35c86",
+      "debc44a5-c947-4fbc-9986-6cdec71cc4c0",
+      "ec2a7849-6dae-4b74-8b88-f3f99766329d"
+    ],
+    "Id": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "Sort": 0,
+    "CreateId": "",
+    "CreateTime": "2023-02-01 09:46:05",
+    "ModifyId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "ModifyTime": "2023-06-09 14:29:11",
+    "IsDelete": false
+  }
+]

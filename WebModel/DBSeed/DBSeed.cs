@@ -109,7 +109,7 @@ namespace WebModel.DBSeed
         /// </summary>
         private void DataAsync(Type type)
         {
-            var SystemAuthTableAttr = type.GetCustomAttribute<SystemAuthTable>();
+            var SystemAuthTableAttr = type.GetCustomAttribute<DataSeedAttribute>();
             if (SystemAuthTableAttr.IsNotEmpty() && AppConfig.Get("DataBase", "SetUp", "CreateData").ObjToBool())
             {
                 var path = Path.Combine(jsonDir, $"{type.Name}.json");

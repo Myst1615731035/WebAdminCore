@@ -4,15 +4,15 @@ import $store from '../vue-plugins/store/store';
 const formatBoolWithData = ({ cellValue }, data, key, value, isReverse = false) => {
 	var res = '';
 	if (!!data && Array.isArray(data) && !!key && !!value) {
-		var item = data.find(t => t[value] == (cellValue && !isReverse));
+		var item = data.find((t) => t[value] == (cellValue && !isReverse));
 		res = (item || {})[key];
 	}
 	return res;
 };
 // bool值格式化
 const formatBool = ({ cellValue }, isReverse = false) => {
-	if (isReverse) return !!cellValue ? '×' : '√';
-	else return !!cellValue ? '√' : '×';
+	if (isReverse) return !!cellValue ? 'x' : '√';
+	else return !!cellValue ? '√' : 'x';
 };
 // 时间格式化
 const formatDate = ({ cellValue }, fmt) => {
@@ -22,9 +22,9 @@ const formatDate = ({ cellValue }, fmt) => {
 // 字典数据格式化
 const formatDict = ({ cellValue }, key) => {
 	if (IsNotEmpty(key) && IsNotEmpty($store.state.cache.storage.dict)) {
-		var obj = $store.state.cache.storage.dict.find(t => t.key == key);
-		if (!!obj) {
-			var option = obj.items.find(t => t.Value == cellValue);
+		var obj = $store.state.cache.storage.dict.find((t) => t.key == key);
+		if (!!obj && !!obj.items) {
+			var option = obj.items.find((t) => t.Value == cellValue);
 			return !!option ? option.Label : '';
 		}
 	}
@@ -35,7 +35,7 @@ const formatList = ({ cellValue }, key, list = null) => {
 	if (IsNotEmpty(key)) {
 		if (list == null || list == undefined) list = $store.state.cache.storage[key];
 		if (IsNotEmpty(list)) {
-			var option = list.find(t => t.Value == cellValue);
+			var option = list.find((t) => t.Value == cellValue);
 			return !!option ? option.Label : '';
 		}
 	}
@@ -45,7 +45,7 @@ const formatList = ({ cellValue }, key, list = null) => {
 const formatDynamicList = ({ cellValue }, list, key, label) => {
 	if (!!cellValue) {
 		if (!!key && !!list && list.length > 0 && Array.isArray(list) && !!label) {
-			var pair = list.find(t => t[key] == cellValue);
+			var pair = list.find((t) => t[key] == cellValue);
 			return (pair || {})[label] || '';
 		}
 	}

@@ -17,6 +17,9 @@
 		<ProjectReference Include="..\WebService\WebService.csproj" />
 		<ProjectReference Include="..\WebUtils\WebUtils.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="DataSeedJson\" />
+	</ItemGroup>
 	<ProjectExtensions>
 		<VisualStudio><UserProperties configs_4database_1json__JsonSchema="https://appsemble.app/api.json" /></VisualStudio>
 	</ProjectExtensions>

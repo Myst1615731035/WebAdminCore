@@ -53,7 +53,9 @@ namespace MainCore.Controllers
             // 增加查询条件
             if (page.keyword.IsNotEmpty())
                 exp = exp.And(t => t.Name.Contains(page.keyword) || t.Description.Contains(page.keyword));
-            res.data = await _service.QueryPage(exp.ToExpression(), page);
+            res.data = page.isOption ?
+                await _service.QueryPage(page, t => new SysRole { Id = t.Id, Name = t.Name }, exp.ToExpression())
+                : await _service.QueryPage(page, exp.ToExpression());
             return res;
         }
 

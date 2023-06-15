@@ -1,17 +1,10 @@
 <template>
-	<vxe-modal ref="modal" v-bind="modalConfig" @show="open" @confirm="confirm" @close="close" :before-hide-method="beforeHideMethod">
-		<el-upload
-			v-model:file-list="fileList"
-			ref="upload"
-			v-bind="uploadConfig"
-			drag
-			@preview="preview"
-			@change="change"
-			@exceed="exceed"
-			@remove="remove"
-			@success="success"
-			@error="error"
-		>
+	<vxe-modal ref="modal" v-bind="modalConfig" @show="open" @close="close" :before-hide-method="beforeHideMethod">
+		<template #footer>
+			<vxe-button content="清空" status="danger" @click="clear({ type: 'cancel' })"></vxe-button>
+			<vxe-button content="上传" status="primary" @click="confirm({ type: 'confirm' })"></vxe-button>
+		</template>
+		<el-upload ref="upload" v-model:file-list="fileList" v-bind="uploadConfig" drag @preview="preview" @change="change" @exceed="exceed" @remove="remove">
 			<div v-if="type == 'file'">
 				<el-icon class="el-icon--upload"><upload-filled /></el-icon>
 				<div class="el-upload__text">Drop file here or click to upload</div>
@@ -28,7 +21,7 @@ export default {
 		show: { type: Boolean, default: false },
 		// 上传组件的类型，image / file
 		type: { type: String, default: 'file' },
-		props: { type: Object, default: {} }
+		props: { type: Object, default: {} },
 	},
 	emits: ['open', 'confirm', 'close', 'submit', 'preview', 'change', 'exceed', 'remove'],
 	data() {
@@ -37,7 +30,7 @@ export default {
 	watch: {
 		modalShow() {
 			this.$emit('update:show', this.modalShow);
-		}
+		},
 	},
 	computed: {
 		modalConfig() {
@@ -45,11 +38,13 @@ export default {
 				title: this.props.title || '上传',
 				type: 'confirm',
 				showFooter: true,
+				resize: true,
 				width: this.props.width || 400,
 				height: this.props.height || 600,
+				cancelButtonText: '清空',
 				confirmButtonText: '上传',
 				marginSize: -1,
-				mask: false
+				mask: false,
 			};
 		},
 		uploadConfig() {
@@ -60,19 +55,19 @@ export default {
 			if (!config.multiple) if (!!!config.limit && config.limit != 0) config.limit = 1;
 			config.autoUpload = false;
 			return config;
-		}
+		},
 	},
 	methods: {
 		open({ type }) {
 			if (IsEmpty(this.uploadConfig.action)) console.error('文件上传路径为空，组件无法使用');
 			this.$emit('open', { type });
 		},
-		confirm({ type, $event }) {
+		async confirm({ type, $event }) {
 			if (!!this.fileList && this.fileList.length > 0) {
 				if (IsNotEmpty(this.uploadConfig.action)) {
 					var formData = new FormData();
-					this.fileList.forEach(t => formData.append(t.name, t.raw));
-					this.$putFile(this.uploadConfig.action, formData).then(res => {
+					this.fileList.forEach((t) => formData.append(t.name, t.raw));
+					this.$putFile(this.uploadConfig.action, formData).then((res) => {
 						// this.$showRes(res);
 						if (res.success) this.$refs.modal.close();
 						else this.$refs.modal.beforeHideMethod(true);
@@ -81,6 +76,9 @@ export default {
 				}
 				return;
 			} else this.$message({ content: '未获取到需要上传的文件', status: 'warning' });
+		},
+		async clear({ type }) {
+			this.$refs.upload.clearFiles();
 		},
 		close({ type, $event }) {
 			this.$emit('close', { type, $event });
@@ -99,8 +97,8 @@ export default {
 		remove(uf, ufs) {
 			this.fileList = ufs;
 			this.$emit('remove', { uf, ufs });
-		}
-	}
+		},
+	},
 };
 </script>
 

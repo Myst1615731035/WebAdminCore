@@ -23,17 +23,7 @@
 					<vxe-button @click="SaveRoleAuth()">保存</vxe-button>
 				</div>
 			</template>
-			<el-tree
-				ref="menutree"
-				:props="treeProps"
-				:data="menus"
-				node-key="Id"
-				:show-checkbox="true"
-				:default-checked-keys="signIds"
-				default-expand-all
-				:highlight-current="true"
-				:indent="30"
-			>
+			<el-tree ref="menutree" :props="treeProps" :data="menus" node-key="Id" :show-checkbox="true" default-expand-all :highlight-current="true" :indent="30">
 				<template #default="{ node, data }">
 					<div class="custom-tree-node">
 						<div class="menu-title">
@@ -87,7 +77,9 @@ export default {
 		},
 		// 获取角色的授权的权限ID
 		GetRolePermission(id) {
-			this.$post(`${this.serverApi.authority.rolePermission}?roleId=${id}`).then(res => (this.signIds = res.success ? res.data : []));
+			this.$post(`${this.serverApi.authority.rolePermission}?roleId=${id}`).then(res => {
+				this.$refs.menutree.setCheckedKeys(res.success ? res.data : []);
+			});
 		},
 		// 选择角色触发事件
 		SelectRole(role) {

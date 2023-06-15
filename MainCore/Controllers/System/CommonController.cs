@@ -29,10 +29,7 @@ namespace MainCore.Controllers.System
             var data = new Dictionary<string, object?>
             {
                 {"dict", null },
-                {"productClass",null },
-                { "products", null },
-                {"warehouse",null },
-                {"users",null },
+                { "area", null }
             };
 
             await _db.ThenMapperAsync(data, async t =>
@@ -40,10 +37,7 @@ namespace MainCore.Controllers.System
                 data[t.Key] = t.Key switch
                 {
                     "dict" => await _db.Queryable<Dict>().Select(t => new { key = t.Code, items = t.Items }).ToListAsync(),
-                    "productClass"=> await _db.Queryable<ProductClass>().Select(t => new Option{ Value = t.Id, Label = t.Name }).ToListAsync(),
-                    "products"=> await _db.Queryable<Product>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
-                    "warehouse" => await _db.Queryable<Warehouse>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
-                    "users"=> await _db.Queryable<SysUser>().Select(t => new Option { Value = t.Id, Label = t.Name }).ToListAsync(),
+                    "area" => await _db.Queryable<Area>().Select(t => new Option{ Label = t.Name, Value = t.Id }).ToListAsync(),
                     _ => new List<object>(),
                 };
             });

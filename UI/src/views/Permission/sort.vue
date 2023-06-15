@@ -7,7 +7,7 @@
 <script>
 const GetAllNode = (tree, res = []) => {
 	if (!!tree && tree.length > 0 && Array.isArray(tree)) {
-		tree.forEach(t => {
+		tree.forEach((t) => {
 			res.push({ Id: t.Id, Pid: t.Pid, Name: t.Name, Path: t.Path, Sort: t.Sort });
 			GetAllNode(t.Children, res);
 		});
@@ -55,13 +55,13 @@ export default {
 			}
 		},
 		async open() {
-			this.$post(this.$store.state.serverApi.permission.list).then(res => {
+			this.$post(this.$store.state.serverApi.permission.list, { isOption: true }, { loading: true }).then((res) => {
 				if (res.success) this.treeConfig.data = res.data;
 			});
 		},
 		async confirm() {
 			var list = GetAllNode(this.treeConfig.data);
-			this.$post(this.serverApi.permission.saveSort, list).then(res => {
+			this.$post(this.serverApi.permission.saveSort, list).then((res) => {
 				if (res.success) {
 					this.$parent.updateRow();
 					this.$refs.modal.close();

@@ -1,1 +1,28 @@
-﻿[{"Id":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","Name":"Page Editor","Description":"","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-22 15:35:40","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU5k=","DefaultRouteId":null},{"Id":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","Name":"System Admin","Description":"","Sort":0,"CreateId":"","CreateName":"","CreateTime":"2023-02-01 09:46:04","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAAAB90=","DefaultRouteId":null}]
+﻿[
+  {
+    "Name": "Page Editor",
+    "DefaultRouteId": null,
+    "DefaultRoute": null,
+    "Description": "",
+    "Id": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-22 15:35:40",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "Name": "System Admin",
+    "DefaultRouteId": null,
+    "DefaultRoute": null,
+    "Description": "",
+    "Id": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "Sort": 0,
+    "CreateId": "",
+    "CreateTime": "2023-02-01 09:46:04",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  }
+]

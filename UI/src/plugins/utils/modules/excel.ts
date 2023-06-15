@@ -12,20 +12,21 @@ const JsonToExcel = (data, columns = null) => {
 		const sheet = workbook.addWorksheet('Sheet1');
 		if (!!columns) {
 			columns = [];
-			Object.keys(data[0]).forEach(t => {
+			Object.keys(data[0]).forEach((t) => {
 				columns.push({ header: t, key: t });
 			});
 		}
 		sheet.columns = columns;
 		sheet.addRows(data);
-		workbook.xlsx.writeBuffer(res => {
+		workbook.xlsx.writeBuffer((res) => {
 			const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
-			fs.saveAs(blob, 'test.xlsx');
+			fs.saveAs(blob, 'json.xlsx');
 		});
 	} else console.log('data is empty, can not export to excel;');
 };
 
-const install = app => {
-	app.config.globalProperties.JsonToExcel = JsonToExcel;
+export default {
+	install: (app) => {
+		app.config.globalProperties.JsonToExcel = JsonToExcel;
+	},
 };
-export default { install };

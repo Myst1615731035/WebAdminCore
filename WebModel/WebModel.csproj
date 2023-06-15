@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
+	  <Folder Include="DBSeed\" />
+	  <Folder Include="Enums\" />
   </ItemGroup>
 
   <ItemGroup>
-	  <Folder Include="DBSeed\" />
-	  <Folder Include="Enums\" />
+    <ProjectReference Include="..\WebUtils\WebUtils.csproj" />
   </ItemGroup>
 
 </Project>

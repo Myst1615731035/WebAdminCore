@@ -19,7 +19,6 @@ namespace WebUtils
                 MethodValue = (expInfo, dbType, expContext) => expInfo.Args[0].MemberValue.ObjToString()
             });
             #endregion
-
             return list;
         }
 
@@ -28,6 +27,6 @@ namespace WebUtils
             throw new NotSupportedException("Can only be used in expressions");
         }
 
-        
+
     }
 }

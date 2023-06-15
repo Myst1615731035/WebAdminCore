@@ -252,15 +252,15 @@ const StuffSort = sortArr => {
 };
 /***** 格式化表格Sort字段 *****/
 const Trim = function(str, char) {
-	if (!!char) str = str.replace(new RegExp('^\\'+char+'|\\'+char+'$', "gi"), "");
+	if (!!char) str = (str||"").replace(new RegExp('^\\'+char+'|\\'+char+'$', "gi"), "");
 	return str.replace(/^\s+|\s+$/g, '');
 }
 const TrimStart = function(str, char) {
-	if (!!char) str = str.replace(new RegExp('^\\'+char, "gi"), "");
+	if (!!char) str = (str||"").replace(new RegExp('^\\'+char, "gi"), "");
 	return str.replace(/^\s+|\s+$/g, '');
 }
 const TrimEnd = function(str, char) {
-	if (!!char) str = str.replace(new RegExp('\\'+char+'$', "gi"), "");
+	if (!!char) str = (str||"").replace(new RegExp('\\'+char+'$', "gi"), "");
 	return str.replace(/^\s+|\s+$/g, '');
 }
 

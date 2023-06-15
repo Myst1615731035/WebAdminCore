@@ -1,9 +1,18 @@
-﻿using System.Text;
+﻿using SqlSugar.Extensions;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebUtils
 {
     public class FileHelper : IDisposable
     {
+        #region 文件类型的正则校验
+        public static Regex ImageReg = new Regex(".*?(jpg|jpeg|png|webp|xmp|bmp|gif|psd|cdr|ai|apng)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        public static Regex FontReg = new Regex(".*?(svg|tif|icon|woff|ttf)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        public static Regex JsReg = new Regex(".*?(js|ts)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        public static Regex CssReg = new Regex(".*?(css)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        public static Regex OfficeReg = new Regex(".*?(pdf|xls|xlsx|doc|docx|ppt)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        #endregion
 
         private bool _alreadyDispose = false;
 
@@ -34,6 +43,14 @@ namespace WebUtils
             GC.SuppressFinalize(this);
         }
 
+        #endregion
+
+        #region 创建空文件
+        public static void CreateFile(string path)
+        {
+            CreateDir(path);
+            if (!File.Exists(path)) File.Create(path).Close();
+        }
         #endregion
 
         #region 取得文件后缀名
@@ -130,54 +147,70 @@ namespace WebUtils
         #region 判重
         public static string CheckRepeat(string path)
         {
-            if(File.Exists(path)) 
+            if (File.Exists(path))
             {
+                var extention = Path.GetExtension(path);
                 var dir = new DirectoryInfo(Path.GetDirectoryName(path));
                 var fileName = Path.GetFileNameWithoutExtension(path);
-                var count = dir.GetFiles().Count(t => Path.GetFileNameWithoutExtension(t.Name).Equals(fileName, StringComparison.OrdinalIgnoreCase));
-                var extention = Path.GetExtension(path);
+                var count = dir.GetFiles().Count(t => Path.GetFileNameWithoutExtension(t.Name).StartsWith(fileName));
                 path = Path.Combine(dir.FullName, $"{fileName}({count + 1}){extention}");
             }
-            return path;
+            return !File.Exists(path) ? path : CheckRepeat(path);
         }
         #endregion
 
         #region 写文件
-        public static void WriteFile(string path, Stream sm, bool checkRepeat = false)
-        {
-            try
-            {
-                if (checkRepeat) path = CheckRepeat(path);
-                using (var fs = new FileStream(CreateDir(path), FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                {
-                    byte[] bytes = new byte[sm.Length];
-                    sm.Read(bytes, 0, bytes.Length);
-                    sm.Seek(0, SeekOrigin.Begin);
-                    BinaryWriter bw = new BinaryWriter(fs);
-                    bw.Write(bytes);
-                    bw.Close();
-                    fs.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogException(ex);
-            }
-        }
         /// <summary>
         /// 写文件
         /// </summary>
         /// <param name="path">文件路径</param>
         /// <param name="Strings">文件内容</param>
-        public static void WriteFile(string path, string Strings, bool checkRepeat = false)
+        public static void WriteFile(string path, string text, bool checkRepeat = false)
         {
-            if (checkRepeat) path = CheckRepeat(path);
-            CreateDir(path);
-            if (!File.Exists(path)) File.Create(path).Close();
-            StreamWriter f2 = new StreamWriter(path, false, Encoding.UTF8);
-            f2.Write(Strings);
-            f2.Close();
-            f2.Dispose();
+            WriteFileAsync(path, text, checkRepeat).Wait();
+        }
+        public static async Task WriteFileAsync(string path, string text, bool checkRepeat = false)
+        {
+            await Task.Run(() =>
+            {
+                if (checkRepeat) path = CheckRepeat(path);
+                CreateDir(path);
+                if (!File.Exists(path)) File.Create(path).Close();
+                StreamWriter f2 = new StreamWriter(path, false, Encoding.UTF8);
+                f2.Write(text);
+                f2.Close();
+                f2.Dispose();
+            });
+        }
+        public static string WriteFile(string path, Stream sm, bool checkRepeat = false)
+        {
+            return WriteFileAsync(path, sm, checkRepeat).GetAwaiter().GetResult();
+        }
+        public static async Task<string> WriteFileAsync(string path, Stream sm, bool checkRepeat = false)
+        {
+            return await Task.Run<string>(() =>
+            {
+                try
+                {
+                    if (checkRepeat) path = CheckRepeat(path);
+                    using (var fs = new FileStream(CreateDir(path), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        byte[] bytes = new byte[sm.Length];
+                        sm.Read(bytes, 0, bytes.Length);
+                        sm.Seek(0, SeekOrigin.Begin);
+                        BinaryWriter bw = new BinaryWriter(fs);
+                        bw.Write(bytes);
+                        bw.Close();
+                        fs.Close();
+                    }
+                    return path;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogException(ex);
+                    return null;
+                }
+            });
         }
 
         /// <summary>
@@ -194,41 +227,6 @@ namespace WebUtils
             f2.Write(Strings);
             f2.Close();
             f2.Dispose();
-        }
-
-        /// <summary>
-        /// 保存上传的文件到服务器，仅限文件流,或保存的数据为文本类型
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="fileType"></param>
-        /// <param name="stream"></param>
-        /// <returns></returns>
-        public static string SaveFile(string fileName, string fileType, Stream stream)
-        {
-            try
-            {
-                #region 获取当前目录
-                var filePath = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Upload\\{fileType.ToUpper()}\\{fileName}{fileType}";
-                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                }
-                #endregion
-                // 把 byte[] 写入文件
-                byte[] bytes = new byte[stream.Length];
-                stream.Read(bytes, 0, bytes.Length);
-                stream.Seek(0, SeekOrigin.Begin);
-                FileStream fs = new FileStream(filePath, FileMode.Create);
-                BinaryWriter bw = new BinaryWriter(fs);
-                bw.Write(bytes);
-                bw.Close();
-                fs.Close();
-                return filePath;
-            }
-            catch (Exception ex)
-            {
-                return "";
-            }
         }
         #endregion
 
@@ -248,18 +246,18 @@ namespace WebUtils
         /// <returns></returns>
         public static string ReadFile(string Path)
         {
-            string s = "";
-            if (!File.Exists(Path)) s = "不存在相应的目录";
-            else
-            {
-                StreamReader f2 = new StreamReader(Path, Encoding.UTF8);
-                s = f2.ReadToEnd();
-                f2.Close();
-                f2.Dispose();
-            }
-            return s;
+            return ReadFileAsync(Path).GetAwaiter().GetResult();
         }
-
+        public static async Task<string> ReadFileAsync(string path)
+        {
+            return await Task.Run(() =>
+            {
+                string s = "";
+                //处理掉相对路径下首字符为/或\\的，相对路径无法读取
+                if (File.Exists(path.TrimStart('/').TrimStart('\\'))) s = File.ReadAllText(path);
+                return s;
+            });
+        }
         /// <summary>
         /// 读文件
         /// </summary>
@@ -283,6 +281,26 @@ namespace WebUtils
         }
         #endregion
 
+        #region 验证完整路径/相对路径下文件是否存在
+        /// <summary>
+        /// 验证完整路径/相对路径下文件是否存在
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool Exists(string path)
+        {
+            // 获取文件名称
+            path = path.ObjToString().TrimStart('/').TrimStart('\\').Trim();
+            return File.Exists(path);
+        }
+        public static bool Exists(params string[] path)
+        {
+            path.ToList().ForEach(t => t = t.TrimStart('/').TrimStart('\\').TrimEnd('/').TrimEnd('\\'));
+            var wholePath = Path.Combine(path);
+            return File.Exists(wholePath);
+        }
+        #endregion
+
         #region 追加文件
         /****************************************
           * 函数名称：FileAdd
@@ -298,12 +316,26 @@ namespace WebUtils
         /// </summary>
         /// <param name="Path">文件路径</param>
         /// <param name="strings">内容</param>
-        public static void FileAdd(string Path, string strings)
+        public static void AppendText(string path, string text, DateTime? CreationTime = null, DateTime? LastWriteTime = null, DateTime? LastAccessTime = null)
         {
-            StreamWriter sw = File.AppendText(Path);
-            sw.Write(strings);
-            sw.Flush();
-            sw.Close();
+            AppendTextAsync(path, text, CreationTime, LastWriteTime, LastAccessTime).Wait();
+        }
+        public static async Task AppendTextAsync(string path, string text, DateTime? CreationTime = null, DateTime? LastWriteTime = null, DateTime? LastAccessTime = null)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    File.AppendAllText(CreateDir(path), text);
+                    if (CreationTime != null) File.SetCreationTime(path, CreationTime.ObjToDate());
+                    if (LastWriteTime != null) File.SetLastWriteTime(path, LastWriteTime.ObjToDate());
+                    if (LastAccessTime != null) File.SetLastAccessTime(path, LastAccessTime.ObjToDate());
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.LogException(ex);
+                }
+            });
         }
         #endregion
 

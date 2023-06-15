@@ -2,6 +2,7 @@
     //Http请求配置
     "HttpRequest": {
         "Https": false,
+        "AbsolutPath": "/adminpage",
         "Cors": {
             "PolicyName": "CorsIpAccess",
             "EnableAllIPs": false,

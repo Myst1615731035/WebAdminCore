@@ -38,7 +38,8 @@ namespace WebExtention.GlobalFilter
 
             if (_env.EnvironmentName.ObjToString().Equals("Development"))
             {
-                json.msg = context.Exception.StackTrace;//堆栈信息
+                json.msg = "系统繁忙，请稍后重试";//堆栈信息
+                json.data = context.Exception.StackTrace;//堆栈信息
             }
             var res = new ContentResult();
             res.Content = json.ToJson();

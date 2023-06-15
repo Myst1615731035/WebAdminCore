@@ -1,1 +1,211 @@
-﻿[{"Id":"0a28cdae-dbc6-4e82-a31d-daf342a6bddc","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"251cec85-4f11-45eb-b15f-78c42e914c4b","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBU="},{"Id":"0ed2091a-88dd-4430-b6ba-2afd8a524176","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"3c934261-a009-4097-8f32-8c06825200f2","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVA4="},{"Id":"1fc8c301-42c1-4097-808b-fa12abe3b81d","RoleId":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","PermissionId":"3c934261-a009-4097-8f32-8c06825200f2","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 15:00:51","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU+M="},{"Id":"2a8fc030-6e51-4438-b19d-76ddb2b11fa3","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"036121fc-eb1e-441a-9d0f-e1d91d73c0fb","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBY="},{"Id":"3cb12e9c-305f-4472-9612-6243ca00dc32","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"7bd0e39e-2b92-4e1f-be07-2ebc053fdce9","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBc="},{"Id":"3ed9aece-41d3-43ea-bace-689906666f5b","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"9c20709a-dda6-4130-b04a-ace21db00e62","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBk="},{"Id":"42e43bf4-f30e-4324-84ec-dfb5971a5ffd","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"18b6b29c-7143-4b01-9ab7-fc51fce4c38f","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBM="},{"Id":"4bb3f8e4-40b5-4637-8d61-ebbded4ea81b","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"a77609f2-f3d0-4043-9003-29c9a9ca831f","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBE="},{"Id":"728369d5-9567-4ebc-8a35-0aacd5da6271","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"7bdf6311-0bb5-407a-a4c7-e85f3ced4a6f","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBo="},{"Id":"87eb33c6-291d-4f23-aca5-17caf06e2771","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"e8a90f0e-1eaf-4495-ad68-d18cf77688d6","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBI="},{"Id":"90ce8ece-72d2-4f47-b017-1ae07194b655","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"30fcf235-3c4f-4e5c-945f-b5e0f39ae26a","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBg="},{"Id":"a1eb96e7-e88a-410a-96d7-c86780dd90e3","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"0dc39c04-0075-44ca-a8d9-a25a2dbc3616","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBA="},{"Id":"ba6a1412-f41f-48d9-afc8-5c1bf4b63e15","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"ac4db1d1-8414-4991-958e-c390835b2693","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVBQ="},{"Id":"c3b54e9c-b6c5-41f8-a9a2-729b43854691","RoleId":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","PermissionId":"9c20709a-dda6-4130-b04a-ace21db00e62","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 15:00:51","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU+Y="},{"Id":"c6bae3c5-3a13-4146-b80f-ef31b61956de","RoleId":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","PermissionId":"7bd0e39e-2b92-4e1f-be07-2ebc053fdce9","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 15:00:51","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU+Q="},{"Id":"d255aff2-ac9f-48fd-849c-552fb127465b","RoleId":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","PermissionId":"30fcf235-3c4f-4e5c-945f-b5e0f39ae26a","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 15:00:51","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU+U="},{"Id":"e399fc23-e406-4ecd-b09f-f94ce3a127f6","RoleId":"D63D6F4E-12E1-455E-A5D7-A4AAB18824DB","PermissionId":"eaf5c33d-e228-4859-9076-443411a47251","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 16:14:42","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADVA8="},{"Id":"f8b25e65-abc8-43b0-9fb1-4ff5ad3be637","RoleId":"6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc","PermissionId":"251cec85-4f11-45eb-b15f-78c42e914c4b","Sort":0,"CreateId":"FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3","CreateName":"admin","CreateTime":"2023-02-23 15:00:51","ModifyId":null,"ModifyName":null,"ModifyTime":null,"IsDelete":false,"Version":"AAAAAAADU+c="}]
+﻿[
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "0dc39c04-0075-44ca-a8d9-a25a2dbc3616",
+    "Id": "04655641-734a-4b8a-9cb8-64337ba95f4a",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "ac4db1d1-8414-4991-958e-c390835b2693",
+    "Id": "1520aa00-5538-4cba-a11f-b80116e7704c",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "ee9d9c6d-38a8-4a43-8e21-b1a30661c2f5",
+    "Id": "1c4310a6-14b6-4808-9cc8-a2836cbd885d",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "PermissionId": "3c934261-a009-4097-8f32-8c06825200f2",
+    "Id": "1fc8c301-42c1-4097-808b-fa12abe3b81d",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-23 15:00:51",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "a77609f2-f3d0-4043-9003-29c9a9ca831f",
+    "Id": "24754e43-63b8-472f-ad2f-68fc09f9447b",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "251cec85-4f11-45eb-b15f-78c42e914c4b",
+    "Id": "2a6c60d5-96ce-409d-8134-ce4a7038ca81",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "eaf5c33d-e228-4859-9076-443411a47251",
+    "Id": "2dab9550-5b57-4c04-bc39-f13aea96c4ae",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "9c20709a-dda6-4130-b04a-ace21db00e62",
+    "Id": "2dcd501c-1aee-437f-a1e8-9998854d40a7",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "7bd0e39e-2b92-4e1f-be07-2ebc053fdce9",
+    "Id": "81fde1df-0fae-4e96-bb64-81c34001c1bd",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "18b6b29c-7143-4b01-9ab7-fc51fce4c38f",
+    "Id": "9ea2e8f0-642a-4f91-8bff-035bd40f89b1",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "036121fc-eb1e-441a-9d0f-e1d91d73c0fb",
+    "Id": "b3747194-c573-4c71-b07d-9c329706974d",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "PermissionId": "9c20709a-dda6-4130-b04a-ace21db00e62",
+    "Id": "c3b54e9c-b6c5-41f8-a9a2-729b43854691",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-23 15:00:51",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "PermissionId": "7bd0e39e-2b92-4e1f-be07-2ebc053fdce9",
+    "Id": "c6bae3c5-3a13-4146-b80f-ef31b61956de",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-23 15:00:51",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "e8a90f0e-1eaf-4495-ad68-d18cf77688d6",
+    "Id": "c9cea8d3-212b-4c2a-b7c6-e3c5f81ee21c",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "PermissionId": "30fcf235-3c4f-4e5c-945f-b5e0f39ae26a",
+    "Id": "d255aff2-ac9f-48fd-849c-552fb127465b",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-23 15:00:51",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "37a3b7af-5611-4f5b-93cb-9cf81634b44e",
+    "Id": "dd4ab53a-4ee7-43ec-99e8-92b9c67b75e3",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "3c934261-a009-4097-8f32-8c06825200f2",
+    "Id": "f3fe37af-4729-4efa-800a-7af1f45f742d",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "6d2d94c8-b29e-43b5-906c-4fb7b6cec9bc",
+    "PermissionId": "251cec85-4f11-45eb-b15f-78c42e914c4b",
+    "Id": "f8b25e65-abc8-43b0-9fb1-4ff5ad3be637",
+    "Sort": 0,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-02-23 15:00:51",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  },
+  {
+    "RoleId": "D63D6F4E-12E1-455E-A5D7-A4AAB18824DB",
+    "PermissionId": "30fcf235-3c4f-4e5c-945f-b5e0f39ae26a",
+    "Id": "fe43f1a1-86ba-4d99-9b97-92ba3df9facc",
+    "Sort": null,
+    "CreateId": "FB2EA4EE-FBFC-4CBB-9F00-3991BC6433A3",
+    "CreateTime": "2023-06-03 15:14:08",
+    "ModifyId": null,
+    "ModifyTime": null,
+    "IsDelete": false
+  }
+]

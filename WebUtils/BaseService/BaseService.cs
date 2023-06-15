@@ -1,5 +1,4 @@
 ﻿using ApiModel;
-using NPOI.SS.Formula.Functions;
 using SqlSugar;
 using SqlSugar.Extensions;
 using System.Data;
@@ -64,6 +63,11 @@ namespace WebUtils.BaseService
         #endregion
 
         #region 单表方法
+        public ISugarQueryable<TEntity> IQuerable(Expression<Func<TEntity, bool>> expression = null)
+        {
+            return Db.Queryable<TEntity>().WhereIF(expression.IsNotEmpty(), expression);
+        }
+
         #region 查
         public async Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression)
         {
@@ -109,6 +113,15 @@ namespace WebUtils.BaseService
                             .IncludesAllFirstLayer()
                             .WhereIF(whereExp != null, whereExp)
                             .OrderByIF(orderExp != null, orderExp)
+                            .ToTreeAsync(childExp, parentExp, rootValue);
+        }
+
+        public async Task<List<TResult>> QueryTree<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TResult, IEnumerable<object>>> childExp, Expression<Func<TResult, object>> parentExp, object rootValue, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null)
+        {
+            return await Db.Queryable<TEntity>().IncludesAllFirstLayer()
+                            .WhereIF(whereExp != null, whereExp)
+                            .OrderByIF(orderExp != null, orderExp)
+                            .Select(resultExp)
                             .ToTreeAsync(childExp, parentExp, rootValue);
         }
         #endregion
@@ -459,13 +472,13 @@ namespace WebUtils.BaseService
         /// <param name="intPageSize">页大小</param>
         /// <param name="strOrderByFileds">排序字段，如name asc,age desc</param>
         /// <returns></returns>
-        public async Task<Pagination> QueryPage(Expression<Func<TEntity, bool>> expression, Pagination pageModel)
+        public async Task<Pagination> QueryPage(Pagination pageModel, Expression<Func<TEntity, bool>> expression, Expression<Func<TEntity, object>> orderExp = null)
         {
             RefAsync<int> totalCount = 0;
             var list = Db.Queryable<TEntity>()
                          .IncludesAllFirstLayer()
                          .WhereIF(expression != null, expression)
-                         .OrderByIF(!string.IsNullOrEmpty(pageModel.sort), pageModel.sort);
+                         .OrderByIF(orderExp.IsNotEmpty(), orderExp);
 
             if (pageModel.isAll)
             {
@@ -493,13 +506,13 @@ namespace WebUtils.BaseService
         /// <param name="intPageSize">页大小</param>
         /// <param name="strOrderByFileds">排序字段，如name asc,age desc</param>
         /// <returns></returns>
-        public async Task<Pagination> QueryPage<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Pagination pageModel)
+        public async Task<Pagination> QueryPage<TResult>(Pagination pageModel, Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Expression<Func<TEntity, object>> orderExp = null)
         {
             RefAsync<int> totalCount = 0;
             var list = Db.Queryable<TEntity>()
                          .IncludesAllFirstLayer()
-                         .OrderByIF(!string.IsNullOrEmpty(pageModel.sort), pageModel.sort)
                          .WhereIF(whereExp != null, whereExp)
+                         .OrderByIF(orderExp.IsNotEmpty(), orderExp)
                          .Select(resultExp);
 
             if (pageModel.isAll)
@@ -547,7 +560,7 @@ namespace WebUtils.BaseService
         #region 分表方法
         public ISugarQueryable<TEntity> SplitQuerable(string split, Expression<Func<TEntity, bool>> expression = null)
         {
-            var tableName = CreateSplitTable<TEntity>(split);
+            var tableName = GetSplitTableName<TEntity>(split);
             return Db.Queryable<TEntity>().WhereIF(expression != null, expression)
                     .SplitTable(t => t.ContainsTableNames(tableName));
         }
@@ -625,12 +638,35 @@ namespace WebUtils.BaseService
         /// <returns></returns>
         public async Task<List<TEntity>> QueryTreeSplit(Expression<Func<TEntity, IEnumerable<object>>> childExp, Expression<Func<TEntity, object>> parentExp, object rootValue, string split, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null)
         {
-            var tableName = CreateSplitTable<TEntity>(split);
+            var tableName = GetSplitTableName<TEntity>(split);
             return (await Db.Queryable<TEntity>().WhereIF(whereExp != null, whereExp)
                            .SplitTable(t => t.ContainsTableNames(tableName))
                            .OrderByIF(orderExp != null, orderExp)
                            .ToTreeAsync(childExp, parentExp, rootValue)) ?? new List<TEntity>();
         }
+
+        /// <summary>
+        /// 分表查询树 + 字段筛选
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="resultExp"></param>
+        /// <param name="childExp"></param>
+        /// <param name="parentExp"></param>
+        /// <param name="rootValue"></param>
+        /// <param name="split"></param>
+        /// <param name="whereExp"></param>
+        /// <param name="orderExp"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryTreeSplit<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TResult, IEnumerable<object>>> childExp, Expression<Func<TResult, object>> parentExp, object rootValue, string split, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null) 
+        {
+            var tableName = GetSplitTableName<TEntity>(split);
+            return (await Db.Queryable<TEntity>().WhereIF(whereExp != null, whereExp)
+                           .SplitTable(t => t.ContainsTableNames(tableName))
+                           .OrderByIF(orderExp != null, orderExp)
+                           .Select(resultExp)
+                           .ToTreeAsync(childExp, parentExp, rootValue)) ?? new List<TResult>();
+        }
+
         /// <summary>
         /// 分表新增或更新数据
         /// </summary>
@@ -686,7 +722,7 @@ namespace WebUtils.BaseService
         /// <returns></returns>
         public string CreateSplitTable<T>(string split) where T : class, new()
         {
-            var tableName = Db.SplitHelper<T>().GetTableName(split);
+            var tableName = GetSplitTableName<T>(split);
             var type = typeof(T);
             if (!Db.DbMaintenance.IsAnyTable(tableName))
             {
@@ -694,6 +730,11 @@ namespace WebUtils.BaseService
                 Db.CodeFirst.InitTables<T>();
             }
             return tableName;
+        }
+
+        public string GetSplitTableName<T>(string split) where T : class, new()
+        {
+            return Db.SplitHelper<T>().GetTableName(split);
         }
         #endregion
 

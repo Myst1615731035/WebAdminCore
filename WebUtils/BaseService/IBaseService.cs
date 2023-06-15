@@ -21,6 +21,8 @@ namespace WebUtils.BaseService
         #endregion
 
         #region 单表方法
+        ISugarQueryable<TEntity> IQuerable(Expression<Func<TEntity, bool>> expression = null);
+
         #region 查
         Task<TEntity> First(Expression<Func<TEntity, bool>> whereExpression);
         /// <summary>
@@ -39,6 +41,7 @@ namespace WebUtils.BaseService
 
         #region 树查询
         Task<List<TEntity>> QueryTree(Expression<Func<TEntity, IEnumerable<object>>> childExp, Expression<Func<TEntity, object>> parentExp, object rootValue, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null);
+        Task<List<TResult>> QueryTree<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TResult, IEnumerable<object>>> childExp, Expression<Func<TResult, object>> parentExp, object rootValue, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null);
         #endregion
 
         #region 增
@@ -198,14 +201,14 @@ namespace WebUtils.BaseService
         /// <param name="expression"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        Task<Pagination> QueryPage(Expression<Func<TEntity, bool>> whereExp, Pagination pageModel);
+        Task<Pagination> QueryPage(Pagination pageModel, Expression<Func<TEntity, bool>> whereExp, Expression<Func<TEntity, object>> orderExp = null);
         /// <summary>
         /// 分页查询
         /// </summary>
         /// <param name="expression"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        Task<Pagination> QueryPage<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Pagination pageModel);
+        Task<Pagination> QueryPage<TResult>(Pagination pageModel, Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TEntity, bool>> whereExp, Expression<Func<TEntity, object>> orderExp = null);
 
         /// <summary>
         /// 三表联查
@@ -250,6 +253,7 @@ namespace WebUtils.BaseService
         /// <returns></returns>
         Task<List<TEntity>> QueryListSplit(Expression<Func<TEntity, bool>> expression, string split);
         Task<List<TEntity>> QueryTreeSplit(Expression<Func<TEntity, IEnumerable<object>>> childExp, Expression<Func<TEntity, object>> parentExp, object rootValue, string split, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null);
+        Task<List<TResult>> QueryTreeSplit<TResult>(Expression<Func<TEntity, TResult>> resultExp, Expression<Func<TResult, IEnumerable<object>>> childExp, Expression<Func<TResult, object>> parentExp, object rootValue, string split, Expression<Func<TEntity, bool>> whereExp = null, Expression<Func<TEntity, object>> orderExp = null);
         #endregion
 
         Task<int> StorageableSplit(TEntity entity, string split);

@@ -1,14 +1,8 @@
 ﻿using ApiModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using NPOI.OpenXmlFormats.Dml.Chart;
 using SqlSugar;
-using SqlSugar.Extensions;
-using System;
-using WebModel.AppdixEntity;
 using WebModel.Entitys;
-using WebService.IService;
 using WebUtils;
 using WebUtils.BaseService;
 using WebUtils.HttpContextUser;
@@ -43,7 +37,7 @@ namespace MainCore.Controllers.System
             var exp = Expressionable.Create<Dict>();
             if(page.keyword.IsNotEmpty()) 
                 exp = exp.And(t=>t.Name.Contains(page.keyword)||t.Code.Contains(page.keyword) || t.Description.Contains(page.keyword));
-            res.data = await _service.QueryPage(exp.ToExpression(), page);
+            res.data = await _service.QueryPage(page, exp.ToExpression());
             return res;
         }
 
@@ -72,10 +66,10 @@ namespace MainCore.Controllers.System
         {
             var res = new ContentJson("保存失败");
             //重复判断
-            if (await _service.Db.Queryable<Dict>().Where(t => t.Name == entity.Name && t.Id != entity.Id).AnyAsync()) res.msg = "已存在相同名称的字典项";
+            if (await _service.Db.Queryable<Dict>().Where(t => (t.Name == entity.Name || t.Code == entity.Code) && t.Id != entity.Id).AnyAsync()) res.msg = "已存在相同名称或编码的字典项";
             else
             {
-                entity.Items.Sort((a, b) => a.Value.CompareTo(b.Value));
+                if(entity.Items.IsNotEmpty()) entity.Items = entity.Items?.OrderBy(t => t.Sort).ToList();
                 if (await _service.Storageable(entity) > 0) res = new ContentJson(true, "保存成功", entity);
             }
             return res;

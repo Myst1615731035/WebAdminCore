@@ -106,7 +106,7 @@ namespace MainCore.Controllers
             var exp = Expressionable.Create<SysUser>();
             // 增加查询条件
             if (page.keyword.IsNotEmpty()) exp = exp.And(t => t.Name.Contains(page.keyword) || t.Account.Contains(page.keyword) || t.Email.Contains(page.keyword));
-            return new ContentJson(true, "获取成功", await _service.QueryPage(exp.ToExpression(), page));
+            return new ContentJson(true, "获取成功", await _service.QueryPage(page, exp.ToExpression()));
         }
 
         /// <summary>
@@ -162,6 +162,7 @@ namespace MainCore.Controllers
                 entity = user.UpdateProp(entity);
             }
 
+            entity.RoleIds = entity.RoleIds ?? new List<string>();
             if (await _service.Storageable(entity) > 0)
             {
                 res = new ContentJson(true, "保存成功", entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null);
@@ -169,6 +170,11 @@ namespace MainCore.Controllers
             return res;
         }
 
+        /// <summary>
+        /// 重置用户密码
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ContentJson> ReSetPassword(string Id)
         {
@@ -183,25 +189,17 @@ namespace MainCore.Controllers
             }
             return res;
         }
-
+        
         /// <summary>
         /// 删除实体
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> Delete([FromBody] SysUser entity)
+        public async Task<ContentJson> Delete([FromQuery] string Id)
         {
-            //结果定义
-            var res = new ContentJson("保存失败");
-            if (entity.Id.IsNotEmpty())
-            {
-                if (await _service.Delete(entity))
-                {
-                    res.msg = "数据已删除";
-                    res.success = true;
-                }
-            }
+            var res = new ContentJson("删除失败");
+            if (await _service.DeleteById(Id)) res = new ContentJson(true, "删除成功");
             return res;
         }
 
@@ -211,19 +209,31 @@ namespace MainCore.Controllers
         /// <param name="entity"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> DeleteById([FromBody] object Id)
+        public async Task<ContentJson> DeleteById([FromBody] List<string> Ids)
         {
-            //结果定义
-            var res = new ContentJson("保存失败");
+            var res = new ContentJson("删除失败");
+            if (await _service.Delete(t => Ids.Contains(t.Id)) > 0) res = new ContentJson(true, "删除成功");
+            return res;
+        }
+        #endregion
 
-            // Delete
-            if (Id.IsNotEmpty())
+        #region 业务功能
+        /// <summary>
+        /// 保存用户站点权限
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="siteIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ContentJson> SaveUserSite([FromQuery] string userId, [FromBody] List<string>? siteIds)
+        {
+            var res = new ContentJson("保存失败");
+            var user = await _service.QueryById(userId);
+            if (user.IsEmpty()) res.msg = $"{res.msg}, 未获取到需要设置的用户信息";
+            else
             {
-                if (await _service.DeleteById(Id))
-                {
-                    res.msg = "数据已删除";
-                    res.success = true;
-                }
+                user.SiteIds = siteIds;
+                if (await _service.Update(user)) res = new ContentJson(true, "保存成功", user);
             }
             return res;
         }

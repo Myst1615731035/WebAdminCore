@@ -7,7 +7,7 @@ namespace WebModel.Entitys
     ///<summary>
     /// Button
     ///</summary>
-    [SystemAuthTable]
+    [DataSeed]
     [SugarTable("Sys_Interface")]
     public partial class Interface : RootEntity<string>
     {

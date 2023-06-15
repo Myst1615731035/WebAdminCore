@@ -1,11 +1,11 @@
 <template>
 	<div class="container-grid">
 		<vxe-grid ref="grid" v-bind="gridOptions" @cell-dblclick="toolClick({ code: 'edit' })" @toolbar-button-click="toolClick" @toolbar-tool-click="toolClick">
-			<template #btns="{row}">
+			<template #btns="{ row }">
 				<vxe-button v-for="t in row.Buttons" :key="row.Id + t.Code" :content="t.Name"></vxe-button>
 			</template>
 		</vxe-grid>
-		<pageForm v-model="form.show" :data="form.data" :menus="form.menus"></pageForm>
+		<pageForm v-model="form.show" :data="form.data"></pageForm>
 		<sortModal v-model="sortConfig.show"></sortModal>
 	</div>
 </template>
@@ -18,7 +18,7 @@ export default {
 	data() {
 		const query = this.$treeGridQuery(this.serverApi.permission.list);
 		return {
-			form: { show: false, data: null, menus: [] },
+			form: { show: false, data: null },
 			sortConfig: { show: false },
 			gridOptions: {
 				height: 'auto',
@@ -60,7 +60,7 @@ export default {
 							collapseNode: false,
 							itemRender: {
 								name: '$buttons',
-								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fa fa-refresh' } }]
+								children: [{ props: { type: 'submit', status: 'primary', icon: 'fa fa-search' } }, { props: { type: 'reset', icon: 'fas fa-redo' } }]
 							}
 						}
 					]
@@ -73,20 +73,20 @@ export default {
 			const funcs = {
 				add: () => {
 					this.$refs.grid.clearCurrentRow();
-					this.GetMenuTree().then(res => (this.form = { show: true, data: null, menus: Object.freeze(res.data) }));
+					this.form = { show: true, data: null };
 				},
 				edit: () => {
 					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row)) this.GetMenuTree().then(res => (this.form = { show: true, data: row, menus: Object.freeze(res.data) }));
+					if (IsNotEmpty(row)) this.form = { show: true, data: row };
 					else this.$message({ content: `请选择一行记录进行编辑`, status: 'warning' });
 				},
 				del: () => {
 					var row = this.$refs.grid.getCurrentRecord();
 					if (IsEmpty(row)) this.$message({ content: `请选择需要处理的记录`, status: 'warning' });
 					else {
-						this.$confirm({ content: '确认删除?' }).then(res => {
+						this.$confirm({ content: '确认删除?' }).then((res) => {
 							if (res == 'confirm')
-								this.$post(`${this.serverApi.permission.delete}?Id=${row.Id}`).then(res => {
+								this.$post(`${this.serverApi.permission.delete}?Id=${row.Id}`).then((res) => {
 									this.$alertRes(res);
 									if (res.success) this.$refs.grid.remove(row);
 								});
@@ -104,9 +104,6 @@ export default {
 			const row = this.$refs.grid.getCurrentRecord();
 			if (IsEmpty(row)) this.$refs.grid.commitProxy('query');
 			else this.$refs.grid.reloadRow(row, Object.assign(row, newRow));
-		},
-		GetMenuTree() {
-			return this.$post(this.$store.state.serverApi.permission.list);
 		}
 	}
 };

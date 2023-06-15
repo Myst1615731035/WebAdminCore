@@ -4,8 +4,11 @@ import router from '../../vue-plugins/router/router.ts';
 import defaultRoute from '../../vue-plugins/router/defaultRoute';
 import store from '../../vue-plugins/store/store';
 import { modal, saveFile } from 'vxe-table';
+
 const { message: $message } = modal;
 const loginInfo = store.getters.get('loginInfo');
+
+const { cursite } = store.getters.get('website');
 
 // 引入element-ui loading组件
 const Loading = ElLoading;
@@ -14,16 +17,23 @@ let base = process.env.NODE_ENV == 'production' ? `${TrimEnd(_config.host, '/')}
 
 axios.defaults.timeout = 400000;
 let loadingInstance;
-const loadingOption = { text: '正在处理中...', lock: true, spinner: 'el-icon-loading', background: 'rgba(0, 0, 0, 0.7)', customClass: 'custom-loading' };
+const loadingOption = { text: '加载中...', lock: true, spinner: 'el-icon-loading', background: 'rgba(0, 0, 0, 0.7)', customClass: 'custom-loading' };
 axios.interceptors.request.use(
 	config => {
 		config.url = formatUrl(config.url);
 		// 处理参数为空时，axios不传Content-type的问题
 		if (config.method.toLowerCase() == 'post' && IsEmpty(config.data)) config.data = {};
+		// 显示数据加载中
 		if (config.loading) loadingInstance = Loading.service(loadingOption);
+		
 		var curTime = new Date();
 		var expiretime = new Date(Date.parse(loginInfo.tokenExpire));
 		if (loginInfo.token && (curTime < expiretime && loginInfo.tokenExpire)) config.headers.Authorization = 'Bearer ' + loginInfo.token;
+		
+		if (!!cursite && !!cursite.Id && !!cursite.Idtag) {
+			config.headers.SiteId = cursite.Id;
+			config.headers.SiteCode = cursite.Idtag;
+		}
 		saveRefreshtime();
 		return config;
 	},
@@ -148,8 +158,7 @@ const ToLogin = params => {
 //通用的请求方式
 const formatUrl = url => {
 	var res = '';
-	var str = url.includes('?') ? url.substring(0, url.indexOf('?')) : url;
-	if (/(^((?!\/\/|http:|https:|localhost|\.com(\/?)|\.org(\/?)|\.net(\/?)|\.gov(\/?)|\.info(\/?)).)*$)/gi.test(url))
+	if (/(^((?!\/\/|http:|https:|localhost|\.com(\/?)|\.org(\/?)|\.net(\/?)|\.gov(\/?)|\.info(\/?)).)*$)/gi.test(url)) 
 		res = Trim(base, '/') != '' ? `${TrimEnd(base, '/')}/${TrimStart(url, '/')}` : url;
 	else res = url;
 	return res;

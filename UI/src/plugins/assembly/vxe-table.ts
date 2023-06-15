@@ -114,7 +114,6 @@ VXETable.setup({
 		mask: true,
 		marginSize: -1,
 		title: '',
-		resize: true,
 		escClosable: true,
 		confirmButtonText: '确认',
 		cancelButtonText: '取消',

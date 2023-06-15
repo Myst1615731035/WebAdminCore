@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using System.ComponentModel.DataAnnotations;
 using WebModel.RootEntity;
 using WebUtils.Attributes;
 
@@ -7,7 +8,7 @@ namespace WebModel.Entitys
     ///<summary>
     ///Menu
     ///</summary>
-    [SystemAuthTable]
+    [DataSeed]
     [SugarTable("Sys_Menu")]
     public partial class Menu : RootEntity<string>
     {
@@ -31,9 +32,6 @@ namespace WebModel.Entitys
 
         [SugarColumn(ColumnDescription = "是否隐藏")]
         public bool? Visiable { get; set; } = true;
-
-        [SugarColumn(IsIgnore = true, ColumnDescription = "用于角色授权")]
-        public bool Selected { get; set; } = false;
 
         [SugarColumn(IsIgnore = true)]
         public List<Menu>? Children { get; set; } = new List<Menu>();

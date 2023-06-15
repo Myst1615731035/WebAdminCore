@@ -17,9 +17,9 @@ const GetGridBtnListByAuth = (route, btnConfigs) => {
 	var menu = FilterMenu(route.path.toLocaleLowerCase());
 	if (!!menu && !!(menus || {}).Buttons) {
 		var btns = (menus || {}).Buttons || [];
-		if (btns.length > 0 && !!btns.find(t => t.Code == code)) {
-			var codes = btns.map(t => t.Code).filter(t => !!t);
-			return btnConfigs.filter(t => codes.indexOf(t.Code));
+		if (btns.length > 0 && !!btns.find((t) => t.Code == code)) {
+			var codes = btns.map((t) => t.Code).filter((t) => !!t);
+			return btnConfigs.filter((t) => codes.indexOf(t.Code));
 		}
 	}
 	return [];
@@ -31,15 +31,15 @@ const CheckGridBtnAuth = (route, code) => {
 	var menu = FilterMenu(route.path.toLocaleLowerCase());
 	if (!!menu && !!(menus || {}).Buttons) {
 		var btns = (menus || {}).Buttons || [];
-		if (btns.length > 0 && !!btns.find(t => t.Code == code)) return true;
+		if (btns.length > 0 && !!btns.find((t) => t.Code == code)) return true;
 	}
 	VXETable.modal.message({ content: '暂无权限', status: 'warning' });
 	return false;
 };
 
-const install = app => {
-	app.config.globalProperties.$GetGridAuthBtnList = GetGridBtnListByAuth;
-	app.config.globalProperties.$CheckGridBtnAuth = CheckGridBtnAuth;
+export default {
+	install: (app) => {
+		app.config.globalProperties.$GetGridAuthBtnList = GetGridBtnListByAuth;
+		app.config.globalProperties.$CheckGridBtnAuth = CheckGridBtnAuth;
+	},
 };
-
-export default { install };

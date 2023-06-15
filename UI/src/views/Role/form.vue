@@ -20,10 +20,10 @@ export default {
 				titleAlign: 'right',
 				preventSubmit: true,
 				items: [
-					{ field: 'Id', title: '主键', visible: false, resetValue: '' },
+					{ field: 'Id', title: '主键', visible: false, resetValue: '', itemRender: { name: '$text' } },
 					{ field: 'Name', title: '角色名称', resetValue: '', span: 24, itemRender: { name: '$input' } },
 					{ field: 'Sort', title: '排序', resetValue: 0, span: 24, itemRender: { name: '$input', props: { type: 'number' } } },
-					{ field: 'IsDelete', title: '状态', resetValue: false, span: 24, itemRender: { name: '$switch', props: this.$store.state.cache.IsDeleteSwitch } },
+					{ field: 'IsDelete', title: '状态', resetValue: false, span: 24, itemRender: { name: '$switch', props: this.$store.state.cache.TrueSwitch } },
 					{ field: 'Description', title: '说明', resetValue: '', span: 24, itemRender: { name: '$textarea', props: { rows: 5 } } }
 				],
 				rules: { Name: [{ required: true, message: '请输入角色名称' }], IsDelete: [{ required: true, message: '请选择角色状态' }] }
@@ -41,7 +41,7 @@ export default {
 			immediate: true,
 			deep: true,
 			handler: function(val) {
-				this.formOption.data = val || {};
+				this.formOption.data = DeepClone(val || {});
 				this.modalOption.title = `${IsEmpty(val) ? '新增' : '编辑'}`;
 			}
 		}
