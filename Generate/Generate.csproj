@@ -16,26 +16,4 @@
 		<ProjectReference Include="..\WebModel\WebModel.csproj" />
 		<ProjectReference Include="..\WebUtils\WebUtils.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Template\ControllerTemplate.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Template\FormVue.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Template\GridVue.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Template\ServiceTemplate.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Template\IServiceTemplate.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Template\EntityTemplate.cshtml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-
 </Project>
