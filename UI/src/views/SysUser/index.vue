@@ -2,20 +2,17 @@
 	<div class="container-grid">
 		<vxe-grid ref="grid" v-bind="gridOptions" @cell-dblclick="toolClick({ code: 'edit' })" @toolbar-button-click="toolClick" @toolbar-tool-click="toolClick"></vxe-grid>
 		<pageForm v-model="form.show" :data="form.data"></pageForm>
-		<siteList v-model="assign.show" :userId="assign.userId" :userName="assign.userName" :siteids="assign.siteids"></siteList>
 	</div>
 </template>
 
 <script>
 import pageForm from './form.vue';
-import siteList from './siteAssign.vue';
 export default {
-	components: { pageForm, siteList },
+	components: { pageForm },
 	data() {
 		const query = this.$gridQuery(this.serverApi.sysUser.list);
 		return {
 			form: { show: false, data: null },
-			assign: { show: false, userId: '', userName: '', siteids: [] },
 			gridOptions: {
 				height: 'auto',
 				headerAlign: 'center',
@@ -115,11 +112,6 @@ export default {
 							}
 						});
 					} else this.$message({ content: `请选择用户`, status: 'warning' });
-				},
-				assign: () => {
-					var row = this.$refs.grid.getCurrentRecord();
-					if (IsNotEmpty(row)) this.assign = { show: true, userId: row.Id, userName: row.Name, siteids: row.SiteIds };
-					else this.$message({ content: `请选择用户`, status: 'warning' });
 				}
 			};
 			if (!!funcs[code] && this.$CheckGridBtnAuth(this.$route, code)) funcs[code]();

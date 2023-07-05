@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace WebUtils
@@ -161,5 +162,26 @@ namespace WebUtils
         }
 
         public static Type StringType = typeof(string);
+
+        public static bool IsUrl(this string thisValue)
+        {
+            var regex = new Regex("^(https?|ftp):\\/\\/[^\\s\\/$.?#].[^\\s]*$");
+            return regex.IsMatch(thisValue);
+        }
+
+        //IP地址是否为局域网地址的判断函数
+        public static bool IsInternalIP(this string? ipAddress)
+        {
+            IPAddress ip = IPAddress.Parse(ipAddress);
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                byte[] addr = ip.GetAddressBytes();
+                if (addr[0] == 10 || (addr[0] == 172 && addr[1] >= 16 && addr[1] <= 31) || (addr[0] == 192 && addr[1] == 168))
+                    return true;
+                if (addr[0] == 0 && addr[1] == 0 && addr[2] == 0 && addr[3] == 0 && addr[4] == 0 && addr[5] == 0 && addr[6] == 0 && addr[7] == 0 && addr[8] == 0 && addr[9] == 0 && addr[10] == 0xFF && addr[11] == 0xFF)
+                    return true;
+            }
+            return false;
+        }
     }
 }

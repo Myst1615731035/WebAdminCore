@@ -4,6 +4,12 @@ using WebModel.RootEntity;
 using WebUtils;
 using WebUtils.Attributes;
 
+var systemDefaultEntitys = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
+                            .Select(Assembly.LoadFrom).ToArray()
+                            .SelectMany(a => a.DefinedTypes).Select(type => type.AsType())
+                            .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<SystemDefaultAttribute>().IsNotEmpty())
+                            .ToClassInfos();
+
 #region DBFirst
 //var db = new SqlSugarClient(new ConnectionConfig()
 //{
@@ -14,14 +20,13 @@ using WebUtils.Attributes;
 
 //var dbFirst = new DBFirst(db);
 
-//dbFirst.GenerateFromDB(entityNameFormat: t => t.Substring(t.IndexOf("_") + 1))
-//        .FilterRootColumns(typeof(RootEntity<string>))
-//        .CreateFile("Template/EntityTemplate.cshtml", "../../../../WebModel/WorkEntity", t => $"{t.EntityName}.cs")
-//.CreateFile("Template/IRepositoryTemplate.cshtml", @"../../../../WebService", t => $"I{t.EntityName}Repository.cs")
-//.CreateFile("Template/RepositoryTemplate.cshtml", @"../../../../WebService", t => $"{t.EntityName}Repository.cs")
-//.CreateFile("Template/IServiceTemplate.cshtml", @"../../../../WebService", t => $"I{t.EntityName}Service.cs")
-//.CreateFile("Template/ServiceTemplate.cshtml", @"../../../../WebService", t => $"{t.EntityName}Service.cs")
-//.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+//var entitys = dbFirst.GenerateFromDB(tableFilter: dt => !systemDefaultEntitys.Any(t => t.TableName == dt.Name || t.EntityName == dt.Name));
+//entitys.CreateFile("Template/Entity.cshtml", @"../../../../WebModel/WorkEntity", t => $"{t.EntityName}.cs", overWriteExistFile: true)
+//    .CreateFile("Template/Controller.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs", overWriteExistFile: true)
+//    .CreateFile("Template/GridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue", overWriteExistFile: true)
+//    .CreateFile("Template/FormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue", overWriteExistFile: true);
+
+//entitys.CreateFileForAllClass("Template/WorkApi.cshtml", @"../../../../UI/src/pages/workApi.ts", true);
 #endregion
 
 #region CodeFirst
@@ -31,7 +36,7 @@ var types = Directory.GetFiles(AppContext.BaseDirectory, "WebModel.dll")
                     .Where(t => t.Namespace == "WebModel.Entitys" && t.GetCustomAttribute<DataSeedAttribute>().IsEmpty())
                     .ToClassInfos();
 // 生成Controller
-types.CreateFile("Template/ControllerTemplate.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
+types.CreateFile("Template/Controller.cshtml", @"../../../../MainCore/Controllers", t => $"{t.EntityName}Controller.cs");
 
 // 生成UI 基本表格模式, 无下级字段
 types.Where(t => !t.Type.GetProperties().Any(p => p.Name.Equals("Children", StringComparison.OrdinalIgnoreCase))).ToList()
@@ -44,6 +49,8 @@ types.Where(t => t.Type.GetProperties().Any(p => p.Name.Equals("Children", Strin
     .FilterRootColumns(typeof(RootEntity<string>))
     .CreateFile("Template/TreeGridVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/index.vue")
     .CreateFile("Template/TreeFormVue.cshtml", @"../../../../UI/src/pages", t => $"{t.EntityName}/form.vue");
+// 生成业务模块的接口文件
+types.CreateFileForAllClass("Template/WorkApi.cshtml", @"../../../../UI/src/pages/workApi.ts", true);
 #endregion
 
 "生成完成".WriteSuccessLine();

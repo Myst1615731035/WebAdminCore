@@ -70,6 +70,14 @@ export default {
 	},
 	methods: {
 		toolClick({ code }) {
+			const delFunc = (code, row) => {
+				if (code == 'confirm') {
+					this.$post(`${this.serverApi.permission.delete}?Id=${row.Id}`).then((res) => {
+						this.$alertRes(res);
+						if (res.success) this.$refs.grid.remove(row);
+					});
+				}
+			};
 			const funcs = {
 				add: () => {
 					this.$refs.grid.clearCurrentRow();
@@ -85,11 +93,10 @@ export default {
 					if (IsEmpty(row)) this.$message({ content: `请选择需要处理的记录`, status: 'warning' });
 					else {
 						this.$confirm({ content: '确认删除?' }).then((res) => {
-							if (res == 'confirm')
-								this.$post(`${this.serverApi.permission.delete}?Id=${row.Id}`).then((res) => {
-									this.$alertRes(res);
-									if (res.success) this.$refs.grid.remove(row);
-								});
+							if (!!row.Children && row.Children.length > 0) {
+								// 二次确认
+								this.$confirm({ content: '该菜单下还存在子菜单，是否一起删除? 确认则一起提交删除！' }).then((res2) => delFunc(res2, row));
+							} else delFunc(res, row);
 						});
 					}
 				},

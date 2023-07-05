@@ -9,6 +9,7 @@ namespace WebModel.Entitys
     ///RolePermissionButton
     ///</summary>
     [DataSeed]
+    [SystemDefault]
     [SugarTable("Sys_RolePermission")]
     public partial class RolePermission : RootEntity<string>
     {

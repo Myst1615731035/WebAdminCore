@@ -35,11 +35,12 @@ namespace Generate.Service
         /// <exception cref="Exception"></exception>
         public static List<ClassInfo> CreateFile(this List<ClassInfo> list, string templatePath, string outputDir, Func<ClassInfo, string> fileNameFormat, bool overWriteExistFile = false, Func<ClassInfo, bool>? noCreateSelectFunc = null)
         {
+            var templateFileInfo = new FileInfo(templatePath);
             outputDir = Path.GetFullPath(outputDir);
             if (outputDir.IsEmpty()) throw new Exception("Invalid file path");
             if (list == null || list.Count == 0) throw new Exception("Invalid list for ClassInfo");
             ($"实体信息数量：{list.Count}\r\n" +
-            $"模板：{templatePath}\r\n" +
+            $"模板：{templateFileInfo.Name}\r\n" +
             $"是否覆写文件：{overWriteExistFile} \r\n").WriteInfoLine();
             list.ForEach(t =>
             {
@@ -109,6 +110,39 @@ namespace Generate.Service
                 res.Add(ci);
             });
             return res;
+        }
+
+        /// <summary>
+        /// 基于所有实体类生成的文件，例如获取所有业务模块的接口配置
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="templatePath"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="overWriteExistFile"></param>
+        /// <returns></returns>
+        public static List<ClassInfo> CreateFileForAllClass(this List<ClassInfo> list, string templatePath, string targetFilePath, bool overWriteExistFile = false)
+        {
+            var templateFileInfo = new FileInfo(templatePath);
+            ($"实体信息数量：{list.Count}\r\n" +
+             $"模板：{templateFileInfo.Name}\r\n" +
+             $"是否覆写文件：{overWriteExistFile} \r\n").WriteInfoLine();
+            if (!FileHelper.Exists(targetFilePath) || overWriteExistFile)
+            {
+                // 根据模板生成内容
+                var text = RazorHelper.Compile(FileHelper.ReadFile(templatePath), new { List = list }, build =>
+                {
+                    build.AddAssemblyReference(typeof(SqlSugar.Extensions.UtilExtensions));
+                    build.AddAssemblyReference(typeof(Newtonsoft.Json.JsonConvert));
+                    build.AddAssemblyReference(typeof(TemplateService));
+                    build.AddUsing("SqlSugar.Extensions");
+                    build.AddUsing("Generate.Service");
+                    build.AddUsing("Newtonsoft.Json");
+                }).Result;
+                // 写文件
+                FileHelper.WriteFile(targetFilePath, text);
+                $"{targetFilePath} create success!".WriteSuccessLine();
+            }
+            return list;
         }
     }
 }

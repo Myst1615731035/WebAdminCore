@@ -41,7 +41,7 @@ namespace WebUtils
                     #region AOP 日志
                     AopEvents = new AopEvents()
                     {
-                        #region 数据过滤
+                        #region 数据更新前
                         DataExecuting = (oldValue, entityInfo) =>
                         {
                             //无法获取使用AddScoped注入的对象，但可以获取AddTransient和AddSingleton注入的对象
@@ -49,7 +49,7 @@ namespace WebUtils
                             var accessor = AppConfig.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
                             var user = new AspNetUser(accessor);
 
-                            #region 插入数据时
+                            #region 插入
                             if (entityInfo.OperationType == DataFilterType.InsertByObject)
                             {
                                 switch (entityInfo.PropertyName)
@@ -63,14 +63,11 @@ namespace WebUtils
                                     case "CreateId":
                                         entityInfo.SetValue(user.ID);
                                         break;
-                                    case "CreateName":
-                                        entityInfo.SetValue(user.Name);
-                                        break;
                                 }
                             }
                             #endregion
 
-                            #region 更新数据时
+                            #region 更新
                             if (entityInfo.OperationType == DataFilterType.UpdateByObject)
                             {
                                 switch (entityInfo.PropertyName)
@@ -78,15 +75,25 @@ namespace WebUtils
                                     case "ModifyId":
                                         entityInfo.SetValue(user.ID);
                                         break;
-                                    case "ModifyName":
-                                        entityInfo.SetValue(user.Name);
-                                        break;
                                     case "ModifyTime":
                                         entityInfo.SetValue(DateTime.Now);
                                         break;
                                 }
                             }
                             #endregion
+
+                            #region 删除
+                            if (entityInfo.OperationType == DataFilterType.DeleteByObject)
+                            {
+                            }
+                            #endregion
+                        },
+                        #endregion
+
+                        #region 数据更新后
+                        DataExecuted = (oldValue, entityInfo) =>
+                        {
+
                         },
                         #endregion
 
@@ -154,3 +161,4 @@ namespace WebUtils
         }
     }
 }
+

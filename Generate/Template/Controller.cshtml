@@ -38,14 +38,32 @@ namespace MainCore.Controllers
         public async Task<ContentJson> GetList([FromBody] Pagination page)
 		{
 			var exp = Expressionable.Create<@Model.EntityName>();
+            exp = exp.Add(t => !t.IsDelete);
 			// 增加查询条件
 			return new ContentJson
             {
 				msg = "success",
 				success = true,
-				data = page.isOption ?
-                        await _service.QueryPage(page, t=> new @Model.EntityName { Id = t.Id, Name = t.Name },  exp.ToExpression())
-                        : await _service.QueryPage(page,exp.ToExpression())
+				data = await _service.QueryPage(page,exp.ToExpression())
+			};
+		}
+
+        /// <summary>
+		/// 获取数据列表, 作为选项
+		/// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ContentJson> GetOption()
+		{
+			var exp = Expressionable.Create<@Model.EntityName>();
+            exp = exp.Add(t => !t.IsDelete);
+			// 增加查询条件
+			return new ContentJson
+            {
+				msg = "success",
+				success = true,
+                data = await _service.Query(t => new @Model.EntityName { Id = t.Id, Name = t.Name }, exp.ToExpression(), t => t.Sort);
 			};
 		}
 

@@ -9,6 +9,7 @@ namespace WebModel.Entitys
     ///Menu
     ///</summary>
     [DataSeed]
+    [SystemDefault]
     [SugarTable("Sys_Menu")]
     public partial class Menu : RootEntity<string>
     {

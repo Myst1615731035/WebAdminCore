@@ -76,15 +76,21 @@ namespace MainCore.Controllers.System
         }
 
         /// <summary>
-        /// 获取字典数据实体
+        /// 删除实体
         /// </summary>
-        /// <param name="page"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> Delete(string Id)
+        public async Task<ContentJson> Delete([FromQuery] string Id)
         {
+            //结果定义
             var res = new ContentJson("删除失败");
-            if(await _service.DeleteById(Id)) res = new ContentJson(true, "删除成功");
+            var entity = await _service.QueryById(Id);
+            if (entity.IsNotEmpty())
+            {
+                entity.IsDelete = true;
+                if (await _service.Update(entity)) res = new ContentJson(true, "数据已删除");
+            }
             return res;
         }
         #endregion

@@ -8,6 +8,7 @@ namespace WebModel.Entitys
     ///SysUser
     ///</summary>
     [DataSeed]
+    [SystemDefault]
     [SugarTable("Sys_SysUser")]
     public partial class SysUser : RootEntity<string>
     {

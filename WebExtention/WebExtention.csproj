@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MiddleWare\ConsulMiddleware.cs" />
-    <Compile Remove="MiddleWare\QuartzJobMiddleware.cs" />
-    <Compile Remove="MiddleWare\SeedDataMiddleware.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />

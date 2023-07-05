@@ -189,30 +189,24 @@ namespace MainCore.Controllers
             }
             return res;
         }
-        
-        /// <summary>
-        /// 删除实体
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ContentJson> Delete([FromQuery] string Id)
-        {
-            var res = new ContentJson("删除失败");
-            if (await _service.DeleteById(Id)) res = new ContentJson(true, "删除成功");
-            return res;
-        }
+
 
         /// <summary>
         /// 删除实体
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> DeleteById([FromBody] List<string> Ids)
+        public async Task<ContentJson> Delete([FromQuery] string Id)
         {
+            //结果定义
             var res = new ContentJson("删除失败");
-            if (await _service.Delete(t => Ids.Contains(t.Id)) > 0) res = new ContentJson(true, "删除成功");
+            var entity = await _service.QueryById(Id);
+            if (entity.IsNotEmpty())
+            {
+                entity.IsDelete = true;
+                if (await _service.Update(entity)) res = new ContentJson(true, "数据已删除");
+            }
             return res;
         }
         #endregion

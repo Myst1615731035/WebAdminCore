@@ -1,0 +1,13 @@
+﻿export default{
+    apiList:{
+        @foreach (var t in @Model.List)
+        {
+        @:@t.EntityName:{
+            @:list:@($"'/api/{t.EntityName}/GetList'"),
+            @:option:@($"'/api/{t.EntityName}/GetOption'"),
+            @:save:@($"'/api/{t.EntityName}/Save'"),
+            @:delete:@($"'/api/{t.EntityName}/Delete'"),
+        @:},
+        }
+    }
+}

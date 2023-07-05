@@ -30,8 +30,12 @@ namespace Generate.Service
                 var tables = _db.DbMaintenance.GetTableInfoList(false);
                 // 根据筛选条件过滤获取到的table信息
                 if (tableFilter != null) tables = tables.Where(tableFilter).ToList();
+                // 过滤掉系统权限实体类
+
+
+
                 // 遍历表信息
-                tables.ForEach(async t =>
+                tables.ForEach(t =>
                 {
                     // 获取表信息类
                     var model = new ClassInfo()
@@ -46,7 +50,7 @@ namespace Generate.Service
                     {
                         model.IsSplitTable = true;
                         return;
-                    } 
+                    }
 
                     // 获取表的所有字段
                     var columns = _db.DbMaintenance.GetColumnInfosByTableName(t.Name, false);
@@ -74,12 +78,17 @@ namespace Generate.Service
                         if (c.IsNullable) props.Add("IsNullable = true");
                         if (c.IsPrimarykey) props.Add("IsPrimaryKey = true");
                         if (c.IsIdentity) props.Add("IsIdentity = true");
+
                         if (c.DataType.Equals("timestamp", StringComparison.OrdinalIgnoreCase)) props.Add("IsOnlyIgnoreInsert = true,IsOnlyIgnoreUpdate = true");
                         if (columnType.Equals("string", StringComparison.OrdinalIgnoreCase))
                         {
-                            var ColumnDataTypeProps = $"ColumnDataType = \"{c.DataType}\"{(c.Length < 0 ? "(MAX)" : "")}";
+                            string ColumnDataTypeProps = string.Empty;
+                            if (c.DataType.Equals("xml", StringComparison.OrdinalIgnoreCase)) ColumnDataTypeProps = $"ColumnDataType = \"{c.DataType}\"";
+                            else ColumnDataTypeProps = $"ColumnDataType = \"{c.DataType}{(c.Length < 0 ? "(MAX)" : "")}\"";
+
                             props.Add(ColumnDataTypeProps);
                         }
+
                         if (hasDefaultValue)
                         {
                             props.Add($"DefaultValue=\"{GetProertypeDefaultValue(c.DefaultValue)}\"");
@@ -103,6 +112,7 @@ namespace Generate.Service
                         });
                     });
                     #endregion
+
                     list.Add(model);
                 });
                 return list;

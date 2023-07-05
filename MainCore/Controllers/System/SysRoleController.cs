@@ -99,61 +99,24 @@ namespace MainCore.Controllers
             return res;
         }
 
-        /// <summary>
-        /// 删除实体
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ContentJson> Delete([FromBody] SysRole entity)
-        {
-            //结果定义
-            var result = new ContentJson()
-            {
-                msg = "操作失败",
-                success = false,
-                data = ""
-            };
-
-            // Delete
-            if (entity.Id.IsNotEmpty())
-            {
-                if (await _service.Delete(entity))
-                {
-                    result.msg = "数据已删除";
-                    result.success = true;
-                }
-
-            }
-            return result;
-        }
 
         /// <summary>
         /// 删除实体
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> DeleteById([FromBody] object Id)
+        public async Task<ContentJson> Delete([FromQuery] string Id)
         {
             //结果定义
-            var result = new ContentJson()
+            var res = new ContentJson("删除失败");
+            var entity = await _service.QueryById(Id);
+            if (entity.IsNotEmpty())
             {
-                msg = "操作失败",
-                success = false,
-                data = ""
-            };
-
-            // Delete
-            if (Id.IsNotEmpty())
-            {
-                if (await _service.DeleteById(Id))
-                {
-                    result.msg = "数据已删除";
-                    result.success = true;
-                }
+                //entity.IsDelete = true;
+                if (await _service.Delete(entity)) res = new ContentJson(true, "数据已删除");
             }
-            return result;
+            return res;
         }
         #endregion
 

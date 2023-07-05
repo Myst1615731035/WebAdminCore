@@ -4,7 +4,6 @@ using System.Reflection;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.AspNetCore.Mvc;
 using WebUtils.BaseService;
-using WebUtils.BaseService;
 
 namespace WebExtention.AutofacDI
 {

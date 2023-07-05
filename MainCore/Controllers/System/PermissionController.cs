@@ -44,7 +44,7 @@ namespace MainCore.Controllers.System
                 list = await _service.Query(exp.ToExpression(), t => t.Sort);
             }
             else list = page.isOption ?
-                    await _service.QueryTree(t=>new Menu { Id = t.Id, Pid = t.Pid, Name = t.Name, Sort = t.Sort, }, t => t.Children, t => t.Pid, "", null, t => t.Sort)
+                    await _service.QueryTree(t => new Menu { Id = t.Id, Pid = t.Pid, Name = t.Name, Sort = t.Sort, }, t => t.Children, t => t.Pid, "", null, t => t.Sort)
                     : await _service.QueryTree(t => t.Children, t => t.Pid, "", null, t => t.Sort);
 
             return new ContentJson()
@@ -93,7 +93,7 @@ namespace MainCore.Controllers.System
                 result.msg = $"该上级目录下已存在\"{entity.Name}\"的同名目录/页面,请确认";
                 return result;
             }
-            if (await _service.Any(t=>t.Id == entity.Pid && t.Type == 1))
+            if (await _service.Any(t => t.Id == entity.Pid && t.Type == 1))
             {
                 result.msg = "只允许在目录下添加目录/页面, 请确认上级目录选择是否正确";
                 return result;
@@ -106,7 +106,8 @@ namespace MainCore.Controllers.System
                 _service.CommitTran();
                 result = new ContentJson(true, "保存成功");
                 result.data = entity.Id.IsNotEmpty() ? await _service.QueryById(entity.Id) : null;
-            }else _service.RollbackTran();
+            }
+            else _service.RollbackTran();
             return result;
         }
         /// <summary>
@@ -125,63 +126,35 @@ namespace MainCore.Controllers.System
             return res;
         }
 
-
         /// <summary>
         /// 删除实体
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ContentJson> Delete([FromBody] Menu entity)
+        public async Task<ContentJson> Delete([FromQuery] string Id)
         {
-            //结果定义
-            var result = new ContentJson("删除失败");
-            #region
-            if (await _service.Any(t => t.Pid == entity.Id && !t.IsDelete))
+            var res = new ContentJson("删除失败");
+            var list = await _service.Query(t => t.Pid == Id || t.Id == Id);
+            var perIds = list.Select(t => t.Id).ToList();
+
+            if (list.IsNotEmpty() && list.Count > 0)
             {
-                result.msg = "该目录下仍然存在未删除的目录或页面,无法删除此目录";
-                return result;
-            }
-            #endregion
-            // Delete
-            if (entity.Id.IsNotEmpty())
-            {
-                if (await _service.Delete(entity))
+                _service.BeginTran();
+                try
                 {
-                    result.msg = "数据已删除";
-                    result.success = true;
+                    await _service.Db.Deleteable<RolePermission>().Where(t => perIds.Contains(t.PermissionId)).ExecuteCommandAsync();
+                    await _service.Delete(list);
+                    _service.CommitTran();
+                    res = new ContentJson(true, "删除成功");
                 }
-
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// 删除实体
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ContentJson> DeleteById([FromBody] object Id)
-        {
-            //结果定义
-            var result = new ContentJson()
-            {
-                msg = "操作失败",
-                success = false,
-                data = ""
-            };
-
-            // Delete
-            if (Id.IsNotEmpty())
-            {
-                if (await _service.DeleteById(Id))
+                catch (Exception ex)
                 {
-                    result.msg = "数据已删除";
-                    result.success = true;
+                    LogHelper.LogException(ex);
+                    _service.RollbackTran();
                 }
             }
-            return result;
+            return res;
         }
         #endregion
     }

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Data;
 using SqlSugar.Extensions;
+using System.Web;
 
 namespace WebUtils
 {
@@ -508,10 +509,19 @@ namespace WebUtils
         #endregion
 
         #region URL
-        public static string ToUrl(this string url)
+        /// <summary>
+        /// 将不完整的url转为正常的url，默认http
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string ToUrl(this object? url, string protocol = "http")
         {
-            url = url.ObjToString().Trim().TrimStart(':').TrimStart('/').TrimEnd('/');
-            return !url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? $"http://{url}" : url;
+            var newUrl = url.ObjToString().Trim().TrimStart(':').TrimStart('/').TrimEnd('/');
+            return HttpUtility.UrlEncode(!newUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? $"${protocol}://{newUrl}" : newUrl);
+        }
+        public static string EnCodeUrl(this object? url)
+        {
+            return HttpUtility.UrlEncode(url.ObjToString());
         }
         #endregion
     }

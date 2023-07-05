@@ -74,7 +74,7 @@ export default {
 					else {
 						this.$confirm({ content: '确认删除?' }).then(res => {
 							if (res == 'confirm')
-								this.$post(`${this.serverApi.dictionary.delete}?Id=${row.Id}`).then(res => {
+								this.$post(`${this.serverApi.sysRole.delete}?Id=${row.Id}`).then(res => {
 									this.$alertRes(res);
 									if (res.success) this.$refs.grid.remove(row);
 								});

@@ -6,10 +6,6 @@ using System.Linq.Expressions;
 
 namespace WebUtils.BaseService
 {
-    /// <summary>
-    /// 仓储方法实现类
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     public abstract class OrmService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
     {
         public abstract ISqlSugarClient Db { get; }

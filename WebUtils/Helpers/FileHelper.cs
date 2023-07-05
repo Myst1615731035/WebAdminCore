@@ -253,8 +253,13 @@ namespace WebUtils
             return await Task.Run(() =>
             {
                 string s = "";
-                //处理掉相对路径下首字符为/或\\的，相对路径无法读取
-                if (File.Exists(path.TrimStart('/').TrimStart('\\'))) s = File.ReadAllText(path);
+                if (File.Exists(path)) s = File.ReadAllText(path);
+                else
+                {
+                    //处理掉相对路径下首字符为/或\\的，相对路径无法读取
+                    path = path.TrimStart('/').TrimStart('\\');
+                    if (File.Exists(path)) s = File.ReadAllText(path);
+                }
                 return s;
             });
         }

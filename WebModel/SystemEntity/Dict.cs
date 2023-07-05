@@ -9,6 +9,7 @@ namespace WebModel.Entitys
     /// Button
     ///</summary>
     [DataSeed]
+    [SystemDefault]
     [SugarTable("Sys_Dict")]
     public partial class Dict : RootEntity<string>
     {

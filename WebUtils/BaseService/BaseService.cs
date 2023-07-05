@@ -1,9 +1,13 @@
-﻿using SqlSugar;
+﻿using ApiModel;
+using SqlSugar;
+using SqlSugar.Extensions;
+using System.Data;
+using System.Linq.Expressions;
 
 namespace WebUtils.BaseService
 {
     /// <summary>
-    /// 继承仓储，数据库链接实例注入
+    /// ORM泛型基类
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     public class BaseService<TEntity> : OrmService<TEntity> where TEntity : class, new()

@@ -8,6 +8,7 @@ namespace WebModel.Entitys
     /// Roles
     ///</summary>
     [DataSeed]
+    [SystemDefault]
     [SugarTable("Sys_Role")]
     public partial class SysRole : RootEntity<string>
     {

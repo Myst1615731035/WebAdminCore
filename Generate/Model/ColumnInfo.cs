@@ -49,7 +49,7 @@ namespace Generate.Model
         {
             get
             {
-                return $"{(HasDefaultValue ? $" = {DefaultValue.ObjToString().ToLower()};" : "")}";
+                return $"{(HasDefaultValue ? $" = {DefaultValue.ObjToString()};" : "")}";
             }
         }
     }

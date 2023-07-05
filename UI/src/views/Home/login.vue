@@ -5,8 +5,8 @@
 			<h3 class="title">Sign In</h3>
 			<el-form-item prop="account"><el-input type="text" v-model="data.account" auto-complete="off" placeholder="Account"></el-input></el-form-item>
 			<el-form-item prop="pass"><el-input v-model="data.password" auto-complete="off" show-password placeholder="Password"></el-input></el-form-item>
-			<el-form-item style="width: 100%">
-				<el-button type="primary" style="width: 100%" @click.native.prevent="submit" @keydown.enter="submit" :loading="logining">{{ loginStr }}</el-button>
+			<el-form-item style="width:100%;">
+				<el-button type="primary" style="width:100%;" @click.native.prevent="submit" @keydown.enter="submit" :loading="logining">{{ loginStr }}</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -14,11 +14,13 @@
 
 <script>
 import { h, toRaw } from 'vue';
+let self;
 export default {
-	mounted() {
+	created() {
+		self = this;
 		window.localStorage.clear();
 		document.onkeydown = () => {
-			if (window.event.keyCode === 13) this.submit();
+			if (window.event.keyCode === 13) self.submit();
 		};
 	},
 	data() {
@@ -28,48 +30,48 @@ export default {
 			data: { account: 'admin', password: '123456' },
 			rules: {
 				account: [{ required: true, message: 'Please enter account', trigger: 'blur' }],
-				password: [{ required: true, message: 'Please enter password', trigger: 'blur' }],
-			},
+				password: [{ required: true, message: 'Please enter password', trigger: 'blur' }]
+			}
 		};
 	},
 	methods: {
 		async submit() {
-			const valid = await this.$refs.form.validate((valid) => valid);
+			const valid = await self.$refs.form.validate(valid => valid);
 			if (valid) {
-				this.logining = true;
-				this.loginStr = '登录...';
-				this.$post(this.$store.state.serverApi.login, this.data)
-					.then((res) => {
+				self.logining = true;
+				self.loginStr = '登录...';
+				self.$post(self.$store.state.serverApi.login, self.data)
+					.then(res => {
 						if (res.success) {
 							//登录成功
-							this.logining = false;
-							this.loginStr = '登录成功';
-							this.$notify({ title: 'Success', message: h('i', { style: 'color: teal' }, 'Welcome'), type: 'success', duration: 5000 });
+							self.logining = false;
+							self.loginStr = '登录成功';
+							self.$notify({ title: 'Success', message: h('i', { style: 'color: teal' }, 'Welcome'), type: 'success', duration: 5000 });
 							//提交数据仓库
-							this.$store.commit('saveToken', res.data.token);
-							this.$store.commit('saveTokenExpire', new Date(new Date().setMinutes(new Date().getMinutes() + res.data.expire)));
+							self.$store.commit('saveToken', res.data.token);
+							self.$store.commit('saveTokenExpire', new Date(new Date().setMinutes(new Date().getMinutes() + res.data.expire)));
 							// 获取用户信息
-							this.GetUserInfo().then((res) => {
+							self.GetUserInfo().then(res => {
 								// 跳转到首页
 								if (res.success)
-									this.GetUserAuth().then((res) => {
+									self.GetUserAuth().then(res => {
 										if (!!res && res.success) this.$router.replace(((res.data || [])[0] || {}).Path || '');
 									});
 							});
-							this.GetCache(); // 获取缓存
+							self.GetCache(); // 获取缓存
 						} else {
 							this.reset();
 							this.$message({ content: res.msg, status: 'error' });
 						}
 					})
-					.catch((ex) => this.reset());
+					.catch(ex => this.reset());
 			} else this.reset();
 		},
 		reset() {
 			this.logining = false;
 			this.loginStr = '登录';
-		},
-	},
+		}
+	}
 };
 </script>
 
